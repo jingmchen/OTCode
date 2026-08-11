@@ -1,0 +1,56 @@
+<Project>
+  <PropertyGroup>
+    <!-- Assembly metadata -->
+    <Product>OTCode</Product>
+    <Company>Tan Jing Ming</Company>
+    <Authors>Tan Jing Ming</Authors>
+    <Copyright>Copyright (c) $(Company). Use of this software is governed by LICENSE.md.</Copyright>
+    <Version>0.0.1</Version>
+
+    <!-- Common settings -->
+    <TargetFramework>net10.0-windows10.0.19041.0</TargetFramework>
+    <LangVersion>Latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <InvariantGlobalization>false</InvariantGlobalization>
+    <NeutralLanguage>en</NeutralLanguage>
+    <AnalysisLevel>latest-recommended</AnalysisLevel>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+
+    <!-- Builds -->
+    <UseArtifactsOutput>true</UseArtifactsOutput>
+    <ArtifactsPath>$(MSBuildThisFileDirectory)build</ArtifactsPath>
+  </PropertyGroup>
+
+  <!-- For shipping -->
+  <PropertyGroup Condition="'$(Configuration)' == 'Release'">
+    <SelfContained>true</SelfContained>
+    <PublishSingleFile>true</PublishSingleFile>
+    <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
+
+    <Deterministic>true</Deterministic>
+    <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
+    
+    <PathMap>$(MSBuildThisFileDirectory)=/_/</PathMap>
+    
+    <DebugType>embedded</DebugType>
+    <EmbedAllSources>false</EmbedAllSources>
+  </PropertyGroup>
+
+  <!-- Files shipped beside executable -->
+  <ItemGroup Condition="
+      ('$(OutputType)' == 'Exe' Or '$(OutputType)' == 'WinExe')
+      And '$(Configuration)' == 'Release'">
+
+    <None Include="$(MSBuildThisFileDirectory)LICENSE.md"
+          Link="LICENSE.md"
+          CopyToPublishDirectory="PreserveNewest"
+          ExcludeFromSingleFile="true" />
+
+    <None Include="$(MSBuildThisFileDirectory)THIRD-PARTY-NOTICES.txt"
+          Link="THIRD-PARTY-NOTICES.txt"
+          CopyToPublishDirectory="PreserveNewest"
+          ExcludeFromSingleFile="true" />
+  </ItemGroup>
+</Project>
