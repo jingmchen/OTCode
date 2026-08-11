@@ -31,7 +31,7 @@ internal static class InfrastructureConstants
     {
         internal static class AppInfo
         {
-            internal const string ProductDefault = "OT-Code";
+            internal const string ProductDefault = "OTCode";
             internal const string CompanyDefault = "Tan Jing Ming";
             internal const string AuthorsDefault = "Tan Jing Ming";
             internal const string CopyrightDefault = $"Copyright (c) {CompanyDefault}. Use of this software is governed by LICENSE.md.";

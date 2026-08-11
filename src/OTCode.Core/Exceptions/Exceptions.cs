@@ -3,7 +3,7 @@
 using OTCode.Core.Enums;
 using OTCode.Core.Domains;
 
-namespace SimplyDraft.Core.Exceptions;
+namespace OTCode.Core.Exceptions;
 
 public sealed class OTCodeException : Exception
 {

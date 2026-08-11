@@ -2,7 +2,7 @@
 
 using Microsoft.Extensions.DependencyInjection;
 
-namespace SimplyDraft.UI.DependencyInjection;
+namespace OTCode.UI.DependencyInjection;
 
 public static class UIServiceExtension
 {
