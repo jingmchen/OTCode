@@ -1,7 +1,7 @@
 <Project>
   <PropertyGroup>
     <!-- Assembly metadata -->
-    <Product>OTCode</Product>
+    <Product>OT-Code</Product>
     <Company>Tan Jing Ming</Company>
     <Authors>Tan Jing Ming</Authors>
     <Copyright>Copyright (c) $(Company). Use of this software is governed by LICENSE.md.</Copyright>

@@ -10,7 +10,11 @@ using Serilog.Extensions.Logging;
 using Serilog.Templates;
 using OTCode.Transpiler.DependencyInjection;
 using OTCode.Infrastructure.DependencyInjection;
+using OTCode.Infrastructure.Services;
+using OTCode.Infrastructure.Utils;
+using OTCode.UI;
 using OTCode.UI.DependencyInjection;
+using OTCode.UI.Services;
 
 namespace OTCode.AppHost;
 
@@ -105,7 +109,7 @@ internal sealed class Program
         
         builder.Services.AddSingleton(typeof(Program).Assembly);
         builder.Services.AddInfrastructureServices();
-        builder.Services.AddEngineServices();
+        builder.Services.AddTranspilerServices();
         builder.Services.AddUIServices();
         
         return builder.Build();
