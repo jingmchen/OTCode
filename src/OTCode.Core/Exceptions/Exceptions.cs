@@ -1,7 +1,6 @@
 // Copyright (c) Tan Jing Ming. Use of this software is governed by LICENSE.md.
 
 using OTCode.Core.Enums;
-using OTCode.Core.Domains;
 
 namespace OTCode.Core.Exceptions;
 

@@ -5,7 +5,7 @@ using System.Text;
 
 namespace OTCode.Infrastructure.Utils;
 
-internal static class AtomicFile
+internal static class AtomicFileWriter
 {
     private static readonly Encoding DefaultEncoding =
         new UTF8Encoding(

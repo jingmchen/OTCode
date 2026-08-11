@@ -1,6 +1,8 @@
 // Copyright (c) Tan Jing Ming. Use of this software is governed by LICENSE.md.
 
 using Microsoft.Extensions.DependencyInjection;
+using OTCode.Core.Abstractions.Infrastructure;
+using OTCode.Infrastructure.Services;
 
 namespace OTCode.Infrastructure.DependencyInjection;
 

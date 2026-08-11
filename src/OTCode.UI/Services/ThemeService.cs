@@ -3,13 +3,13 @@
 using System.Globalization;
 using System.Text;
 using System.Windows;
+using System.Windows.Media;
 using Windows.UI.ViewManagement;
 using Microsoft.Extensions.Logging;
-using SimplyDraft.Core.Abstractions.Infrastructure;
-using SimplyDraft.Core.Abstractions.UI;
-using SimplyDraft.Core.Enums;
-using SimplyDraft.UI.Common.Editor;
-using SimplyDraft.UI.Constants;
+using OTCode.Core.Abstractions.Infrastructure;
+using OTCode.Core.Abstractions.UI;
+using OTCode.Core.Enums;
+using OTCode.UI.Constants;
 
 namespace OTCode.UI.Services;
 
@@ -17,11 +17,11 @@ public sealed class ThemeService : IThemeService
 {
     private readonly IAppSettingsProvider _settings;
     private readonly ILogger<ThemeService> _logger;
-    private IPlatformSettings? _platformSettings;
     private ResourceDictionary? _themeSlot;
     private ResourceDictionary? _accentSlot;
     private readonly Dictionary<AppTheme, ResourceDictionary> _themeCache = [];
     private readonly Dictionary<AppAccent, ResourceDictionary> _accentCache = [];
+    private readonly UISettings _uiSettings = new();
     private readonly CompositeFormat _themeTemplate;
     private readonly CompositeFormat _accentTemplate;
     private bool _isInitialized;
@@ -67,8 +67,7 @@ public sealed class ThemeService : IThemeService
         ApplyCore(CurrentTheme, CurrentAccent, fireEvent: false, persist: true);
 
         // Subscribe to OS theme changes
-        _platformSettings = Application.Current!.PlatformSettings;
-        _platformSettings!.ColorValuesChanged += OnSystemThemeChanged;
+        _uiSettings.ColorValuesChanged += OnSystemThemeChanged;
 
         _isInitialized = true;
     }
@@ -84,24 +83,26 @@ public sealed class ThemeService : IThemeService
         ThrowIfNotInitialized();
         ThrowIfDisposed();
 
-        if (theme == CurrentTheme && accent == CurrentAccent) return;
+        if (theme == CurrentTheme && accent == CurrentAccent)
+            return;
 
         InvokeOnUiThread(() => ApplyCore(theme, accent, fireEvent: true, persist: true));
     }
 
     public void Dispose()
     {
-        if (_isDisposed) return;
+        if (_isDisposed)
+            return;
         _isDisposed = true;
-        if (_platformSettings is not null)
-            _platformSettings.ColorValuesChanged -= OnSystemThemeChanged;
+        _uiSettings.ColorValuesChanged -= OnSystemThemeChanged;
     }
 
     // ─── PRIVATE METHODS ───────────────────────
     // Core implementation
     private void ApplyCore(AppTheme theme, AppAccent accent, bool fireEvent, bool persist = true)
     {
-        if (_isDisposed) return;
+        if (_isDisposed)
+            return;
 
         CurrentTheme = theme;
         CurrentAccent = accent;
@@ -110,8 +111,8 @@ public sealed class ThemeService : IThemeService
         var isDark = IsDarkTheme(effectiveTheme);
 
         // Fluent theme for built-in control styles
-        Application.Current!.RequestedThemeVariant =
-            isDark ? ThemeVariant.Dark : ThemeVariant.Light;
+        Application.Current!.ThemeMode =
+            isDark ? ThemeMode.Dark : ThemeMode.Light;
 
         var merged = Application.Current!.Resources.MergedDictionaries;
         var themeDictionary = GetOrLoadDictionary(_themeCache, effectiveTheme, ThemeUri);
@@ -123,8 +124,8 @@ public sealed class ThemeService : IThemeService
         _accentSlot?.MergedDictionaries.Clear();
         _accentSlot?.MergedDictionaries.Add(accentDictionary);
         
-        // Call EditorSyntax to update palette
-        EditorSyntax.SetTheme(isDark, GetColor(accentDictionary));
+        // Call EditorSyntax to update palette - keep this here, I will implement AvalonEditor later
+        // EditorSyntax.SetTheme(isDark, GetColor(accentDictionary));
 
         if (persist)
             Persist();
@@ -142,21 +143,24 @@ public sealed class ThemeService : IThemeService
 
     private static void InvokeOnUiThread(Action action)
     {
-        if (Dispatcher.UIThread.CheckAccess())
+        var dispatcher = Application.Current!.Dispatcher;
+
+        if (dispatcher.CheckAccess())
             action();
         else
-            Dispatcher.UIThread.Post(action);
+            dispatcher.BeginInvoke(() => action());
     }
 
-    private void OnSystemThemeChanged(object? sender, PlatformColorValues e)
+    private void OnSystemThemeChanged(UISettings sender, object args)
     {
-        if (_isDisposed || CurrentTheme != AppTheme.System) return;
+        if (_isDisposed || CurrentTheme != AppTheme.System)
+            return;
 
         InvokeOnUiThread(() => ApplyCore(AppTheme.System, CurrentAccent, fireEvent: true, persist: true));
     }
     
-    private static AppTheme GetSystemTheme()
-        => Application.Current?.PlatformSettings?.GetColorValues().ThemeVariant == PlatformThemeVariant.Dark
+    private AppTheme GetSystemTheme()
+        => IsColorLight(_uiSettings.GetColorValue(UIColorType.Background))
             ? AppTheme.Black
             : AppTheme.Light;
 
@@ -168,14 +172,19 @@ public sealed class ThemeService : IThemeService
             _ => throw new ArgumentOutOfRangeException(nameof(theme), theme, "Invalid theme.")
         };
     
+    private static bool IsColorLight(Windows.UI.Color c)
+        => (5 * c.G + 2 * c.R + c.B) > 8 * 128;
+    
     // Color helpers for AvalonEditor
     private Color GetColor(ResourceDictionary dictionary)
     {
-        if (dictionary.TryGetValue(UIConstants.ThemeManagement.AccentKey, out var value1) && value1 is Color color)
-            return color;
+        if (dictionary.Contains(UIConstants.XAMLThemeKeys.SystemAccentColor)
+            && dictionary[UIConstants.XAMLThemeKeys.SystemAccentColor] is Color color)
+                return color;
         
-        if (dictionary.TryGetValue(UIConstants.ThemeManagement.AccentBrushKey, out var value2) && value2 is SolidColorBrush brush)
-            return brush.Color;
+        if (dictionary.Contains(UIConstants.XAMLThemeKeys.AccentBrush)
+            && dictionary[UIConstants.XAMLThemeKeys.AccentBrush] is SolidColorBrush brush)
+                return brush.Color;
 
         throw new KeyNotFoundException($"Accent keys not found in {CurrentAccent}.");
     }
@@ -195,11 +204,7 @@ public sealed class ThemeService : IThemeService
     }
 
     private static ResourceDictionary LoadDictionary(Uri uri)
-    {
-        var include = new ResourceInclude(uri) {Source = uri};
-        return include.Loaded as ResourceDictionary
-            ?? throw new InvalidOperationException($"Resource at '{uri}' is not a ResourceDictionary.");
-    }
+        => new() {Source = uri};
 
     // Uri helpers
     private Uri ThemeUri(AppTheme theme)
@@ -218,7 +223,7 @@ public sealed class ThemeService : IThemeService
 
     private static void ThrowIfAppNotReady()
     {
-        if (Application.Current?.ApplicationLifetime is null)
+        if (Application.Current is null)
             throw new InvalidOperationException("Application is not yet ready.");
     }
 

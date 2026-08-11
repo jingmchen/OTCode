@@ -22,9 +22,9 @@ internal static class UIConstants
         }
     }
 
-    internal static class ThemeManagement
+    internal static class XAMLThemeKeys
     {
-        internal const string AccentKey = "SystemAccentColor";
-        internal const string AccentBrushKey = "AccentBrush";
+        internal const string SystemAccentColor = "SystemAccentColor";
+        internal const string AccentBrush = "AccentBrush";
     }
 }
