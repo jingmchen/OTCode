@@ -87,7 +87,7 @@ terms, and the **software** is the software the licensor makes
 available under these terms.
 
 **You** refers to the individual or entity agreeing to these
-terms.
+terms
 
 **Your company** is any legal entity, sole proprietorship,
 or other kind of organization that you work for, plus all

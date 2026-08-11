@@ -28,12 +28,9 @@
     <SelfContained>true</SelfContained>
     <PublishSingleFile>true</PublishSingleFile>
     <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
-
     <Deterministic>true</Deterministic>
     <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
-    
     <PathMap>$(MSBuildThisFileDirectory)=/_/</PathMap>
-    
     <DebugType>embedded</DebugType>
     <EmbedAllSources>false</EmbedAllSources>
   </PropertyGroup>
