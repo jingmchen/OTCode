@@ -1,16 +1,16 @@
 // Copyright (c) Tan Jing Ming. Use of this software is governed by LICENSE.md.
 
-using AvaloniaEdit;
 using Microsoft.Extensions.Logging;
+using ICSharpCode.AvalonEdit;
 using OTCode.Core.Abstractions.UI;
 
 namespace OTCode.UI.Services;
 
-public sealed class AvaloniaEditorService : IEditorService<TextEditor>
+public sealed class AvalonEditService : IEditorService<TextEditor>
 {
-    private readonly ILogger<AvaloniaEditorService> _logger;
+    private readonly ILogger<AvalonEditService> _logger;
 
-    public AvaloniaEditorService(ILogger<AvaloniaEditorService> logger)
+    public AvalonEditService(ILogger<AvalonEditService> logger)
         => _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     
     // ─── PUBLIC METHODS ────────────────────────
