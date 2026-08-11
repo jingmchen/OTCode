@@ -1,6 +1,5 @@
 // Copyright (c) Tan Jing Ming. Use of this software is governed by LICENSE.md.
 
-using Avalonia;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -64,8 +63,8 @@ internal sealed class Program
 
             try
             {
-                return BuildAvaloniaApp(host.Services)
-                    .StartWithClassicDesktopLifetime(args);
+                using var app = host.Services.GetRequiredService<App>();
+                return app.InitializeComponent().Run();
             }
             finally
             {
@@ -114,9 +113,4 @@ internal sealed class Program
         
         return builder.Build();
     }
-
-    private static AppBuilder BuildAvaloniaApp(IServiceProvider services)
-        => AppBuilder.Configure(() => new App(services))
-            .UsePlatformDetect()
-            .WithInterFont();
 }

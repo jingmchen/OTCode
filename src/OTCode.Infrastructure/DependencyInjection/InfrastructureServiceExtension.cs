@@ -10,6 +10,9 @@ public static class InfrastructureServiceExtension
     {
         ArgumentNullException.ThrowIfNull(services);
         
+        services.AddSingleton<IAppInfo, AppInfo>();
+        services.AddSingleton<IAppPaths, AppPaths>();
+        services.AddSingleton<IAppSettingsProvider, AppSettingsProvider>();
         return services;
     }
 }
