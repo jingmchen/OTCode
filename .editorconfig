@@ -6,4 +6,4 @@ indent_size = 2
 [*.cs]
 file_header_template = Copyright (c) Tan Jing Ming. Use of this software is governed by LICENSE.md.
 dotnet_diagnostic.IDE0073.severity = warning
-csharp_style_prefer_primary_constructors = falses
+csharp_style_prefer_primary_constructors = false

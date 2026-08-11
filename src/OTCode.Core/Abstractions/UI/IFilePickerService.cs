@@ -6,6 +6,6 @@ namespace OTCode.Core.Abstractions.UI;
 
 public interface IFilePickerService
 {
-    Task<string?> PickFileAsync(string title, IReadOnlyList<FileFilter> filters);
+    string? OpenFile(FilePickerOptions)
     Task<string?> PickFolderAsync(string title);
 }
