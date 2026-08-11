@@ -5,4 +5,5 @@ namespace OTCode.Core.Options.AvalonEdit;
 public sealed record AvalonEditOptions
 {
     public EditorOptions Editor {get; set;} = new();
+    public FontOptions Font {get; set;} = new();
 }

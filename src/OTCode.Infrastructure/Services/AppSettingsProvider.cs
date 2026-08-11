@@ -6,13 +6,13 @@ using Microsoft.Extensions.Logging;
 using OTCode.Core.Abstractions.Infrastructure;
 using OTCode.Core.Configuration;
 using OTCode.Core.Enums;
+using OTCode.Infrastructure.Logging;
 using OTCode.Infrastructure.Utils;
 
 namespace OTCode.Infrastructure.Services;
 
 public sealed partial class AppSettingsProvider : IAppSettingsProvider
 {
-    public AppSettings Current {get; private set;} = null!;
     private readonly ILogger<AppSettingsProvider> _logger;
     private readonly object _gate = new();
     private readonly string _settingsPath;
@@ -24,6 +24,7 @@ public sealed partial class AppSettingsProvider : IAppSettingsProvider
     };
     private const int MinRetainedFiles = 1;
     private const int MaxRetainedFiles = 30;
+    public AppSettings Current {get; private set;} = null!;
 
     public AppSettingsProvider(ILogger<AppSettingsProvider> logger, IAppPaths appPaths)
     {
@@ -55,7 +56,7 @@ public sealed partial class AppSettingsProvider : IAppSettingsProvider
     {
         if (!File.Exists(_settingsPath))
         {
-            LogCreatingDefaults();
+            _logger.LogCreatingDefaults();
             ApplyDefaults();
             return;
         }
@@ -67,7 +68,7 @@ public sealed partial class AppSettingsProvider : IAppSettingsProvider
 
             if (settings is null)
             {
-                LogInvalidContent();
+                _logger.LogInvalidContent();
                 ApplyDefaults();
                 return;
             }
@@ -77,7 +78,7 @@ public sealed partial class AppSettingsProvider : IAppSettingsProvider
         }
         catch (Exception ex)
         {
-            LogUnableToLoad(ex);
+            _logger.LogUnableToLoad(ex);
             ApplyDefaults();
         }
     }
@@ -94,11 +95,11 @@ public sealed partial class AppSettingsProvider : IAppSettingsProvider
 
         try
         {
-            AtomicFile.WriteTo(_settingsPath, json);
+            AtomicFileWriter.WriteTo(_settingsPath, json);
         }
         catch (Exception ex)
         {
-            LogUnableToSave(ex);
+            _logger.LogUnableToSave(ex);
         }
     }
 
@@ -123,34 +124,4 @@ public sealed partial class AppSettingsProvider : IAppSettingsProvider
         
         return settings;
     }
-
-    [LoggerMessage(
-        EventId = 1001,
-        Level = LogLevel.Information,
-        Message = "No user appsettings file found - reverting to factory defaults.")]
-    private partial void LogCreatingDefaults();
-
-    [LoggerMessage(
-        EventId = 1002,
-        Level = LogLevel.Warning,
-        Message = "Unable to read appsettings file - reverting to factory defaults.")]
-    private partial void LogUnableToLoad(Exception ex);
-
-    [LoggerMessage(
-        EventId = 1003,
-        Level = LogLevel.Warning,
-        Message = "Appsettings file was empty or invalid - reverting to factory defaults.")]
-    private partial void LogInvalidContent();
-
-    [LoggerMessage(
-        EventId = 1004,
-        Level = LogLevel.Warning,
-        Message = "Unable to persist appsettings file.")]
-    private partial void LogUnableToSave(Exception ex);
-
-    [LoggerMessage(
-        EventId = 1005,
-        Level = LogLevel.Debug,
-        Message = "Could not remove temporary settings file '{Path}'; it will be overwritten on the next successful save.")]
-    private partial void LogTempCleanupFailed(Exception ex, string path);
 }
