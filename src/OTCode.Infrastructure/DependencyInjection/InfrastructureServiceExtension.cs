@@ -14,7 +14,8 @@ public static class InfrastructureServiceExtension
         
         services.AddSingleton<IAppInfo, AppInfo>();
         services.AddSingleton<IAppPaths, AppPaths>();
-        services.AddSingleton<IAppSettingsProvider, AppSettingsProvider>();
+        services.AddSingleton<ISettingsProvider, AppSettingsProvider>();
+        services.AddSingleton<ISettingsProvider, UserStateSettingsProvider>();
         return services;
     }
 }

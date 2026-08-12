@@ -1,12 +1,10 @@
 // Copyright (c) Tan Jing Ming. Use of this software is governed by LICENSE.md.
 
-using OTCode.Core.Configuration;
-
 namespace OTCode.Core.Abstractions.Infrastructure;
 
-public interface IAppSettingsProvider
+public interface ISettingsProvider<T>
 {
-    AppSettings Current {get;}
+    T Current {get;}
     void Save();
     void Reload();
 }

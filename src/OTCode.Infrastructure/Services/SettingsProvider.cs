@@ -11,48 +11,32 @@ using OTCode.Infrastructure.Utils;
 
 namespace OTCode.Infrastructure.Services;
 
-public sealed partial class AppSettingsProvider : ISettingsProvider<T>
+public abstract partial class SettingsProvider<T> : ISettingsProvider<T>
 {
-    private readonly ILogger<AppSettingsProvider> _logger;
     private readonly object _gate = new();
-    private readonly string _settingsPath;
     private static readonly JsonSerializerOptions _jsonOptions = new()
     {
         WriteIndented = true,
         PropertyNameCaseInsensitive = true,
         Converters = {new JsonStringEnumConverter()}
     };
-    private const int MinRetainedFiles = 1;
-    private const int MaxRetainedFiles = 30;
-    public AppSettings Current {get; private set;} = null!;
-
-    public AppSettingsProvider(ILogger<AppSettingsProvider> logger, IAppPaths appPaths)
-    {
-        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-        _settingsPath = appPaths.UserAppSettingsFile ?? throw new ArgumentNullException(nameof(appPaths));
-
-        var dir = Path.GetDirectoryName(_settingsPath);
-        if (!string.IsNullOrEmpty(dir))
-            Directory.CreateDirectory(dir);
-        
-        Reload();
-    }
+    public T? Current {get; protected set;} = null!;
 
     // ─── PUBLIC METHODS ────────────────────────
-    public void Save()
+    public virtual void Save()
     {
         lock(_gate)
             WriteToDisk(Current);
     }
 
-    public void Reload()
+    public virtual void Reload()
     {
         lock(_gate)
             ReloadCore();
     }
 
     // ─── PRIVATE METHODS ───────────────────────
-    private void WriteToDisk(AppSettings settings)
+    private void WriteToDisk(T settings)
     {
         var json = JsonSerializer.Serialize(settings, _jsonOptions);
 
@@ -99,29 +83,9 @@ public sealed partial class AppSettingsProvider : ISettingsProvider<T>
 
     private void ApplyDefaults()
     {
-        Current = new AppSettings();
+        Current = new T();
         Save();
     }
 
-    private static AppSettings Sanitize(AppSettings settings)
-    {
-        ArgumentNullException.ThrowIfNull(settings);
-
-        settings.LoggingSection ??= new();
-        settings.ThemeSection ??= new();
-
-        if (!Enum.IsDefined(settings.LoggingSection.MinimumLevel))
-            settings.LoggingSection.MinimumLevel = LogLevel.Information;
-        
-        settings.LoggingSection.RetainedFileCountLimit =
-            Math.Clamp(settings.LoggingSection.RetainedFileCountLimit, MinRetainedFiles, MaxRetainedFiles);
-        
-        if (!Enum.IsDefined(settings.ThemeSection.Theme))
-            settings.ThemeSection.Theme = AppTheme.Light;
-        
-        if (!Enum.IsDefined(settings.ThemeSection.Accent))
-            settings.ThemeSection.Accent = AppAccent.Black;
-        
-        return settings;
-    }
+    protected abstract static T Sanitize(T settings);
 }

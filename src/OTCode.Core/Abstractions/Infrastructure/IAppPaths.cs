@@ -5,8 +5,10 @@ namespace OTCode.Core.Abstractions.Infrastructure;
 public interface IAppPaths
 {
     string AppDataFolder {get;}
+    string UserStateFolder {get;}
     string LogsFolder {get;}
     string BundledAppSettingsFile {get;}
     string UserAppSettingsFile {get;}
+    string UserStateSettingsFile {get;}
     string LatestLogFile {get;}
 }

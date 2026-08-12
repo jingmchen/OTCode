@@ -2,7 +2,7 @@
 
 using Microsoft.Extensions.Logging;
 
-namespace OTCode.Core.Configuration;
+namespace OTCode.Core.Configuration.AppSettings;
 
 public sealed record LoggingSettings
 {

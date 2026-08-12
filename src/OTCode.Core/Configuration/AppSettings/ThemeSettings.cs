@@ -2,7 +2,7 @@
 
 using OTCode.Core.Enums;
 
-namespace OTCode.Core.Configuration;
+namespace OTCode.Core.Configuration.AppSettings;
 
 public sealed record ThemeSettings
 {
