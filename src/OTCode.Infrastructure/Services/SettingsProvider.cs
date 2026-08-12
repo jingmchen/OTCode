@@ -4,32 +4,44 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using Microsoft.Extensions.Logging;
 using OTCode.Core.Abstractions.Infrastructure;
-using OTCode.Core.Configuration.AppSettings;
-using OTCode.Core.Enums;
 using OTCode.Infrastructure.Logging;
 using OTCode.Infrastructure.Utils;
 
 namespace OTCode.Infrastructure.Services;
 
-public abstract partial class SettingsProvider<T> : ISettingsProvider<T>
+public abstract partial class SettingsProvider<T> : ISettingsProvider<T> where T : class, new()
 {
+    private readonly ILogger _logger;
     private readonly object _gate = new();
+    private readonly string _settingsPath;
     private static readonly JsonSerializerOptions _jsonOptions = new()
     {
         WriteIndented = true,
         PropertyNameCaseInsensitive = true,
         Converters = {new JsonStringEnumConverter()}
     };
-    public T? Current {get; protected set;} = null!;
+    public T Current {get; private set;} = null!;
+
+    protected SettingsProvider(ILogger logger, string settingsPath)
+    {
+        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+        _settingsPath = settingsPath;
+
+        var dir = Path.GetDirectoryName(_settingsPath);
+        if (!string.IsNullOrEmpty(dir))
+            Directory.CreateDirectory(dir);
+        
+        Reload();
+    }
 
     // ─── PUBLIC METHODS ────────────────────────
-    public virtual void Save()
+    public void Save()
     {
         lock(_gate)
             WriteToDisk(Current);
     }
 
-    public virtual void Reload()
+    public void Reload()
     {
         lock(_gate)
             ReloadCore();
@@ -54,7 +66,8 @@ public abstract partial class SettingsProvider<T> : ISettingsProvider<T>
     {
         if (!File.Exists(_settingsPath))
         {
-            _logger.LogFileNotFoundCreateDefaults(Path.GetFileName(_settingsPath));
+            if (_logger.IsEnabled(LogLevel.Information))
+                _logger.LogFileNotFoundCreateDefaults(Path.GetFileName(_settingsPath));
             ApplyDefaults();
             return;
         }
@@ -62,7 +75,7 @@ public abstract partial class SettingsProvider<T> : ISettingsProvider<T>
         try
         {
             var json = File.ReadAllText(_settingsPath);
-            var settings = JsonSerializer.Deserialize<AppSettings>(json, _jsonOptions);
+            var settings = JsonSerializer.Deserialize<T>(json, _jsonOptions);
 
             if (settings is null)
             {
@@ -87,5 +100,5 @@ public abstract partial class SettingsProvider<T> : ISettingsProvider<T>
         Save();
     }
 
-    protected abstract static T Sanitize(T settings);
+    protected abstract T Sanitize(T settings);
 }

@@ -1,20 +1,28 @@
 // Copyright (c) Tan Jing Ming. Use of this software is governed by LICENSE.md.
 
-using Avalonia;
-using Avalonia.Controls;
-using Avalonia.Input;
-using Avalonia.Xaml.Interactivity;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Input;
+using Microsoft.Xaml.Behaviors;
 using OTCode.Core.Abstractions.UI;
 
 namespace OTCode.UI.Behaviors;
 
 public sealed class HoverTrackerBehavior : Behavior<Control>
 {
-    public static readonly StyledProperty<object?> ItemProperty =
-        AvaloniaProperty.Register<HoverTrackerBehavior, object?>(nameof(Item));
+    public static readonly DependencyProperty ItemProperty =
+        DependencyProperty.Register(
+            nameof(Item),
+            typeof(object),
+            typeof(HoverTrackerBehavior),
+            new PropertyMetadata(null));
     
-    public static readonly StyledProperty<IHoverTracker?> TrackerProperty =
-        AvaloniaProperty.Register<HoverTrackerBehavior, IHoverTracker?>(nameof(Tracker));
+    public static readonly DependencyProperty TrackerProperty =
+        DependencyProperty.Register(
+            nameof(Tracker),
+            typeof(IHoverTracker),
+            typeof(HoverTrackerBehavior),
+            new PropertyMetadata(null));
     
     public object? Item
     {
@@ -24,7 +32,7 @@ public sealed class HoverTrackerBehavior : Behavior<Control>
 
     public IHoverTracker? Tracker
     {
-        get => GetValue(TrackerProperty);
+        get => (IHoverTracker?)GetValue(TrackerProperty);
         set => SetValue(TrackerProperty, value);
     }
 
@@ -32,27 +40,24 @@ public sealed class HoverTrackerBehavior : Behavior<Control>
     {
         base.OnAttached();
 
-        if (AssociatedObject is { } c)
-        {
-            c.PointerEntered += OnEntered;
-            c.PointerExited += OnExited;
-        }
+        AssociatedObject.MouseEnter += OnEntered;
+        AssociatedObject.MouseLeave += OnExited;
     }
 
     protected override void OnDetaching()
     {
-        if (AssociatedObject is { } c)
-        {
-            c.PointerEntered -= OnEntered;
-            c.PointerExited -= OnExited;
-        }
+        AssociatedObject.MouseEnter -= OnEntered;
+        AssociatedObject.MouseLeave -= OnExited;
+
+        if (AssociatedObject.IsMouseOver)
+            Tracker?.ClearHovered(Item);
         
         base.OnDetaching();
     }
 
-    private void OnEntered(object? sender, PointerEventArgs e)
+    private void OnEntered(object? sender, MouseEventArgs e)
         => Tracker?.SetHovered(Item);
     
-    private void OnExited(object? sender, PointerEventArgs e)
+    private void OnExited(object? sender, MouseEventArgs e)
         => Tracker?.ClearHovered(Item);
 }

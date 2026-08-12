@@ -4,6 +4,6 @@ namespace OTCode.Core.Configuration.UserStateSettings;
 
 public sealed class UserStateSettings
 {
-    public AppStateSettings AppStateSection {get;} = new();
-    public TermsSettings TermsSection {get;} = new();
+    public AppStateSettings AppStateSection {get; set;} = new();
+    public TermsSettings TermsSection {get; set;} = new();
 }

@@ -4,5 +4,5 @@ namespace OTCode.Core.Configuration.UserStateSettings;
 
 public sealed record AppStateSettings
 {
-    public string? LastOpenedDirectory {get; set;}
+    public string? LastOpenedDirectory {get; set;} = "";
 }

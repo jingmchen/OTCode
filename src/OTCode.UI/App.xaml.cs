@@ -4,6 +4,7 @@ using System.Windows;
 using System.Windows.Threading;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using OTCode.Core.Abstractions.UI;
 using OTCode.UI.Views;
 
 namespace OTCode.UI;
@@ -24,7 +25,7 @@ public sealed partial class App : Application
     {
         if (_services is { } services)
         {
-            var themeService = _services.GetRequiredService<IThemeService>();
+            var themeService = services.GetRequiredService<IThemeService>();
             themeService.Initialize();
         }
         base.OnStartup(e);

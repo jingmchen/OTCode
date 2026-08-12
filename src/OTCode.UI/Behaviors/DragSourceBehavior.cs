@@ -1,95 +1,102 @@
 // Copyright (c) Tan Jing Ming. Use of this software is governed by LICENSE.md.
 
-using Avalonia;
-using Avalonia.Controls;
-using Avalonia.Input;
-using Avalonia.Xaml.Interactivity;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Input;
+using Microsoft.Xaml.Behaviors;
 
 namespace OTCode.UI.Behaviors;
 
 public sealed class DragSourceBehavior : Behavior<Control>
 {
     private Point _origin;
-    private PointerPressedEventArgs? _pressedArgs; // Avalonia 12 DoDragDropAsync requires original press args
-    public static readonly StyledProperty<string?> PayloadProperty =
-        AvaloniaProperty.Register<DragSourceBehavior, string?>(nameof(Payload));
+    private bool _pressed;
+    public static readonly DependencyProperty PayloadProperty =
+        DependencyProperty.Register(
+            nameof(Payload),
+            typeof(string),
+            typeof(DragSourceBehavior),
+            new PropertyMetadata(null));
     
-    public static readonly StyledProperty<double> ThresholdProperty =
-        AvaloniaProperty.Register<DragSourceBehavior, double>(nameof(Threshold), 4.0);
+    public static readonly DependencyProperty ThresholdProperty =
+        DependencyProperty.Register(
+            nameof(Threshold),
+            typeof(double),
+            typeof(DragSourceBehavior),
+            new PropertyMetadata(4.0));
     
     // Stable id to hand to the drop target
     public string? Payload
     {
-        get => GetValue(PayloadProperty);
+        get => (string?)GetValue(PayloadProperty);
         set => SetValue(PayloadProperty, value);
     }
 
     // Distance in DIPs the pointer must travel before a drag starts
     public double Threshold
     {
-        get => GetValue(ThresholdProperty);
+        get => (double)GetValue(ThresholdProperty);
         set => SetValue(ThresholdProperty, value);
     }
 
     protected override void OnAttached()
     {
         base.OnAttached();
-        
-        if (AssociatedObject is { } c)
-        {
-            c.PointerPressed += OnPressed;
-            c.PointerReleased += OnReleased;
-            c.PointerCaptureLost += OnCaptureLost;
-            c.PointerMoved += OnMoved;
-        }
+
+        AssociatedObject.PreviewMouseLeftButtonDown += OnPressed;
+        AssociatedObject.PreviewMouseLeftButtonUp += OnReleased;
+        AssociatedObject.LostMouseCapture += OnCaptureLost;
+        AssociatedObject.PreviewMouseMove += OnMoved;
     }
 
     protected override void OnDetaching()
     {
-        if (AssociatedObject is { } c)
-        {
-            c.PointerPressed -= OnPressed;
-            c.PointerReleased -= OnReleased;
-            c.PointerCaptureLost -= OnCaptureLost;
-            c.PointerMoved -= OnMoved;
-        }
+        AssociatedObject.PreviewMouseLeftButtonDown -= OnPressed;
+        AssociatedObject.PreviewMouseLeftButtonUp -= OnReleased;
+        AssociatedObject.LostMouseCapture -= OnCaptureLost;
+        AssociatedObject.PreviewMouseMove -= OnMoved;
 
         base.OnDetaching();
     }
 
-    private void OnPressed(object? sender, PointerPressedEventArgs e)
+    private void OnPressed(object? sender, MouseButtonEventArgs e)
     {
-        if (!e.GetCurrentPoint(AssociatedObject).Properties.IsLeftButtonPressed) return;
+        if (e.LeftButton != MouseButtonState.Pressed)
+            return;
 
         _origin = PointerPosition(e);
-        _pressedArgs = e;
+        _pressed = true;
     }
 
-    private void OnReleased(object? sender, PointerReleasedEventArgs e)
-        => _pressedArgs = null;
+    private void OnReleased(object? sender, MouseButtonEventArgs e)
+        => _pressed = false;
     
-    private void OnCaptureLost(object? sender, PointerCaptureLostEventArgs e)
-        => _pressedArgs = null;
+    private void OnCaptureLost(object? sender, MouseEventArgs e)
+        => _pressed = false;
     
-    private async void OnMoved(object? sender, PointerEventArgs e)
+    private async void OnMoved(object? sender, MouseEventArgs e)
     {
-        if (_pressedArgs is not { } pressed || Payload is not { } payload)
+        if (!_pressed || Payload is not { } payload)
             return;
         
-        var delta = PointerPosition(e) - _origin;
+        if (e.LeftButton != MouseButtonState.Pressed)
+        {
+            _pressed = false;
+            return;
+        }
+        
+        Vector delta = PointerPosition(e) - _origin;
         if (Math.Abs(delta.X) < Threshold && Math.Abs(delta.Y) < Threshold)
             return; // Still within click territory
         
-        _pressedArgs = null;
+        _pressed = false;
 
-        var item = new DataTransferItem();
-        item.Set(DataFormat.Text, payload);
-        var data = new DataTransfer();
-        data.Add(item);
+        var data = new DataObject();
+        data.SetData(DataFormats.Text, payload);
         
         try
         {
-            await DragDrop.DoDragDropAsync(pressed, data, DragDropEffects.Move);
+            DragDrop.DoDragDrop(AssociatedObject, data, DragDropEffects.Move);
         }
         catch
         {
@@ -97,10 +104,12 @@ public sealed class DragSourceBehavior : Behavior<Control>
         }
     }
     
-    private Point PointerPosition(PointerEventArgs e)
+    private Point PointerPosition(MouseEventArgs e)
     {
-        Visual reference = TopLevel.GetTopLevel(AssociatedObject)
-            ?? (Visual)AssociatedObject!;
+        IInputElement reference =
+            PresentationSource.FromVisual(AssociatedObject)?.RootVisual as IInputElement
+                ?? Window.GetWindow(AssociatedObject)
+                ?? AssociatedObject;
         
         return e.GetPosition(reference);
     }

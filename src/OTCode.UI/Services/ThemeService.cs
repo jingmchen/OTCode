@@ -8,6 +8,7 @@ using Windows.UI.ViewManagement;
 using Microsoft.Extensions.Logging;
 using OTCode.Core.Abstractions.Infrastructure;
 using OTCode.Core.Abstractions.UI;
+using OTCode.Core.Configuration.AppSettings;
 using OTCode.Core.Enums;
 using OTCode.UI.Constants;
 
@@ -15,7 +16,7 @@ namespace OTCode.UI.Services;
 
 public sealed class ThemeService : IThemeService
 {
-    private readonly IAppSettingsProvider _settings;
+    private readonly ISettingsProvider<AppSettings> _settings;
     private readonly ILogger<ThemeService> _logger;
     private ResourceDictionary? _themeSlot;
     private ResourceDictionary? _accentSlot;
@@ -30,7 +31,7 @@ public sealed class ThemeService : IThemeService
     public AppAccent CurrentAccent {get; private set;}
     public event EventHandler<ThemeChangedEventArgs>? ThemeChanged;
     
-    public ThemeService(IAppSettingsProvider settings, ILogger<ThemeService> logger, IUriPaths uriPaths)
+    public ThemeService(ISettingsProvider<AppSettings> settings, ILogger<ThemeService> logger, IUriPaths uriPaths)
     {
         ArgumentNullException.ThrowIfNull(uriPaths);
         
