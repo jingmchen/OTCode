@@ -1,0 +1,9 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/OTCode.AppHost/OTCode.AppHost.csproj" />
+    <Project Path="src/OTCode.Core/OTCode.Core.csproj" />
+    <Project Path="src/OTCode.Infrastructure/OTCode.Infrastructure.csproj" />
+    <Project Path="src/OTCode.Transpiler/OTCode.Transpiler.csproj" />
+    <Project Path="src/OTCode.UI/OTCode.UI.csproj" />
+  </Folder>
+</Solution>

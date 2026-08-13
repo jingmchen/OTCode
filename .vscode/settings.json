@@ -1,0 +1,7 @@
+{
+  "files.associations": {
+    "*.xaml": "xml",
+    "*.axaml": "xml",
+    "*.props": "xml"
+  }
+}
