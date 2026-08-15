@@ -21,9 +21,6 @@ public sealed class AtomicFileAsync : IAtomicFileAsync
     public AtomicFileAsync() { }
 
     // ─── PUBLIC METHODS ────────────────────────
-    public void Write(string path, string contents, Encoding? encoding = null)
-        => WriteAsync(path, contents, encoding).GetAwaiter().GetResult();
-
     public Task WriteAsync(string path, string contents, Encoding? encoding = null)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(path);
