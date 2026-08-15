@@ -11,7 +11,6 @@ namespace OTCode.Infrastructure.Services;
 
 public abstract partial class SettingsProvider<T> : ISettingsProvider<T> where T : class, new()
 {
-    private readonly IAtomicFileWriter _fileWriter;
     private readonly ILogger _logger;
     private readonly object _gate = new();
     private readonly string _settingsPath;
@@ -23,9 +22,8 @@ public abstract partial class SettingsProvider<T> : ISettingsProvider<T> where T
     };
     public T Current {get; private set;} = null!;
 
-    protected SettingsProvider(IAtomicFileWriter fileWriter, ILogger logger, string settingsPath)
+    protected SettingsProvider(ILogger logger, string settingsPath)
     {
-        _fileWriter = fileWriter ?? throw new ArgumentNullException(nameof(fileWriter));
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         _settingsPath = settingsPath;
 
@@ -56,7 +54,7 @@ public abstract partial class SettingsProvider<T> : ISettingsProvider<T> where T
 
         try
         {
-            _fileWriter.WriteToAsync(_settingsPath, json);
+            AtomicFile.WriteTo(_settingsPath, json);
         }
         catch (Exception ex)
         {

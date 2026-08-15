@@ -9,7 +9,7 @@ using OTCode.Infrastructure.Utils;
 
 namespace OTCode.Infrastructure.Services;
 
-public sealed class AtomicFileWriter : IAtomicFileWriter
+public sealed class AtomicFileAsync : IAtomicFileAsync
 {
     private readonly ConcurrentDictionary<string, Lazy<ChannelWriter<WriteRequest>>> _queues = new(PathComparer);
     private readonly ConcurrentDictionary<string, byte> _pendingCleanup = new(PathComparer);
@@ -17,11 +17,19 @@ public sealed class AtomicFileWriter : IAtomicFileWriter
         OperatingSystem.IsWindows()
             ? StringComparer.OrdinalIgnoreCase
             : StringComparer.Ordinal;
+    
+    public AtomicFileAsync() { }
 
-    public Task WriteToAsync(string path, string contents, Encoding? encoding = null)
+    // ─── PUBLIC METHODS ────────────────────────
+    public void Write(string path, string contents, Encoding? encoding = null)
+        => WriteAsync(path, contents, encoding).GetAwaiter().GetResult();
+
+    public Task WriteAsync(string path, string contents, Encoding? encoding = null)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(path);
         ArgumentNullException.ThrowIfNull(contents);
+
+        string fullPath = Path.GetFullPath(path);
 
         var completion = new TaskCompletionSource<bool>(
             TaskCreationOptions.RunContinuationsAsynchronously
@@ -30,7 +38,7 @@ public sealed class AtomicFileWriter : IAtomicFileWriter
         WriteRequest request = new(contents, encoding, completion);
 
         ChannelWriter<WriteRequest> writer = _queues.GetOrAdd(
-            path,
+            fullPath,
             path => new Lazy<ChannelWriter<WriteRequest>>(() => CreateQueue(path))).Value;
 
         if (!writer.TryWrite(request))
@@ -39,6 +47,7 @@ public sealed class AtomicFileWriter : IAtomicFileWriter
         return completion.Task;
     }
 
+    // ─── PRIVATE METHODS ───────────────────────
     private ChannelWriter<WriteRequest> CreateQueue(string path)
     {
         var channel = Channel.CreateUnbounded<WriteRequest>(
@@ -50,14 +59,14 @@ public sealed class AtomicFileWriter : IAtomicFileWriter
             }
         );
 
-        _ = Task.Run(() => ProcessQueueAsync(path, channel.Reader));
+        _ = ProcessQueueAsync(path, channel.Reader);
 
         return channel.Writer;
     }
 
     private async Task ProcessQueueAsync(string path, ChannelReader<WriteRequest> reader)
     {
-        await foreach (WriteRequest request in reader.ReadAllAsync())
+        await foreach (WriteRequest request in reader.ReadAllAsync().ConfigureAwait(false))
         {
             try
             {
@@ -67,7 +76,7 @@ public sealed class AtomicFileWriter : IAtomicFileWriter
                     path: path,
                     contents: request.Contents,
                     encoding: request.Encoding,
-                    AddToCleanup);
+                    cleanupFailed: AddToCleanup);
                 
                 request.Completion.TrySetResult(true);
             }
@@ -82,11 +91,8 @@ public sealed class AtomicFileWriter : IAtomicFileWriter
     {
         foreach (string tempPath in _pendingCleanup.Keys)
         {
-            if (!_pendingCleanup.TryRemove(tempPath, out _))
-                continue;
-            
-            try { File.Delete(tempPath); }
-            catch { AddToCleanup(tempPath); }
+            if (_pendingCleanup.TryRemove(tempPath, out _) && !AtomicFile.TryDelete(tempPath))
+                AddToCleanup(tempPath);
         }
     }
 
