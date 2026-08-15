@@ -12,7 +12,8 @@ public sealed partial class AppSettingsProvider : SettingsProvider<AppSettings>
     private const int MinRetainedFiles = 1;
     private const int MaxRetainedFiles = 30;
 
-    public AppSettingsProvider(ILogger<AppSettingsProvider> logger, IAppPaths appPaths) : base(logger, appPaths.UserAppSettingsFile)
+    public AppSettingsProvider(IAtomicFileWriter fileWriter, ILogger<AppSettingsProvider> logger, IAppPaths appPaths)
+        : base(fileWriter, logger, appPaths.UserAppSettingsFile)
     {
     }
 

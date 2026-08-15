@@ -18,6 +18,7 @@ public static class InfrastructureServiceExtension
         services.AddSingleton<IAppPaths, AppPaths>();
         services.AddSingleton<ISettingsProvider<AppSettings>, AppSettingsProvider>();
         services.AddSingleton<ISettingsProvider<UserStateSettings>, UserStateSettingsProvider>();
+        services.AddSingleton<IAtomicFileWriter, AtomicFileWriter>();
         return services;
     }
 }

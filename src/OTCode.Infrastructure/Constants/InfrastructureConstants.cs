@@ -17,7 +17,7 @@ internal static class InfrastructureConstants
         internal static class FileName
         {
             internal const string AppSettings = "appsettings.json";
-            internal const string UserStateSettings = "userstatesettings.json";
+            internal const string UserStateSettings = "userstate.json";
             internal const string LatestLog = "latest.log";
             internal const string ArchivedLog = "archived.log";
         }

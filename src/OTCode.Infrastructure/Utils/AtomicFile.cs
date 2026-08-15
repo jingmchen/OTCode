@@ -5,14 +5,22 @@ using System.Text;
 
 namespace OTCode.Infrastructure.Utils;
 
-internal static class AtomicFileWriter
+internal static class AtomicFile
 {
     private static readonly Encoding DefaultEncoding =
         new UTF8Encoding(
             encoderShouldEmitUTF8Identifier: false,
             throwOnInvalidBytes: true);
     
-    public static void WriteTo(string path, string contents, Encoding? encoding = null)
+    // Method overloading, first method for writes outside of Atomic File Writer cls
+    internal static void WriteTo(string path, string contents, Encoding? encoding = null)
+        => WriteTo(path, contents, encoding, cleanupFailed: null);
+    
+    internal static void WriteTo(
+        string path,
+        string contents,
+        Encoding? encoding = null,
+        Action<string>? cleanupFailed = null)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(path);
         ArgumentNullException.ThrowIfNull(contents);
@@ -37,7 +45,8 @@ internal static class AtomicFileWriter
         }
         finally
         {
-            TryDelete(tempPath);
+            if (!TryDelete(tempPath))
+                cleanupFailed?.Invoke(tempPath);
         }
     }
 
@@ -82,10 +91,17 @@ internal static class AtomicFileWriter
         File.Move(tempPath, destinationPath, overwrite: true);
     }
 
-    private static void TryDelete(string path)
+    private static bool TryDelete(string path)
     {
-        try {File.Delete(path);}
-        catch { }
+        try
+        {
+            File.Delete(path);
+            return true;
+        }
+        catch
+        {
+            return false;
+        }
     }
 
     [UnsupportedOSPlatform("windows")]
@@ -93,7 +109,9 @@ internal static class AtomicFileWriter
     {
         try
         {
-            return File.Exists(path) ? File.GetUnixFileMode(path) : null;
+            return File.Exists(path)
+                ? File.GetUnixFileMode(path)
+                : null;
         }
         catch (Exception ex) when (ex is UnauthorizedAccessException or IOException)
         {

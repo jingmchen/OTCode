@@ -8,7 +8,8 @@ namespace OTCode.Infrastructure.Services;
 
 public sealed class UserStateSettingsProvider : SettingsProvider<UserStateSettings>
 {
-    public UserStateSettingsProvider(ILogger<UserStateSettingsProvider> logger, IAppPaths appPaths) : base(logger, appPaths.UserStateSettingsFile)
+    public UserStateSettingsProvider(IAtomicFileWriter fileWriter, ILogger<UserStateSettingsProvider> logger, IAppPaths appPaths)
+        : base(fileWriter, logger, appPaths.UserStateSettingsFile)
     {
     }
 

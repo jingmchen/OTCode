@@ -31,6 +31,7 @@ internal sealed class Program
     {
         var appInfo = new AppInfo(typeof(Program).Assembly);
         var appPaths = new AppPaths(appInfo);
+        var fileWriter = new AtomicFileWriter();
 
         Log.Logger = new LoggerConfiguration()
             .MinimumLevel.Debug()
@@ -49,6 +50,7 @@ internal sealed class Program
             logsHandler.ArchivePreviousLatestLogFile();
 
             var settings = new AppSettingsProvider(
+                fileWriter: fileWriter,
                 logger: bootstrapLoggerFactory.CreateLogger<AppSettingsProvider>(),
                 appPaths: appPaths);
             
