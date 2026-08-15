@@ -4,7 +4,7 @@ using System.Collections.ObjectModel;
 
 namespace OTCode.Core.Abstractions.UI;
 
-public interface IConsoleLogService
+public interface IConsoleLog
 {
     ObservableCollection<string> Entries {get;}
     void Clear();

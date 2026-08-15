@@ -11,6 +11,7 @@ using OTCode.Core.Abstractions.UI;
 using OTCode.Core.Configuration.AppSettings;
 using OTCode.Core.Enums;
 using OTCode.UI.Constants;
+using OTCode.UI.Utils;
 
 namespace OTCode.UI.Services;
 
@@ -87,7 +88,7 @@ public sealed class ThemeService : IThemeService
         if (theme == CurrentTheme && accent == CurrentAccent)
             return;
 
-        InvokeOnUiThread(() => ApplyCore(theme, accent, fireEvent: true, persist: true));
+        DispatcherHelper.PostOnUIThread(() => ApplyCore(theme, accent, fireEvent: true, persist: true));
     }
 
     public void Dispose()
@@ -142,22 +143,13 @@ public sealed class ThemeService : IThemeService
         _settings.Save();
     }
 
-    private static void InvokeOnUiThread(Action action)
-    {
-        var dispatcher = Application.Current!.Dispatcher;
-
-        if (dispatcher.CheckAccess())
-            action();
-        else
-            dispatcher.BeginInvoke(() => action());
-    }
-
     private void OnSystemThemeChanged(UISettings sender, object args)
     {
         if (_isDisposed || CurrentTheme != AppTheme.System)
             return;
 
-        InvokeOnUiThread(() => ApplyCore(AppTheme.System, CurrentAccent, fireEvent: true, persist: true));
+        DispatcherHelper.PostOnUIThread(
+            () => ApplyCore(AppTheme.System, CurrentAccent, fireEvent: true, persist: true));
     }
     
     private AppTheme GetSystemTheme()

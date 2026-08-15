@@ -2,7 +2,7 @@
 
 namespace OTCode.Core.Models.Text;
 
-public sealed record struct LinePosition
+public readonly record struct LinePosition
 {
     public int Line {get;}
     public int Column {get;}

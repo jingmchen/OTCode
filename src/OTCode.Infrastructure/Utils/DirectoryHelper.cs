@@ -2,9 +2,9 @@
 
 namespace OTCode.Infrastructure.Utils;
 
-public static class DirectoryHelper
+internal static class DirectoryHelper
 {
-    public static string MakeUniquePath(string directory, string baseName, string extension)
+    internal static string MakeUniquePath(string directory, string baseName, string extension)
     {
         string candidate = Path.Combine(directory, baseName + extension);
         int n = 2;
@@ -15,11 +15,11 @@ public static class DirectoryHelper
         return candidate;
     }
 
-    public static string MakeRelativePath(string fromFile, string toFile)
+    internal static string MakeRelativePath(string fromFile, string toFile)
         => Path.GetRelativePath(Path.GetDirectoryName(fromFile)!, toFile)
             .Replace(Path.DirectorySeparatorChar, '/');
     
-    public static bool PathsEqual(string path1, string path2)
+    internal static bool PathsEqual(string path1, string path2)
         => string.Equals(Path.GetFullPath(path1), Path.GetFullPath(path2),
             OperatingSystem.IsWindows() ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal);
 }

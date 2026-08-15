@@ -105,7 +105,7 @@ internal sealed class Program
             .WriteTo.File(
                 path: appPaths.LatestLogFile,
                 formatter: new ExpressionTemplate(LoggerFormat))
-            .WriteTo.ConsolePane(services));  
+            .WriteTo.ConsoleLogPane(services));  
         
         builder.Services.AddSingleton(typeof(Program).Assembly);
         builder.Services.AddInfrastructureServices();

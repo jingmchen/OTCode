@@ -2,7 +2,7 @@
 
 namespace OTCode.Core.Models.Text;
 
-public sealed record struct TextSpan
+public readonly record struct TextSpan
 {
     public int Start {get;}
     public int Length {get;}
@@ -19,7 +19,7 @@ public sealed record struct TextSpan
 
     public static TextSpan FromBounds(int start, int end)
     {
-        If (end < start)
+        if (end < start)
             throw new ArgumentOutOfRangeException(nameof(end), end, "Start cannot be larger than End");
         return new(start, end - start);
     }

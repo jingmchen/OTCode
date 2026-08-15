@@ -1,5 +1,7 @@
 // Copyright (c) Tan Jing Ming. Use of this software is governed by LICENSE.md.
 
+using OTCode.Core.Models.Text;
+
 namespace OTCode.Core.Models.Nodes;
 
 public abstract class Node
@@ -10,6 +12,6 @@ public abstract class Node
     public Node(TextSpan span, LinePosition position)
     {
         Span = span;
-        LinePosition = position;
+        Position = position;
     }
 }
