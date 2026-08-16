@@ -4,7 +4,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using Microsoft.Extensions.Logging;
 using OTCode.Core.Abstractions.Infrastructure;
-using OTCode.Infrastructure.Logging;
+using OTCode.Core.Logging;
 using OTCode.Infrastructure.Utils;
 
 namespace OTCode.Infrastructure.Services;
@@ -58,7 +58,7 @@ public abstract partial class SettingsProvider<T> : ISettingsProvider<T> where T
         }
         catch (Exception ex)
         {
-            _logger.LogFileUnableToSave(ex, Path.GetFileName(_settingsPath));
+            LogFileUnableToSave(ex, Path.GetFileName(_settingsPath));
         }
     }
 
@@ -67,7 +67,7 @@ public abstract partial class SettingsProvider<T> : ISettingsProvider<T> where T
         if (!File.Exists(_settingsPath))
         {
             if (_logger.IsEnabled(LogLevel.Information))
-                _logger.LogFileNotFoundCreateDefaults(Path.GetFileName(_settingsPath));
+                LogFileNotFoundCreateDefaults(Path.GetFileName(_settingsPath));
             ApplyDefaults();
             return;
         }
@@ -79,7 +79,7 @@ public abstract partial class SettingsProvider<T> : ISettingsProvider<T> where T
 
             if (settings is null)
             {
-                _logger.LogFileInvalidOrEmptyCreateDefaults(Path.GetFileName(_settingsPath));
+                LogFileInvalidOrEmptyCreateDefaults(Path.GetFileName(_settingsPath));
                 ApplyDefaults();
                 return;
             }
@@ -89,7 +89,7 @@ public abstract partial class SettingsProvider<T> : ISettingsProvider<T> where T
         }
         catch (Exception ex)
         {
-            _logger.LogFileUnableToReadCreateDefaults(ex, Path.GetFileName(_settingsPath));
+            LogFileUnableToReadCreateDefaults(ex, Path.GetFileName(_settingsPath));
             ApplyDefaults();
         }
     }
@@ -101,4 +101,34 @@ public abstract partial class SettingsProvider<T> : ISettingsProvider<T> where T
     }
 
     protected abstract T Sanitize(T settings);
+
+    [LoggerMessage(
+        EventId = LogEventIDs.Infrastructure.SettingsProvider.FileNotFound,
+        Level = LogLevel.Information,
+        Message = "File: '{FileName}' - Unable to be found. Reverting to factory defaults.")]
+    private partial void LogFileNotFoundCreateDefaults(string fileName);
+
+    [LoggerMessage(
+        EventId = LogEventIDs.Infrastructure.SettingsProvider.FileUnableToRead,
+        Level = LogLevel.Warning,
+        Message = "File: '{FileName}' - Unable to be read. Reverting to factory defaults.")]
+    private partial void LogFileUnableToReadCreateDefaults(Exception ex, string fileName);
+
+    [LoggerMessage(
+        EventId = LogEventIDs.Infrastructure.SettingsProvider.FileInvalidOrEmpty,
+        Level = LogLevel.Warning,
+        Message = "File: '{FileName}' was empty or invalid. Reverting to factory defaults.")]
+    private partial void LogFileInvalidOrEmptyCreateDefaults(string fileName);
+
+    [LoggerMessage(
+        EventId = LogEventIDs.Infrastructure.SettingsProvider.FileUnableToSave,
+        Level = LogLevel.Warning,
+        Message = "File: '{FileName}' - Unable to save.")]
+    private partial void LogFileUnableToSave(Exception ex, string fileName);
+
+    [LoggerMessage(
+        EventId = LogEventIDs.Infrastructure.SettingsProvider.TempCleanupFailed,
+        Level = LogLevel.Debug,
+        Message = "Temp File: Could not be removed at '{Path}'; it may be overwritten on the next successful save.")]
+    private partial void LogTempCleanupFailed(Exception ex, string path);
 }
