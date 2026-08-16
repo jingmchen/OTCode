@@ -20,8 +20,6 @@ public sealed class UserStateSettingsProvider : SettingsProvider<UserStateSettin
 
         settings.AppStateSection ??= new();
         settings.TermsSection ??= new();
-
-        // Nothing to sanitize here for now. Keep as placeholder.
         
         return settings;
     }

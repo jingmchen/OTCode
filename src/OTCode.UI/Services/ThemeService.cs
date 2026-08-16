@@ -100,7 +100,6 @@ public sealed class ThemeService : IThemeService
     }
 
     // ─── PRIVATE METHODS ───────────────────────
-    // Core implementation
     private void ApplyCore(AppTheme theme, AppAccent accent, bool fireEvent, bool persist = true)
     {
         if (_isDisposed)

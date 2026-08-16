@@ -67,7 +67,10 @@ public abstract partial class SettingsProvider<T> : ISettingsProvider<T> where T
         if (!File.Exists(_settingsPath))
         {
             if (_logger.IsEnabled(LogLevel.Information))
-                LogFileNotFoundCreateDefaults(Path.GetFileName(_settingsPath));
+            {
+                var fileName = Path.GetFileName(_settingsPath);
+                LogFileNotFoundCreateDefaults(fileName);
+            }
             ApplyDefaults();
             return;
         }

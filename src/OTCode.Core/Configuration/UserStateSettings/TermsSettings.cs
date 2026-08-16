@@ -7,5 +7,4 @@ public sealed class TermsSettings
     public string? AcceptedTermsHash {get; set;} = "";
     public DateTime? AcceptedAtUtc {get; set;}
     public string? AcceptedBy {get; set;} = "";
-    public int AcceptedVersion {get; set;}
 }

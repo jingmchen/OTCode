@@ -20,7 +20,10 @@ public static class LogEventIDs
     {
         public static class TermsService
         {
-            //
+            public const int TermsAccepted = 2001;
+            public const int TermsDeclined = 2002;
+            public const int TermsUnavailable = 2003;
+            public const int UnableToPersistAcceptance = 2004;
         }
     }
 }
