@@ -6,8 +6,8 @@ namespace OTCode.Core.Abstractions.Infrastructure;
 
 public interface IAtomicFileAsync
 {
-    /// <summary>
-    /// Use AtomicFile instead for write methods that is fire & forget
-    /// </summary>
     Task WriteAsync(string path, string contents, Encoding? encoding = null);
+    Task MoveAsync(string sourcePath, string destinationPath, bool overwrite = false);
+    Task DeleteAsync(string path);
+    Task FlushAsync();
 }
