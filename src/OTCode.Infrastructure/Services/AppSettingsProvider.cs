@@ -22,20 +22,20 @@ public sealed partial class AppSettingsProvider : SettingsProvider<AppSettings>
     {
         ArgumentNullException.ThrowIfNull(settings);
 
-        settings.LoggingSection ??= new();
-        settings.ThemeSection ??= new();
+        settings.Logging ??= new();
+        settings.Theme ??= new();
 
-        if (!Enum.IsDefined(settings.LoggingSection.MinimumLevel))
-            settings.LoggingSection.MinimumLevel = LogLevel.Information;
+        if (!Enum.IsDefined(settings.Logging.MinimumLevel))
+            settings.Logging.MinimumLevel = LogLevel.Information;
         
-        settings.LoggingSection.RetainedFileCountLimit =
-            Math.Clamp(settings.LoggingSection.RetainedFileCountLimit, MinRetainedFiles, MaxRetainedFiles);
+        settings.Logging.RetainedFileCountLimit =
+            Math.Clamp(settings.Logging.RetainedFileCountLimit, MinRetainedFiles, MaxRetainedFiles);
         
-        if (!Enum.IsDefined(settings.ThemeSection.Theme))
-            settings.ThemeSection.Theme = AppTheme.Light;
+        if (!Enum.IsDefined(settings.Theme.Theme))
+            settings.Theme.Theme = AppTheme.Light;
         
-        if (!Enum.IsDefined(settings.ThemeSection.Accent))
-            settings.ThemeSection.Accent = AppAccent.Black;
+        if (!Enum.IsDefined(settings.Theme.Accent))
+            settings.Theme.Accent = AppAccent.Black;
         
         return settings;
     }

@@ -2,16 +2,16 @@
 
 namespace OTCode.Core.Options.AvalonEdit;
 
-public sealed record EditorOptions
+public sealed class EditorOptions
 {
-    public bool ShowLineNumbers {get; init;} = true;
-    public bool ShowSpaces {get; init;}
-    public bool ShowTabs {get; init;} = true;
-    public bool ShowEndOfLine {get; init;}
+    public bool ShowLineNumbers {get; set;} = true;
+    public bool ShowSpaces {get; set;}
+    public bool ShowTabs {get; set;} = true;
+    public bool ShowEndOfLine {get; set;}
 
-    public bool WordWrap {get; init;} = true;
-    public bool ConvertTabsToSpaces {get; init;} = true;
-    public bool HighlightCurrentLine {get; init;} = true;
+    public bool WordWrap {get; set;} = true;
+    public bool ConvertTabsToSpaces {get; set;} = true;
+    public bool HighlightCurrentLine {get; set;} = true;
 
-    public int IndentationSize {get; init;} = 4;
+    public int IndentationSize {get; set;} = 4;
 }

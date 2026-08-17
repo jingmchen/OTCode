@@ -1,9 +1,9 @@
 // Copyright (c) Tan Jing Ming. Use of this software is governed by LICENSE.md.
 
-using OTCode.Core.Models.Nodes.Expressions;
-using OTCode.Core.Models.Text;
+using OTCode.Core.Models.Transpiler.Nodes.Expressions;
+using OTCode.Core.Models.Transpiler.Text;
 
-namespace OTCode.Core.Models.Nodes.Statements;
+namespace OTCode.Core.Models.Transpiler.Nodes.Statements;
 
 public sealed class IfStatement : Statement
 {

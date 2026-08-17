@@ -1,9 +1,9 @@
 // Copyright (c) Tan Jing Ming. Use of this software is governed by LICENSE.md.
 
-using OTCode.Core.Models.Nodes.Expressions;
-using OTCode.Core.Models.Text;
+using OTCode.Core.Models.Transpiler.Nodes.Expressions;
+using OTCode.Core.Models.Transpiler.Text;
 
-namespace OTCode.Core.Models.Nodes.Leaves;
+namespace OTCode.Core.Models.Transpiler.Nodes.Leaves;
 
 public sealed class StringLiteral : Expression
 {

@@ -55,8 +55,8 @@ public sealed class ThemeService : IThemeService
 
         ThrowIfAppNotReady();
 
-        CurrentTheme = _settings.Current.ThemeSection.Theme;
-        CurrentAccent = _settings.Current.ThemeSection.Accent;
+        CurrentTheme = _settings.Current.Theme.Theme;
+        CurrentAccent = _settings.Current.Theme.Accent;
 
         _themeSlot = new ResourceDictionary();
         _accentSlot = new ResourceDictionary();
@@ -137,8 +137,8 @@ public sealed class ThemeService : IThemeService
 
     private void Persist()
     {
-        _settings.Current.ThemeSection.Theme = CurrentTheme;
-        _settings.Current.ThemeSection.Accent = CurrentAccent;
+        _settings.Current.Theme.Theme = CurrentTheme;
+        _settings.Current.Theme.Accent = CurrentAccent;
         _settings.Save();
     }
 

@@ -2,7 +2,7 @@
 
 namespace OTCode.Core.Configuration.UserStateSettings;
 
-public sealed record AppStateSettings
+public sealed class AppStateSettings
 {
     public string? LastOpenedDirectory {get; set;} = "";
 }

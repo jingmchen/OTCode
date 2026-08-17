@@ -4,6 +4,6 @@ namespace OTCode.Core.Configuration.AppSettings;
 
 public sealed class AppSettings
 {
-    public ThemeSettings ThemeSection {get; set;} = new();
-    public LoggingSettings LoggingSection {get; set;} = new();
+    public ThemeSettings Theme {get; set;} = new();
+    public LoggingSettings Logging {get; set;} = new();
 }

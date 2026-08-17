@@ -18,8 +18,8 @@ public sealed class UserStateSettingsProvider : SettingsProvider<UserStateSettin
     {
         ArgumentNullException.ThrowIfNull(settings);
 
-        settings.AppStateSection ??= new();
-        settings.TermsSection ??= new();
+        settings.AppState ??= new();
+        settings.Terms ??= new();
         
         return settings;
     }

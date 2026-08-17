@@ -1,6 +1,6 @@
 // Copyright (c) Tan Jing Ming. Use of this software is governed by LICENSE.md.
 
-namespace OTCode.Core.Models.Text;
+namespace OTCode.Core.Models.Transpiler.Text;
 
 public readonly record struct LinePosition
 {

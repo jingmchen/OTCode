@@ -34,7 +34,7 @@ public sealed partial class TermsService : ITermsService
 
         var hash = Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(text)));
 
-        if (string.Equals(_settings.Current.TermsSection.AcceptedTermsHash, hash, StringComparison.Ordinal))
+        if (string.Equals(_settings.Current.Terms.AcceptedTermsHash, hash, StringComparison.Ordinal))
             return true;
         
         bool accepted = await TermsDialog.ShowStandaloneAsync(text);
@@ -45,9 +45,9 @@ public sealed partial class TermsService : ITermsService
             return false;
         }
         
-        _settings.Current.TermsSection.AcceptedTermsHash = hash;
-        _settings.Current.TermsSection.AcceptedAtUtc = DateTime.UtcNow;
-        _settings.Current.TermsSection.AcceptedBy = Environment.UserName;
+        _settings.Current.Terms.AcceptedTermsHash = hash;
+        _settings.Current.Terms.AcceptedAtUtc = DateTime.UtcNow;
+        _settings.Current.Terms.AcceptedBy = Environment.UserName;
 
         try
         {

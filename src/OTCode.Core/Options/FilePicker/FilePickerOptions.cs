@@ -1,12 +1,12 @@
 // Copyright (c) Tan Jing Ming. Use of this software is governed by LICENSE.md.
 
-using OTCode.Core.Domains.UI;
+using OTCode.Core.Domains.FilePicker;
 
 namespace OTCode.Core.Options.FilePicker;
 
-public sealed record FilePickerOptions
+public sealed class FilePickerOptions
 {
-    public string? Title {get; init;}
-    public string? InitialDirectory {get; init;}
-    public IReadOnlyList<FileFilter> Filters {get; init;} = [];
+    public string? Title {get; set;}
+    public string? InitialDirectory {get; set;}
+    public IReadOnlyList<FileFilter> Filters {get; set;} = [];
 }
