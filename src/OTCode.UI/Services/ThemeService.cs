@@ -170,12 +170,12 @@ public sealed class ThemeService : IThemeService
     // Color helpers for AvalonEditor
     private Color GetColor(ResourceDictionary dictionary)
     {
-        if (dictionary.Contains(UIConstants.XAMLThemeKeys.SystemAccentColor)
-            && dictionary[UIConstants.XAMLThemeKeys.SystemAccentColor] is Color color)
+        if (dictionary.Contains(UIConstants.XAMLThemeKey.SystemAccentColor)
+            && dictionary[UIConstants.XAMLThemeKey.SystemAccentColor] is Color color)
                 return color;
         
-        if (dictionary.Contains(UIConstants.XAMLThemeKeys.AccentBrush)
-            && dictionary[UIConstants.XAMLThemeKeys.AccentBrush] is SolidColorBrush brush)
+        if (dictionary.Contains(UIConstants.XAMLThemeKey.AccentBrush)
+            && dictionary[UIConstants.XAMLThemeKey.AccentBrush] is SolidColorBrush brush)
                 return brush.Color;
 
         throw new KeyNotFoundException($"Accent keys not found in {CurrentAccent}.");

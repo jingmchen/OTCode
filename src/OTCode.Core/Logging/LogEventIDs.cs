@@ -25,5 +25,10 @@ public static class LogEventIDs
             public const int TermsUnavailable = 2003;
             public const int UnableToPersistAcceptance = 2004;
         }
+
+        public static class FileWatcher
+        {
+            public const int UnexpectedError = 2101;
+        }
     }
 }

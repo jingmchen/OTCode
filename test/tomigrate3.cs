@@ -2,10 +2,12 @@
 
 using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
+using MacroCanvas.Core.Abstractions.FileExplorer;
+using MacroCanvas.Core.Utils;
 
-namespace OTCode.UI.Domains.FileExplorer;
+namespace MacroCanvas.Core.Models.FileExplorer;
 
-public sealed partial class FileExplorerItemViewModel : ObservableObject
+public sealed partial class FileExplorerItem : ObservableObject
 {
     // ─── OBSERVABLE PROPERTIES - IDENTITY ──────
     [ObservableProperty] public partial string Name {get; set;} = "";

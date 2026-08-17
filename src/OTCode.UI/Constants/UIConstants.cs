@@ -22,9 +22,17 @@ internal static class UIConstants
         }
     }
 
-    internal static class XAMLThemeKeys
+    internal static class XAMLThemeKey
     {
         internal const string SystemAccentColor = "SystemAccentColor";
         internal const string AccentBrush = "AccentBrush";
+    }
+
+    internal static class Service
+    {
+        internal static class FileWatcher
+        {
+            internal const int InternalBufferSize = 65_536;
+        }
     }
 }

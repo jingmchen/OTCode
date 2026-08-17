@@ -4,7 +4,7 @@ namespace OTCode.Core.Primitives.FileExplorer;
 
 public readonly record struct FileExplorerFilter
 {
-    public IReadOnlySet<string> Entries {get; init;}
+    public IReadOnlySet<string>? Entries {get; init;}
     public bool IsWhitelist {get; init;}
 
     public bool Passes(string value)
