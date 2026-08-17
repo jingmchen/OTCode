@@ -124,7 +124,7 @@ public sealed partial class FileWatcherService : IFileWatcherService, IDisposabl
     [LoggerMessage(
         EventId = LogEventIDs.UI.FileWatcher.UnexpectedError,
         Level = LogLevel.Information,
-        Message = "FileWatcherService encountered an unexpected error."
+        Message = "FileWatcherService stopped due to an error."
     )]
     private partial void LogUnexpectedError(Exception ex);
 }
