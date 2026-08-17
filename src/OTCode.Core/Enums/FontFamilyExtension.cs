@@ -4,7 +4,7 @@ namespace OTCode.Core.Enums;
 
 internal static class FontFamilyExtension
 {
-    internal static string ToFontString(this FontFamily font) => font switch
+    internal static string ToExactString(this FontFamily font) => font switch
     {
         FontFamily.SegoeUI => "Segoe UI",
         FontFamily.SegoeUIVariable => "Segoe UI Variable",

@@ -2,9 +2,14 @@
 
 namespace OTCode.Core.Abstractions.UI;
 
-public interface IEditorService<T>
+public interface IEditorService<TEditor, TOptions>
+    where TEditor : class
+    where TOptions : class
 {
-    T CreateEditor();
-    void ConfigureEditor(T editor);
-    void SetSyntaxHighlighting(T editor);
+    TOptions Options {get;}
+
+    TEditor CreateEditor();
+    void ConfigureEditor(TEditor editor);
+    void SetSyntaxHighlighting(TEditor editor, string? colorFormat);
+    void SetOptions(TOptions options);
 }

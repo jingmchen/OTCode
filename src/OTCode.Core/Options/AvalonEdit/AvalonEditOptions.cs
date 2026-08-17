@@ -6,4 +6,5 @@ public sealed record AvalonEditOptions
 {
     public EditorOptions Editor {get; set;} = new();
     public FontOptions Font {get; set;} = new();
+    public ColorOptions Color {get; set;} = new();
 }
