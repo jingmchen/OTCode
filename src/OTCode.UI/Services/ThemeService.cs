@@ -27,7 +27,7 @@ public sealed class ThemeService : IThemeService
     private readonly CompositeFormat _themeTemplate;
     private readonly CompositeFormat _accentTemplate;
     private bool _isInitialized;
-    private bool _isDisposed;
+    private bool _disposed;
     public AppTheme CurrentTheme {get; private set;}
     public AppAccent CurrentAccent {get; private set;}
     public event EventHandler<ThemeChangedEventArgs>? ThemeChanged;
@@ -93,16 +93,16 @@ public sealed class ThemeService : IThemeService
 
     public void Dispose()
     {
-        if (_isDisposed)
+        if (_disposed)
             return;
-        _isDisposed = true;
+        _disposed = true;
         _uiSettings.ColorValuesChanged -= OnSystemThemeChanged;
     }
 
     // ─── PRIVATE METHODS ───────────────────────
     private void ApplyCore(AppTheme theme, AppAccent accent, bool fireEvent, bool persist = true)
     {
-        if (_isDisposed)
+        if (_disposed)
             return;
 
         CurrentTheme = theme;
@@ -144,7 +144,7 @@ public sealed class ThemeService : IThemeService
 
     private void OnSystemThemeChanged(UISettings sender, object args)
     {
-        if (_isDisposed || CurrentTheme != AppTheme.System)
+        if (_disposed || CurrentTheme != AppTheme.System)
             return;
 
         DispatcherHelper.PostOnUIThread(
@@ -220,5 +220,5 @@ public sealed class ThemeService : IThemeService
     }
 
     private void ThrowIfDisposed()
-        => ObjectDisposedException.ThrowIf(_isDisposed, nameof(ThemeService));
+        => ObjectDisposedException.ThrowIf(_disposed, nameof(ThemeService));
 }

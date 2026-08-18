@@ -15,7 +15,7 @@ public sealed partial class FileWatcherService : IFileWatcherService, IDisposabl
     private FileSystemEventArgs? _pendingEvent;
     private Timer? _debounceTimer;
     private readonly TimeSpan _debounce;
-    private bool _isdisposed;
+    private bool _disposed;
     private readonly Lock _gate = new();
     public event EventHandler<FileSystemEventArgs>? Changed;
 
@@ -81,9 +81,9 @@ public sealed partial class FileWatcherService : IFileWatcherService, IDisposabl
 
     public void Dispose()
     {
-        if (_isdisposed)
+        if (_disposed)
             return;
-        _isdisposed = true;
+        _disposed = true;
         StopWatching();
     }
 
@@ -119,7 +119,7 @@ public sealed partial class FileWatcherService : IFileWatcherService, IDisposabl
     }
 
     private void ThrowIfDisposed()
-        => ObjectDisposedException.ThrowIf(_isdisposed, nameof(FileWatcherService));
+        => ObjectDisposedException.ThrowIf(_disposed, nameof(FileWatcherService));
     
     [LoggerMessage(
         EventId = LogEventIDs.UI.FileWatcher.UnexpectedError,

@@ -2,6 +2,7 @@
 
 using System.Collections.ObjectModel;
 using OTCode.Core.Domains.FileExplorer;
+using OTCode.Core.Options.FileExplorer;
 
 namespace OTCode.Core.Abstractions.UI;
 
@@ -10,7 +11,7 @@ public interface IFileExplorerService
     ObservableCollection<FileExplorerItem> RootItems {get;}
     ObservableCollection<FileExplorerItem> SelectedItems {get;}
     FileExplorerClipboard Clipboard {get;}
-    FileExplorerServiceOptions Options {get;}
+    FileExplorerOptions Options {get;}
 
     event EventHandler<FileExplorerItem>? ItemCreated;
     event EventHandler<FileExplorerItem>? ItemRenamed;
