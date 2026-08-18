@@ -1,10 +1,9 @@
 // Copyright (c) Tan Jing Ming. Use of this software is governed by LICENSE.md.
 
-using System.IO;
 using Microsoft.Extensions.Logging;
-using OTCode.Core.Abstractions.UI;
+using OTCode.Core.Abstractions.Infrastructure;
 using OTCode.Core.Logging;
-using OTCode.UI.Constants;
+using OTCode.Infrastructure.Constants;
 
 namespace OTCode.Infrastructure.Services;
 
@@ -23,7 +22,7 @@ public sealed partial class FileWatcherService : IFileWatcherService, IDisposabl
     public FileWatcherService(ILogger<FileWatcherService> logger, TimeSpan debounce)
     {
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-        _debounce = debounce ?? TimeSpan.FromMilliseconds(400);
+        _debounce = debounce;
     }
     
     // ─── PUBLIC METHODS ────────────────────────
@@ -44,7 +43,7 @@ public sealed partial class FileWatcherService : IFileWatcherService, IDisposabl
                 NotifyFilters.Size |
                 NotifyFilters.Attributes,
             IncludeSubdirectories = true,
-            InternalBufferSize = UIConstants.Service.FileWatcher.InternalBufferSize
+            InternalBufferSize = InfrastructureConstants.Service.FileWatcher.InternalBufferSize
         };
 
         watcher.Changed += OnWatcherEvent;

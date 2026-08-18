@@ -1,9 +1,10 @@
 // Copyright (c) Tan Jing Ming. Use of this software is governed by LICENSE.md.
 
 using System.Collections.ObjectModel;
+using OTCode.Core.Abstractions.Infrastructure;
 using OTCode.Core.Domains.FileExplorer;
 using OTCode.Core.Options.FileExplorer;
-using OTCode.UI.Utils;
+using OTCode.Infrastructure.Utils;
 
 namespace OTCode.Infrastructure.Services;
 
@@ -154,7 +155,7 @@ public sealed class FileExplorerService : IFileExplorerService
 
         try
         {
-            var fullPath = DirectoryHelper.GetUniquePath(PathOf(parent), name, isFile);
+            var fullPath = DirectoryHelper.MakeUniquePath(PathOf(parent), name, isFile);
 
             if (isFile)
                 File.WriteAllText(fullPath, "");

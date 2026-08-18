@@ -38,5 +38,10 @@ internal static class InfrastructureConstants
             internal const string AuthorsDefault = "Tan Jing Ming";
             internal const string CopyrightDefault = $"Copyright (c) {CompanyDefault}. Use of this software is governed by LICENSE.md.";
         }
+
+        internal static class FileWatcher
+        {
+            internal const int InternalBufferSize = 65_536;
+        }
     }
 }
