@@ -4,12 +4,35 @@ namespace OTCode.Infrastructure.Utils;
 
 internal static class DirectoryHelper
 {
-    internal static string MakeUniquePath(string directory, string baseName, string extension)
+    internal static void CopyDirectory(string source, string destination, bool overwrite = false)
     {
-        string candidate = Path.Combine(directory, baseName + extension);
-        int n = 2;
+        Directory.CreateDirectory(destination);
+
+        foreach (var file in Directory.GetFiles(source))
+            File.Copy(file, Path.Combine(destination, Path.GetFileName(file)), overwrite);
+
+        foreach (var dir in Directory.GetDirectories(source))
+        {
+            if ((File.GetAttributes(dir) & FileAttributes.ReparsePoint) != 0)
+                continue; // Ignore reparse points
+            CopyDirectory(dir, Path.Combine(destination, Path.GetFileName(dir)), overwrite);
+        }
+    }
+
+    internal static string MakeUniquePath(string directory, string name, bool isFile = true)
+    {
+        var baseName = isFile
+            ? Path.GetFileNameWithoutExtension(name)
+            : name;
         
-        while(File.Exists(candidate))
+        var extension = isFile
+            ? Path.GetExtension(name)
+            : "";
+        
+        var candidate = Path.Combine(directory, name);
+        var n = 1;
+        
+        while(Path.Exists(candidate))
             candidate = Path.Combine(directory, $"{baseName} ({n++}){extension}");
         
         return candidate;
@@ -23,6 +46,9 @@ internal static class DirectoryHelper
         => string.Equals(Path.GetFullPath(path1), Path.GetFullPath(path2),
             OperatingSystem.IsWindows() ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal);
     
-    internal static bool PathExists(string path)
-        => Path.Exists(path) || Directory.Exists(path);
+    internal static bool IsFile(string name)
+        => File.Exists(name) ? true : false;
+    
+    internal static bool IsFolder(string name)
+        => Directory.Exists(name) ? true : false;
 }

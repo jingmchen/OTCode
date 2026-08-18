@@ -154,7 +154,106 @@ public sealed class FileExplorerService : IFileExplorerService
 
         try
         {
-            var fullPath = DirectoryHelper.GetUniquePath(
+            var fullPath = DirectoryHelper.GetUniquePath(PathOf(parent), name, isFile);
+
+            if (isFile)
+                File.WriteAllText(fullPath, "");
+            else
+                Directory.CreateDirectory(fullPath);
+            
+            var item = FileExplorerItemFactory.FromPath(fullPath, parent);
+            InsertSorted(ChildrenOf(parent), item);
+            ItemCreated?.Invoke(this, item);
+
+            return item;
+        }
+        finally
+        {
+            ResumeWatcher();
+        }
+    }
+
+    private static void RelocateFileExplorerItem(FileExplorerItem item, string newPath)
+    {
+        if (item.IsDirectory)
+            Directory.Move(item.FullPath, newPath);
+        else
+            File.Move(item.FullPath, newPath);
+
+        item.FullPath = newPath;
+        item.Name = Path.GetFileName(newPath);
+
+        item.Extension = item.IsFile
+            ? Path.GetExtension(newPath).ToLowerInvariant()
+            : "";
+
+        if (item.IsDirectory)
+            UpdateDescendantPaths(item);
+    }
+
+    private FileExplorerItem BuildSingleItem(string path, FileExplorerItem? parent)
+    {
+        var item = FileExplorerItemFactory.FromPath(path, parent);
+
+        if (item.IsDirectory)
+            foreach (var child in BuildTree(path, item))
+                item.Children.Add(child);
+
+        return item;
+    }
+
+    private static void SetExpandedRecursive(FileExplorerItem item, bool setExpanded)
+    {
+        if (!item.IsDirectory)
+            return;
+        item.IsExpanded = setExpanded;
+        foreach (var child in item.Children)
+            SetExpandedRecursive(child, setExpanded);
+    }
+
+    private static void CollectExpandedPaths(IEnumerable<FileExplorerItem> items, HashSet<string> paths)
+    {
+        foreach (var item in items)
+        {
+            if (!item.IsDirectory || !item.IsExpanded)
+                continue;
+            paths.Add(item.FullPath);
+            CollectExpandedPaths(item.Children, paths);
+        }
+    }
+
+    private static void RestoreExpandedPaths(IEnumerable<FileExplorerItem> items, HashSet<string> paths)
+    {
+        foreach (var item in items)
+        {
+            if (!item.IsDirectory)
+                continue;
+            if (paths.Contains(item.FullPath))
+            {
+                item.IsExpanded = true;
+                RestoreExpandedPaths(item.Children, paths);
+            }
+        }
+    }
+
+    private static bool IsAncestor(FileExplorerItem ancestor, FileExplorerItem candidate)
+    {
+        var current = candidate.Parent;
+        while (current is not null)
+        {
+            if (current == ancestor)
+                return true;
+            current = current.Parent;
+        }
+        return false;
+    }
+
+    private static void UpdateDescendantPaths(FileExplorerItem item)
+    {
+        foreach (var child in item.Children)
+        {
+            child.FullPath = Path.Combine(item.FullPath, child.Name);
+            UpdateDescendantPaths(child);
         }
     }
 
@@ -167,7 +266,27 @@ public sealed class FileExplorerService : IFileExplorerService
         DispatcherHelper.PostOnUIThread(() =>
         {
             var expandedPaths = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            CollectExpandedPaths(RootItems, expandedPaths);
+            RebuildRoot();
+            RestoreExpandedPaths(RootItems, expandedPaths);
+            ExplorerRefreshed?.Invoke(this, EventArgs.Empty);
         });
+    }
+
+    private void SuppressWatcher()
+    {
+        if (Interlocked.Increment(ref _internalOpCount) == 1)
+            _watcher.StopWatching();
+    }
+
+    private void ResumeWatcher()
+    {
+        if (Interlocked.Decrement(ref _internalOpCount) == 0
+            && Options.Service.EnableFileWatcher
+            && !string.IsNullOrWhiteSpace(_rootPath))
+        {
+            _watcher.StartWatching(_rootPath);
+        }
     }
 
     // Options
@@ -213,5 +332,9 @@ public sealed class FileExplorerService : IFileExplorerService
     }
 
     // Helpers
-    private strng
+    private ObservableCollection<FileExplorerItem> ChildrenOf(FileExplorerItem? folder)
+        => folder?.Children ?? RootItems;
+
+    private string PathOf(FileExplorerItem? folder)
+        => folder?.FullPath ?? _rootPath;
 }
