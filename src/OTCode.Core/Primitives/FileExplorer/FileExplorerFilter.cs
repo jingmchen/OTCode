@@ -4,16 +4,13 @@ namespace OTCode.Core.Primitives.FileExplorer;
 
 public readonly record struct FileExplorerFilter
 {
-    public IReadOnlySet<string>? Entries {get; init;}
+    public IReadOnlySet<string>? Entries {get; init;} =
+        new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+    
     public bool IsWhitelist {get; init;}
 
     public bool Passes(string value)
-    {
-        if (Entries is null || Entries.Count == 0)
-            return true;
-        
-        return IsWhitelist
-            ? Entries.Contains(value)
+        => IsWhitelist
+            ? Entries.Count == 0 || Entries.Contains(value)
             : !Entries.Contains(value);
-    }
 }

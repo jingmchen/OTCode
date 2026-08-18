@@ -5,11 +5,12 @@ using OTCode.Core.Domains.FileExplorer;
 using OTCode.Core.Options.FileExplorer;
 using OTCode.UI.Utils;
 
-namespace OTCode.UI.Services;
+namespace OTCode.Infrastructure.Services;
 
 public sealed class FileExplorerService : IFileExplorerService
 {
     private readonly IFileWatcherService _watcher;
+    private string _rootPath = "";
     private int _internalOpCount;
     private bool _disposed;
 
@@ -28,11 +29,18 @@ public sealed class FileExplorerService : IFileExplorerService
         _watcher = watcher ?? throw new ArgumentNullException(nameof(watcher));
         Options = options ?? new FileExplorerOptions();
 
-        Sanitize(Options);
+        SanitizeValidate(Options);
+
+        if (Options.Service.EnableFileWatcher)
+            _watcher.Changed += OnWatcherChanged;
     }
 
     // ─── PUBLIC METHODS ────────────────────────
-    void LoadDirectory(string rootPath);
+    public void LoadDirectory(string rootPath)
+    {
+        //
+    }
+
     void RefreshDirectory();
     FileExplorerItem CreateFile(FileExplorerItem? parent, string name);
     FileExplorerItem CreateFolder(FileExplorerItem? parent, string name);
@@ -92,7 +100,7 @@ public sealed class FileExplorerService : IFileExplorerService
     }
 
     // Options
-    private static FileExplorerOptions Sanitize(FileExplorerOptions options)
+    private static FileExplorerOptions SanitizeValidate(FileExplorerOptions options)
     {
         ArgumentNullException.ThrowIfNull(options);
 
@@ -107,9 +115,25 @@ public sealed class FileExplorerService : IFileExplorerService
         
         if (string.IsNullOrWhiteSpace(service.NewFolderName))
             service.NewFolderName = "NewFolder";
+        
+        if (!service.NewFileExt.StartsWith('.'))
+            throw new ArgumentException(
+                $"{nameof(service.NewFileExt)} must include a leading dot.");
+             
+        if (service.MaxSearchResults < 1)
+            throw new ArgumentException(
+                $"{nameof(service.MaxSearchResults)} must be at least 1.");
 
-        if (panel.MinWidth < panel.MaxWidth)
-            panel.MinWidth = panel.MaxWidth;
+        if (service.NewFileName.IndexOfAny(Path.GetInvalidFileNameChars()) >= 0 ||
+            service.NewFolderName.IndexOfAny(Path.GetInvalidFileNameChars()) >= 0)
+            throw new ArgumentException("New file/folder names contain invalid path characters.");
+
+        if (service.RootPath is not null && string.IsNullOrWhiteSpace(service.RootPath))
+            throw new ArgumentException($"{nameof(service.RootPath)} must be null (no auto-load) or a non-blank path.");
+        
+        if (panel.MinWidth > panel.MaxWidth)
+            throw new ArgumentException(
+                $"{nameof(panel.MinWidth)} cannot be greater than {nameof(panel.MaxWidth)}.");
         
         if (panel.Width < panel.MinWidth || panel.Width > panel.MaxWidth)
             panel.Width = Math.Clamp(panel.Width, panel.MinWidth, panel.MaxWidth);

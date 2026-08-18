@@ -6,7 +6,7 @@ using OTCode.Core.Abstractions.UI;
 using OTCode.Core.Logging;
 using OTCode.UI.Constants;
 
-namespace OTCode.UI.Services;
+namespace OTCode.Infrastructure.Services;
 
 public sealed partial class FileWatcherService : IFileWatcherService, IDisposable
 {
@@ -15,14 +15,15 @@ public sealed partial class FileWatcherService : IFileWatcherService, IDisposabl
     private FileSystemEventArgs? _pendingEvent;
     private Timer? _debounceTimer;
     private readonly TimeSpan _debounce;
-    private bool _disposed;
     private readonly Lock _gate = new();
+    private bool _disposed;
+
     public event EventHandler<FileSystemEventArgs>? Changed;
 
     public FileWatcherService(ILogger<FileWatcherService> logger, TimeSpan debounce)
     {
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-        _debounce = debounce;
+        _debounce = debounce ?? TimeSpan.FromMilliseconds(400);
     }
     
     // ─── PUBLIC METHODS ────────────────────────
@@ -43,15 +44,15 @@ public sealed partial class FileWatcherService : IFileWatcherService, IDisposabl
                 NotifyFilters.Size |
                 NotifyFilters.Attributes,
             IncludeSubdirectories = true,
-            EnableRaisingEvents = true,
             InternalBufferSize = UIConstants.Service.FileWatcher.InternalBufferSize
         };
 
-        watcher.Changed += OnDirEvent;
-        watcher.Created += OnDirEvent;
-        watcher.Deleted += OnDirEvent;
-        watcher.Renamed += OnDirEvent;
+        watcher.Changed += OnWatcherEvent;
+        watcher.Created += OnWatcherEvent;
+        watcher.Deleted += OnWatcherEvent;
+        watcher.Renamed += OnWatcherEvent;
         watcher.Error += OnError;
+        watcher.EnableRaisingEvents = true;
 
         lock(_gate)
             _watcher = watcher;
@@ -68,10 +69,10 @@ public sealed partial class FileWatcherService : IFileWatcherService, IDisposabl
             if (_watcher is not null)
             {
                 _watcher.EnableRaisingEvents = false;
-                _watcher.Changed -= OnDirEvent;
-                _watcher.Created -= OnDirEvent;
-                _watcher.Deleted -= OnDirEvent;
-                _watcher.Renamed -= OnDirEvent;
+                _watcher.Changed -= OnWatcherEvent;
+                _watcher.Created -= OnWatcherEvent;
+                _watcher.Deleted -= OnWatcherEvent;
+                _watcher.Renamed -= OnWatcherEvent;
                 _watcher.Error -= OnError;
                 _watcher.Dispose();
                 _watcher = null;
@@ -88,7 +89,7 @@ public sealed partial class FileWatcherService : IFileWatcherService, IDisposabl
     }
 
     // ─── PRIVATE METHODS ───────────────────────
-    private void OnDirEvent(object? sender, FileSystemEventArgs e)
+    private void OnWatcherEvent(object? sender, FileSystemEventArgs e)
     {
         lock (_gate)
         {
@@ -96,12 +97,6 @@ public sealed partial class FileWatcherService : IFileWatcherService, IDisposabl
             _debounceTimer?.Dispose(); // Reset debounce window each time a new event arrives
             _debounceTimer = new Timer(FireDebounced, null, _debounce, Timeout.InfiniteTimeSpan);
         }
-    }
-
-    private void OnError(object? sender, ErrorEventArgs e)
-    {
-        var ex = e.GetException();
-        LogUnexpectedError(ex);
     }
     
     private void FireDebounced(object? _)
@@ -118,13 +113,19 @@ public sealed partial class FileWatcherService : IFileWatcherService, IDisposabl
             Changed?.Invoke(this, evnt);
     }
 
+    private void OnError(object? sender, ErrorEventArgs e)
+    {
+        var ex = e.GetException();
+        LogUnexpectedError(ex);
+    }
+
     private void ThrowIfDisposed()
         => ObjectDisposedException.ThrowIf(_disposed, nameof(FileWatcherService));
     
     [LoggerMessage(
         EventId = LogEventIDs.UI.FileWatcher.UnexpectedError,
         Level = LogLevel.Information,
-        Message = "FileWatcherService stopped due to an error."
+        Message = "FileWatcherService encountered an error."
     )]
     private partial void LogUnexpectedError(Exception ex);
 }
