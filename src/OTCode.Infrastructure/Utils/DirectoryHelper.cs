@@ -22,4 +22,7 @@ internal static class DirectoryHelper
     internal static bool PathsEqual(string path1, string path2)
         => string.Equals(Path.GetFullPath(path1), Path.GetFullPath(path2),
             OperatingSystem.IsWindows() ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal);
+    
+    internal static bool PathExists(string path)
+        => Path.Exists(path) || Directory.Exists(path);
 }

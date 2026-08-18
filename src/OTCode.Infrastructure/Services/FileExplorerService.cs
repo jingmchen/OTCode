@@ -84,7 +84,31 @@ public sealed class FileExplorerService : IFileExplorerService
 
     private List<FileExplorerItem> BuildTree(string path, FileExplorerItem? parent)
     {
-        var items = new 
+        var items = new List<FileExplorerItem>();
+
+        DirectoryInfo[] dirs;
+        FileInfo[] files;
+
+        try
+        {
+            var root = DirectoryInfo(path);
+            dirs = [.. root.GetDirectories().OrderBy(d => d.Name, StringComparer.OrdinalIgnoreCase)];
+            files = [.. root.GetFiles().OrderBy(f => f.Name, StringComparer.OrdinalIgnoreCase)];
+        }
+        catch (Exception ex) when (ex is UnauthorizedAccessException or IOException)
+        {
+            return items;
+        }
+
+        var applyFolderFilters = !Options.Service.FolderNameFilter.IsWhitelist || parent is null;
+
+        foreach (var dir in dirs)
+        {
+            if (applyFolderFilters && !Options.Service.FolderNameFilter.Passes(dir.Name))
+                continue;
+            
+            if ()
+        }
     }
 
     // Watcher
