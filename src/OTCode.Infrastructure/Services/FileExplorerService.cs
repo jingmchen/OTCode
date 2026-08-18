@@ -91,7 +91,7 @@ public sealed class FileExplorerService : IFileExplorerService
 
         try
         {
-            var root = DirectoryInfo(path);
+            var root = new DirectoryInfo(path);
             dirs = [.. root.GetDirectories().OrderBy(d => d.Name, StringComparer.OrdinalIgnoreCase)];
             files = [.. root.GetFiles().OrderBy(f => f.Name, StringComparer.OrdinalIgnoreCase)];
         }
@@ -99,15 +99,62 @@ public sealed class FileExplorerService : IFileExplorerService
         {
             return items;
         }
-
+        
         var applyFolderFilters = !Options.Service.FolderNameFilter.IsWhitelist || parent is null;
 
         foreach (var dir in dirs)
         {
-            if (applyFolderFilters && !Options.Service.FolderNameFilter.Passes(dir.Name))
+            try
+            {
+                if (applyFolderFilters && !Options.Service.FolderNameFilter.Passes(dir.Name))
+                    continue;
+
+                if (!Options.Service.ShowHiddenFiles && dir.Attributes.HasFlag(FileAttributes.Hidden))
+                    continue;
+
+                var item = FileExplorerItemFactory.FromPath(dir.FullName, parent);
+
+                // Junctions / symlinks can point back up the tree resulting in infinite loop
+                if (!dir.Attributes.HasFlag(FileAttributes.ReparsePoint))
+                    foreach (var c in BuildTree(dir.FullName, item))
+                        item.Children.Add(c);
+
+                items.Add(item);
+            }
+            catch (Exception ex) when (ex is UnauthorizedAccessException or IOException)
+            {
                 continue;
-            
-            if ()
+            }
+        }
+
+        foreach (var file in files)
+        {
+            try
+            {
+                if (!Options.Service.ShowHiddenFiles && file.Attributes.HasFlag(FileAttributes.Hidden))
+                    continue;
+
+                if (!Options.Service.FileExtensionFilter.Passes(file.Extension))
+                    continue;
+
+                items.Add(FileExplorerItemFactory.FromPath(file.FullName, parent));
+            }
+            catch (Exception ex) when (ex is UnauthorizedAccessException or IOException)
+            {
+                continue;
+            }
+        }
+
+        return items;
+    }
+
+    private FileExplorerItem CreateFileExplorerItem(FileExplorerItem? parent, string name, bool isFile)
+    {
+        SuppressWatcher();
+
+        try
+        {
+            var fullPath = DirectoryHelper.GetUniquePath(
         }
     }
 
@@ -164,4 +211,7 @@ public sealed class FileExplorerService : IFileExplorerService
         
         return options;
     }
+
+    // Helpers
+    private strng
 }
