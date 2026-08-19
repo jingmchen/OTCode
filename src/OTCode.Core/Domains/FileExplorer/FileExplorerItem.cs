@@ -1,28 +1,96 @@
 // Copyright (c) Tan Jing Ming. Use of this software is governed by LICENSE.md.
 
+using System.Collections.ObjectModel;
+using OTCode.Core.Abstractions.Infrastructure;
+using OTCode.Core.Domains.INPC;
+
 namespace OTCode.Core.Domains.FileExplorer;
 
-public sealed record FileExplorerItem
+public sealed class FileExplorerItem : NotifyPropertyChangedBase
 {
-    public required string Name {get; set;}
-    public required string FullPath {get; set;}
-    public string Extension {get; set;} = "";
+    // Identity
+    public required string Name
+    {
+        get;
+        set
+        {
+            if (SetField(ref field, value))
+                OnPropertyChanged(nameof(Icon));
+        }
+    }
 
-    public bool IsHoveredOver {get; set;}
-    public bool IsSelected {get; set;}
-    public bool IsBeingEdited {get; set;}
-    public bool IsExpanded {get; set;}
-    public bool IsCut {get; set;}
-    public bool IsBeingDraggedOver {get; set;}
+    public required string FullPath
+    {
+        get;
+        set
+        {
+            if (SetField(ref field, value))
+                OnPropertyChanged(nameof(Tooltip));
+        }
+    }
 
-    public bool IsDirectory {get; set;}
+    public string Extension
+    {
+        get;
+        set
+        {
+            if (SetField(ref field, value))
+                OnPropertyChanged(nameof(Icon));
+        }
+    } = "";
+
+    // UI state
+    public bool IsHovered
+    {
+        get;
+        set => SetField(ref field, value);
+    }
+
+    public bool IsSelected
+    {
+        get;
+        set => SetField(ref field, value);
+    }
+
+    public bool IsBeingEdited
+    {
+        get;
+        set => SetField(ref field, value);
+    }
+
+    public bool IsExpanded
+    {
+        get;
+        set
+        {
+            if (SetField(ref field, value))
+                OnPropertyChanged(nameof(Icon));
+        }
+    }
+
+    public bool IsCut
+    {
+        get;
+        set => SetField(ref field, value);
+    }
+
+    public bool IsDragOver
+    {
+        get;
+        set => SetField(ref field, value);
+    }
+
+    // FIle system metadata
+    public bool IsDirectory {get; init;}
     public bool IsFile => !IsDirectory;
-    public long Size {get; set;}
+    public long Size {get; init;}
+    public DateTime CreatedAt {get; init;}
+    public DateTime LastModifiedAt {get; init;}
+    public bool IsHidden {get; init;}
+    public bool IsSymLink {get; init;}
+    public bool IsReadOnly {get; init;}
 
-    public DateTime CreatedAt {get; set;}
-    public DateTime LastModifiedAt {get; set;}
-
-    public bool IsHidden {get; set;}
-    public bool IsSymLink {get; set;}
-    public bool IsReadOnly {get; set;}
+    // Hierarchy
+    public ObservableCollection<FileExplorerItem> Children {get; set;} = [];
+    public FileExplorerItem? Parent {get; set;}
 }

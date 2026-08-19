@@ -1,10 +1,10 @@
 // Copyright (c) Tan Jing Ming. Use of this software is governed by LICENSE.md.
 
-namespace OTCode.Core.Primitives.FileExplorer;
+namespace OTCode.Core.Domains.FileExplorer;
 
-public readonly record struct FileExplorerFilter
+public sealed record FileExplorerFilter
 {
-    public IReadOnlySet<string>? Entries {get; init;} =
+    public IReadOnlySet<string> Entries {get; init;} =
         new HashSet<string>(StringComparer.OrdinalIgnoreCase);
     
     public bool IsWhitelist {get; init;}

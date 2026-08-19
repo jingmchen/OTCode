@@ -1,6 +1,6 @@
 // Copyright (c) Tan Jing Ming. Use of this software is governed by LICENSE.md.
 
-using OTCode.Core.Primitives.FileExplorer;
+using OTCode.Core.Domains.FileExplorer;
 
 namespace OTCode.Core.Options.FileExplorer;
 

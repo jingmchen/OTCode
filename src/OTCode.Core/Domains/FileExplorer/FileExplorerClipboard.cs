@@ -30,6 +30,7 @@ public sealed class FileExplorerClipboard
     private void Set(ClipboardOperation operation, IEnumerable<FileExplorerItem> items, bool cut)
     {
         ArgumentNullException.ThrowIfNull(items);
+        
         SetNone();
         Operation = operation;
         Items = [.. items];
