@@ -6,6 +6,7 @@ using OTCode.Core.Abstractions.UI;
 using OTCode.Core.Domains.FileExplorer;
 using OTCode.Core.Enums;
 using OTCode.Core.Options.FileExplorer;
+using OTCode.Infrastructure.Factories;
 using OTCode.Infrastructure.Utils;
 
 namespace OTCode.Infrastructure.Services;
@@ -355,7 +356,7 @@ public sealed class FileExplorerService : IFileExplorerService
                 if (!Options.Service.ShowHiddenFiles && dir.Attributes.HasFlag(FileAttributes.Hidden))
                     continue;
 
-                var item = FileExplorerItemFactory(dir.FullName, parent);
+                var item = FileExplorerItemFactory.FromPath(dir.FullName, parent);
 
                 // Junctions and symlinks can point back up the tree resulting in endless cycle recursion
                 if (!dir.Attributes.HasFlag(FileAttributes.ReparsePoint))
@@ -380,7 +381,7 @@ public sealed class FileExplorerService : IFileExplorerService
                 if (!Options.Service.FileExtensionFilter.Passes(file.Extension))
                     continue;
 
-                items.Add(FileExplorerItemFactory(file.FullName, parent));
+                items.Add(FileExplorerItemFactory.FromPath(file.FullName, parent));
             }
             catch (Exception ex) when (ex is UnauthorizedAccessException or IOException)
             {
@@ -407,7 +408,7 @@ public sealed class FileExplorerService : IFileExplorerService
             else
                 Directory.CreateDirectory(fullPath);
             
-            var item = FileExplorerItemFactory(fullPath, parent);
+            var item = FileExplorerItemFactory.FromPath(fullPath, parent);
             InsertSorted(ChildrenOf(parent), item);
             ItemCreated?.Invoke(this, item);
 
@@ -417,30 +418,6 @@ public sealed class FileExplorerService : IFileExplorerService
         {
             ResumeWatcher();
         }
-    }
-
-    private static FileExplorerItem FileExplorerItemFactory(string path, FileExplorerItem? parent = null)
-    {
-        FileSystemInfo info = Directory.Exists(path)
-            ? new DirectoryInfo(path)
-            : new FileInfo(path);
-        
-        var attrs = info.Attributes;
-
-        return new FileExplorerItem
-        {
-            Name = info.Name,
-            FullPath = info.FullName,
-            Extension = info is FileInfo fi ? fi.Extension.ToLowerInvariant() : "",
-            IsDirectory = info is DirectoryInfo,
-            Size = info is FileInfo fileInfo ? fileInfo.Length : 0L,
-            CreatedAt = info.CreationTime,
-            LastModifiedAt = info.LastWriteTime,
-            IsHidden = attrs.HasFlag(FileAttributes.Hidden),
-            IsSymLink = attrs.HasFlag(FileAttributes.ReparsePoint),
-            IsReadOnly = attrs.HasFlag(FileAttributes.ReadOnly),
-            Parent = parent
-        };
     }
 
     private static void RelocateFileExplorerItem(FileExplorerItem item, string newPath)
@@ -485,7 +462,7 @@ public sealed class FileExplorerService : IFileExplorerService
 
     private FileExplorerItem BuildSingleItem(string path, FileExplorerItem? parent)
     {
-        var item = FileExplorerItemFactory(path, parent);
+        var item = FileExplorerItemFactory.FromPath(path, parent);
 
         if (item.IsDirectory)
             foreach (var child in BuildTree(path, item))
