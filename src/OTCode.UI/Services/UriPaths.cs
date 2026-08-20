@@ -11,6 +11,7 @@ public sealed class UriPaths : IUriPaths
     public string ThemeTemplate {get;}
     public string AccentTemplate {get;}
     public string StyleTemplate {get;}
+    public string IconTemplate {get;}
     public string TermsCondition {get;}
     
     public UriPaths(IAppInfo appInfo)
@@ -22,17 +23,22 @@ public sealed class UriPaths : IUriPaths
         ThemeTemplate =
             $"pack://application:,,,/{assemblyName};component/" +
             $"{UIConstants.Bundled.FolderName.Assets}/" +
-            $"{UIConstants.Bundled.FolderName.Themes}/{{0}}Theme.axaml";
+            $"{UIConstants.Bundled.FolderName.Themes}/{{0}}Theme.xaml";
         
         AccentTemplate =
             $"pack://application:,,,/{assemblyName};component/" +
             $"{UIConstants.Bundled.FolderName.Assets}/" +
-            $"{UIConstants.Bundled.FolderName.Accents}/{{0}}Accent.axaml";
+            $"{UIConstants.Bundled.FolderName.Accents}/{{0}}Accent.xaml";
         
         StyleTemplate =
             $"pack://application:,,,/{assemblyName};component/" +
             $"{UIConstants.Bundled.FolderName.Assets}/" +
-            $"{UIConstants.Bundled.FolderName.Styles}/{{0}}.axaml";
+            $"{UIConstants.Bundled.FolderName.Styles}/{{0}}.xaml";
+        
+        IconTemplate =
+            $"pack://application:,,,/{assemblyName};component/" +
+            $"{UIConstants.Bundled.FolderName.Assets}/" +
+            $"{UIConstants.Bundled.FolderName.Icons}/{{0}}.xaml";
         
         TermsCondition =
             $"pack://application:,,,/{assemblyName};component/" +
