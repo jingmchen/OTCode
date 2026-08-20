@@ -147,7 +147,7 @@ public sealed class FileExplorerService : IFileExplorerService
         }
     }
 
-    public async Task DeleteMultipleItemsAsync(IEnumerable<FileExplorerItem> items, CancellationToken cancellationToken = default)
+    public async Task DeleteMultipleItemsAsync(IEnumerable<FileExplorerItem> items, CancellationToken ct = default)
     {
         ArgumentNullException.ThrowIfNull(items);
 
@@ -166,7 +166,7 @@ public sealed class FileExplorerService : IFileExplorerService
             {
                 foreach (var (item, path, isDirectory, isFile) in targets)
                 {
-                    cancellationToken.ThrowIfCancellationRequested();
+                    ct.ThrowIfCancellationRequested();
 
                     try
                     {
@@ -182,7 +182,7 @@ public sealed class FileExplorerService : IFileExplorerService
                         (failures ??= []).Add(ex);
                     }
                 }
-            }, cancellationToken);
+            }, ct);
             
             foreach (var item in deleted)
             {
@@ -278,7 +278,7 @@ public sealed class FileExplorerService : IFileExplorerService
     public void ClipboardCutItems(IEnumerable<FileExplorerItem> items)
         => Clipboard.SetCut(items);
 
-    public async Task ClipboardPasteItemsAsync(FileExplorerItem? targetFolder, CancellationToken cancellationToken = default)
+    public async Task ClipboardPasteItemsAsync(FileExplorerItem? targetFolder, CancellationToken ct = default)
     {
         if (!Clipboard.HasItems)
             return;
@@ -300,7 +300,7 @@ public sealed class FileExplorerService : IFileExplorerService
                 {
                     foreach (var item in snapshot)
                     {
-                        cancellationToken.ThrowIfCancellationRequested();
+                        ct.ThrowIfCancellationRequested();
 
                         try
                         {
@@ -324,7 +324,7 @@ public sealed class FileExplorerService : IFileExplorerService
                             (failures ??= []).Add(ex);
                         }
                     }
-                }, cancellationToken);
+                }, ct);
 
                 // Return to UI thread and insert the copied items into the tree
                 foreach (var newPath in newPaths)
