@@ -33,7 +33,7 @@ public interface IFileExplorerService
     void CollapseAll(FileExplorerItem item);
     
     bool CanDrop(FileExplorerItem item, FileExplorerItem? targetFolder);
-    void MoveItem(FileExplorerItem item, FileExplorerItem? targetFolder);
+    Task MoveItemAsync(FileExplorerItem item, FileExplorerItem? targetFolder, CancellationToken ct = default);
     void ClipboardCopyItems(IEnumerable<FileExplorerItem> items);
     void ClipboardCutItems(IEnumerable<FileExplorerItem> items);
     Task ClipboardPasteItemsAsync(FileExplorerItem? targetFolder, CancellationToken ct = default);

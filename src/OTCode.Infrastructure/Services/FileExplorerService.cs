@@ -238,7 +238,7 @@ public sealed class FileExplorerService : IFileExplorerService
         return !IsAncestor(ancestor: item, candidate: targetFolder);
     }
 
-    public void MoveItem(FileExplorerItem item, FileExplorerItem? targetFolder)
+    public async Task MoveItemAsync(FileExplorerItem item, FileExplorerItem? targetFolder, CancellationToken ct = default)
     {
         ArgumentNullException.ThrowIfNull(item);
 
@@ -251,20 +251,24 @@ public sealed class FileExplorerService : IFileExplorerService
         if (string.Equals(currentParent, Path.TrimEndingDirectorySeparator(targetPath), StringComparison.OrdinalIgnoreCase))
             return;
         
+        var source = item.FullPath;
+        var name = item.Name;
+        var isDirectory = item.IsDirectory;
+        var isFile = item.IsFile;
+        
         SuppressWatcher();
 
         try
         {
-            var newPath = DirectoryHelper.MakeUniquePath(targetPath, item.Name, isFile: item.IsFile);
+            var newPath = await Task.Run(() =>
+            {
+                ct.ThrowIfCancellationRequested();
+                var dest = DirectoryHelper.MakeUniquePath(targetPath, name, isFile: isFile);
+                RelocateOnDisk(source, dest, isDirectory);
+                return dest;
+            }, ct);
 
-            RelocateFileExplorerItem(item, newPath);
-            ChildrenOf(item.Parent).Remove(item);
-
-            item.Parent = targetFolder;
-
-            InsertSorted(ChildrenOf(targetFolder), item);
-
-            targetFolder?.IsExpanded = true;
+            ApplyRelocationToTree(item, newPath, targetFolder);
         }
         finally
         {
@@ -326,7 +330,6 @@ public sealed class FileExplorerService : IFileExplorerService
                     }
                 }, ct);
 
-                // Return to UI thread and insert the copied items into the tree
                 foreach (var newPath in newPaths)
                 {
                     var copy = BuildSingleItem(newPath, targetFolder);
@@ -341,28 +344,55 @@ public sealed class FileExplorerService : IFileExplorerService
             }
             else
             {
-                // Cut = move. A same-volume move is an O(1) rename with no bytes to copy, so this
-                // stays synchronous on the UI thread; MoveItem does the tree fix-up itself.
-                // Cut is move which can stay sync on UI thread
-                List<Exception>? failures = null;
+                // Cut = move. A move is I/O — a rename on the same volume, but a copy+delete
+                // across volumes, and always a round-trip on network/AV paths — so its
+                // filesystem work runs off the UI thread just like copy. Validate and capture
+                // primitives on the UI thread, do the moves off it, fix up the tree back on it.
+                var plan = new List<(FileExplorerItem item, string source, string name, bool isDirectory, bool isFile)>();
 
                 foreach (var item in snapshot)
                 {
-                    try
+                    if (!CanDrop(item, targetFolder))
+                        continue;
+
+                    var currentParent = Path.GetDirectoryName(Path.TrimEndingDirectorySeparator(item.FullPath));
+
+                    if (string.Equals(currentParent, Path.TrimEndingDirectorySeparator(targetPath), StringComparison.OrdinalIgnoreCase))
+                        continue;
+
+                    plan.Add((item, item.FullPath, item.Name, item.IsDirectory, item.IsFile));
+                }
+
+                var moved = new List<(FileExplorerItem item, string newPath)>(plan.Count);
+                List<Exception>? failures = null;
+
+                await Task.Run(() =>
+                {
+                    foreach (var (item, source, name, isDirectory, isFile) in plan)
                     {
-                        MoveItem(item, targetFolder);
-                        item.IsCut = false;
+                        ct.ThrowIfCancellationRequested();
+                        try
+                        {
+                            var dest = DirectoryHelper.MakeUniquePath(targetPath, name, isFile: isFile);
+                            RelocateOnDisk(source, dest, isDirectory);
+                            moved.Add((item, dest));
+                        }
+                        catch (Exception ex)
+                        {
+                            (failures ??= []).Add(ex);
+                        }
                     }
-                    catch (Exception ex)
-                    {
-                        (failures ??= []).Add(ex);
-                    }
+                }, ct);
+
+                // Back on the UI thread: reparent the moved nodes (ApplyRelocationToTree also
+                // expands the target).
+                foreach (var (item, newPath) in moved)
+                {
+                    ApplyRelocationToTree(item, newPath, targetFolder);
+                    item.IsCut = false;
                 }
 
                 Clipboard.SetNone();
-
-                if (targetFolder is not null)
-                    targetFolder.IsExpanded = true;
 
                 if (failures is { Count: > 0 })
                     throw new IOException($"{failures.Count} item(s) could not be pasted.", failures[0]);
@@ -493,6 +523,17 @@ public sealed class FileExplorerService : IFileExplorerService
         }
     }
 
+    private FileExplorerItem BuildSingleItem(string path, FileExplorerItem? parent)
+    {
+        var item = FileExplorerItemFactory.FromPath(path, parent);
+
+        if (item.IsDirectory)
+            foreach (var child in BuildTree(path, item))
+                item.Children.Add(child);
+
+        return item;
+    }
+
     private static void RelocateFileExplorerItem(FileExplorerItem item, string newPath)
     {
         if (item.IsDirectory)
@@ -509,6 +550,45 @@ public sealed class FileExplorerService : IFileExplorerService
 
         if (item.IsDirectory)
             UpdateDescendantPaths(item);
+    }
+
+    private static void RelocateOnDisk(string source, string destination, bool isDirectory)
+    {
+        if (!isDirectory)
+        {
+            File.Move(source, destination);
+            return;
+        }
+
+        if (SameRoot(source, destination))
+            Directory.Move(source, destination);
+        else
+        {
+            DirectoryHelper.CopyDirectory(source, destination, overwrite: false);
+            Directory.Delete(source, recursive: true);
+        }
+    }
+
+    private static void RefreshItemPaths(FileExplorerItem item, string newPath)
+    {
+        item.FullPath = newPath;
+        item.Name = Path.GetFileName(newPath);
+        item.Extension = item.IsFile ? Path.GetExtension(newPath).ToLowerInvariant() : "";
+
+        if (item.IsDirectory)
+            UpdateDescendantPaths(item);
+    }
+
+    private void ApplyRelocationToTree(FileExplorerItem item, string newPath, FileExplorerItem? targetFolder)
+    {
+        RefreshItemPaths(item, newPath);
+
+        ChildrenOf(item.Parent).Remove(item);
+        item.Parent = targetFolder;
+        InsertSorted(ChildrenOf(targetFolder), item);
+
+        if (targetFolder is not null)
+            targetFolder.IsExpanded = true;
     }
 
     private static void InsertSorted(ObservableCollection<FileExplorerItem> collection, FileExplorerItem item)
@@ -531,17 +611,6 @@ public sealed class FileExplorerService : IFileExplorerService
         }
 
         collection.Insert(index, item);
-    }
-
-    private FileExplorerItem BuildSingleItem(string path, FileExplorerItem? parent)
-    {
-        var item = FileExplorerItemFactory.FromPath(path, parent);
-
-        if (item.IsDirectory)
-            foreach (var child in BuildTree(path, item))
-                item.Children.Add(child);
-
-        return item;
     }
 
     private static void SetExpandedRecursive(FileExplorerItem item, bool setExpanded)
@@ -686,6 +755,12 @@ public sealed class FileExplorerService : IFileExplorerService
     }
 
     // Helpers
+    private static bool SameRoot(string a, string b)
+        => string.Equals(
+            Path.GetPathRoot(Path.GetFullPath(a)),
+            Path.GetPathRoot(Path.GetFullPath(b)),
+            StringComparison.OrdinalIgnoreCase);
+    
     private ObservableCollection<FileExplorerItem> ChildrenOf(FileExplorerItem? folder)
         => folder?.Children ?? RootItems;
 

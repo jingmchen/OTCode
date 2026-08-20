@@ -1,12 +1,10 @@
 // Copyright (c) Tan Jing Ming. Use of this software is governed by LICENSE.md.
 
-using System.Globalization;
-using System.Windows;
 using System.Windows.Data;
 
 namespace OTCode.UI.Converters;
 
-public sealed class BoolToOpacityConverter : IValueConverter
+public sealed class FileIconConverter : IValueConverter
 {
     public double TrueOpacity {get;} = 0.4;
     public double FalseOpacity {get;} = 1.0;
