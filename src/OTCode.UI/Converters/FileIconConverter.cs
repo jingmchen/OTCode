@@ -6,9 +6,6 @@ namespace OTCode.UI.Converters;
 
 public sealed class FileIconConverter : IValueConverter
 {
-    public double TrueOpacity {get;} = 0.4;
-    public double FalseOpacity {get;} = 1.0;
-
     private FileIconConverter() {}
     public static readonly FileIconConverter Instance = new();
 
