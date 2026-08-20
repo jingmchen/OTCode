@@ -64,8 +64,7 @@ public sealed class FileExplorerService : IFileExplorerService
 
     public void LoadDirectory()
     {
-        if (string.IsNullOrWhiteSpace(Options.Service.RootPath))
-            throw new InvalidOperationException($"{nameof(Options.Service.RootPath)} is not set");
+        ArgumentException.ThrowIfNullOrWhiteSpace(Options.Service.RootPath);
         LoadDirectory(Options.Service.RootPath);
     }
 
@@ -497,8 +496,7 @@ public sealed class FileExplorerService : IFileExplorerService
 
     private FileExplorerItem CreateFileExplorerItem(FileExplorerItem? parent, string name, bool isFile)
     {
-        if (string.IsNullOrWhiteSpace(name))
-            throw new ArgumentException($"{nameof(name)} cannot be null or whitespace.");
+        ArgumentException.ThrowIfNullOrWhiteSpace(name);
         
         SuppressWatcher();
 

@@ -7,46 +7,51 @@
         Background="{DynamicResource ThemeBg0Brush}">
 
   <DockPanel Margin="16">
+
     <StackPanel DockPanel.Dock="Top"
-                Spacing="4"
                 Margin="0,0,0,12">
 
       <TextBlock Text="Terms and Conditions"
                  FontSize="20"
                  FontWeight="SemiBold"
-                 Foreground="{DynamicResource ThemeFg0Brush}" />
+                 Foreground="{DynamicResource ThemeFg0Brush}"
+                 Margin="0,0,0,4" />
 
       <TextBlock Text="Please review the terms below. Accepting them is required to use the app."
                  Foreground="{DynamicResource ThemeFg2Brush}"
                  TextWrapping="Wrap" />
 
     </StackPanel>
+
     <StackPanel DockPanel.Dock="Bottom"
                 Orientation="Horizontal"
                 HorizontalAlignment="Right"
-                Spacing="8"
                 Margin="0,12,0,0">
 
       <Button Content="Decline"
+              Style="{DynamicResource ThemedButtonStyle}"
               MinWidth="90"
               IsCancel="True"
               Click="OnDecline" />
-
-      <Button Content="Accept"
-              Classes="accent"
+      
+      <Button x:Name="AcceptButton"
+              Content="Accept"
+              Style="{DynamicResource AccentButtonStyle}"
               MinWidth="90"
+              Margin="8,0,0,0"
               IsDefault="True"
+              IsEnabled="False"
+              ToolTip="Scroll to the end of the terms to accept"
+              ToolTipService.ShowOnDisabled="True"
               Click="OnAccept" />
 
     </StackPanel>
+
+    <Border Style="{DynamicResource EditorFrameStyle}">
     
-    <Border Classes="editorFrame">
-      <ScrollViewer x:Name="TermsScroll">
+      <FlowDocumentScrollViewer x:Name="TermsViewer"
+                                VerticalScrollBarVisibility="Auto" />
 
-        <ContentControl x:Name="TermsHost"
-                        Margin="14,10" />
-
-      </ScrollViewer>
     </Border>
 
   </DockPanel>
