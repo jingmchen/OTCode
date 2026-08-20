@@ -2,23 +2,24 @@
 
 using System.Collections.ObjectModel;
 using System.Globalization;
-using OTCode.Core.Abstractions.UI;
-using OTCode.UI.Utils;
 using Serilog.Core;
 using Serilog.Events;
+using OTCode.Core.Abstractions.UI;
 
 namespace OTCode.UI.Services;
 
 public sealed class ConsoleLog : IConsoleLog, ILogEventSink
 {
     private const int Cap = 400;
+    private readonly IUIDispatcher _dispatcher;
     public ObservableCollection<string> Entries {get;} = [];
 
-    public ConsoleLog() { }
+    public ConsoleLog(IUIDispatcher dispatcher)
+        => _dispatcher = dispatcher ?? throw new ArgumentNullException(nameof(dispatcher));
 
     // ─── INTERFACE METHODS ─────────────────────
     public void Clear()
-        => DispatcherHelper.PostOnUIThread(Entries.Clear);
+        => _dispatcher.Post(Entries.Clear);
     
     // ─── SERILOG SINK (ILogEventSink) ──────────
     public void Emit(LogEvent logEvent)
@@ -31,7 +32,7 @@ public sealed class ConsoleLog : IConsoleLog, ILogEventSink
         if (string.IsNullOrWhiteSpace(message))
             return;
         
-        DispatcherHelper.PostOnUIThread(() =>
+        _dispatcher.Post(() =>
         {
             Entries.Add($"{logEvent.Timestamp:HH:mm:ss}  {message}");
             while (Entries.Count > Cap)

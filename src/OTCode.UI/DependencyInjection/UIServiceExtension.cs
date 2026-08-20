@@ -18,6 +18,7 @@ public static class UIServiceExtension
         services.AddSingleton<IUriPaths, UriPaths>();
         services.AddSingleton<IThemeService, ThemeService>();
         services.AddSingleton<IHoverTracker, HoverTracker>();
+        services.AddSingleton<IUIDispatcher, UIDispatcher>();
         return services;
     }
 

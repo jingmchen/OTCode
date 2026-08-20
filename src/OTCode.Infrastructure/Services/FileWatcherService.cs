@@ -28,6 +28,8 @@ public sealed partial class FileWatcherService : IFileWatcherService, IDisposabl
     // ─── PUBLIC METHODS ────────────────────────
     public void StartWatching(string path)
     {
+        ArgumentException.ThrowIfNullOrWhiteSpace(path);
+
         ThrowIfDisposed();
         StopWatching();
         

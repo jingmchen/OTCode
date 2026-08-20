@@ -2,7 +2,9 @@
 
 using System.Collections.ObjectModel;
 using OTCode.Core.Abstractions.Infrastructure;
+using OTCode.Core.Abstractions.UI;
 using OTCode.Core.Domains.FileExplorer;
+using OTCode.Core.Enums;
 using OTCode.Core.Options.FileExplorer;
 using OTCode.Infrastructure.Utils;
 
@@ -11,13 +13,14 @@ namespace OTCode.Infrastructure.Services;
 public sealed class FileExplorerService : IFileExplorerService
 {
     private readonly IFileWatcherService _watcher;
+    private readonly IUIDispatcher _dispatcher;
     private string _rootPath = "";
     private int _internalOpCount;
     private bool _disposed;
 
-    public ObservableCollection<FileExplorerItem> RootItems {get;}
-    public ObservableCollection<FileExplorerItem> SelectedItems {get;}
-    public FileExplorerClipboard Clipboard {get;}
+    public ObservableCollection<FileExplorerItem> RootItems {get;} = [];
+    public ObservableCollection<FileExplorerItem> SelectedItems {get;} = [];
+    public FileExplorerClipboard Clipboard {get;} = new();
     public FileExplorerOptions Options {get;}
 
     public event EventHandler<FileExplorerItem>? ItemCreated;
@@ -25,9 +28,13 @@ public sealed class FileExplorerService : IFileExplorerService
     public event EventHandler<string>? ItemDeleted;
     public event EventHandler? ExplorerRefreshed;
 
-    public FileExplorerService(IFileWatcherService watcher, FileExplorerOptions options? = null)
+    public FileExplorerService(
+        IFileWatcherService watcher,
+        IUIDispatcher dispatcher,
+        FileExplorerOptions? options = null)
     {
         _watcher = watcher ?? throw new ArgumentNullException(nameof(watcher));
+        _dispatcher = dispatcher ?? throw new ArgumentNullException(nameof(dispatcher));
         Options = options ?? new FileExplorerOptions();
 
         SanitizeValidate(Options);
@@ -39,24 +46,259 @@ public sealed class FileExplorerService : IFileExplorerService
     // ─── PUBLIC METHODS ────────────────────────
     public void LoadDirectory(string rootPath)
     {
-        //
+        ArgumentException.ThrowIfNullOrWhiteSpace(rootPath);
+
+        _rootPath = Path.TrimEndingDirectorySeparator(rootPath);
+
+        if (!Directory.Exists(_rootPath) && Options.Service.CreateRootIfMissing)
+            Directory.CreateDirectory(_rootPath);
+
+        RebuildRoot();
+
+        if (Options.Service.EnableFileWatcher)
+            _watcher.StartWatching(_rootPath);
+
+        ExplorerRefreshed?.Invoke(this, EventArgs.Empty);
     }
 
-    void RefreshDirectory();
-    FileExplorerItem CreateFile(FileExplorerItem? parent, string name);
-    FileExplorerItem CreateFolder(FileExplorerItem? parent, string name);
-    void RenameItem(FileExplorerItem item, string newName);
-    void DeleteItem(FileExplorerItem item);
-    void DeleteMultipleItems(IEnumerable<FileExplorerItem> items);
-    void ExpandItem(FileExplorerItem item);
-    void CollapseItem(FileExplorerItem item);
-    void ExpandAll(FileExplorerItem item);
-    void CollapseAll(FileExplorerItem item);
-    bool CanDrop(FileExplorerItem item, FileExplorerItem? targetFolder);
-    void MoveItem(FileExplorerItem item, FileExplorerItem? targetFolder);
-    void ClipboardCopyItems(IEnumerable<FileExplorerItem> items);
-    void ClipboardCutItems(IEnumerable<FileExplorerItem> items);
-    void ClipboardPasteItems(FileExplorerItem? targetFolder);
+    public void LoadDirectory()
+    {
+        if (string.IsNullOrWhiteSpace(Options.Service.RootPath))
+            throw new InvalidOperationException($"{nameof(Options.Service.RootPath)} is not set");
+        LoadDirectory(Options.Service.RootPath);
+    }
+
+    public void RefreshDirectory()
+    {
+        if (string.IsNullOrWhiteSpace(_rootPath))
+            return;
+        LoadDirectory(_rootPath);
+    }
+
+    public FileExplorerItem CreateFile(FileExplorerItem? parent, string name)
+        => CreateFileExplorerItem(parent, name, isFile: true);
+    
+    public FileExplorerItem CreateFolder(FileExplorerItem? parent, string name)
+        => CreateFileExplorerItem(parent, name, isFile: false);
+    
+    public void RenameItem(FileExplorerItem item, string newName)
+    {
+        ArgumentNullException.ThrowIfNull(item);
+
+        if (string.IsNullOrWhiteSpace(newName) || newName == item.Name)
+            return;
+        
+        if (newName.IndexOfAny(Path.GetInvalidFileNameChars()) >= 0)
+            return;
+        
+        var parentPath = Path.GetDirectoryName(item.FullPath);
+
+        if (parentPath is null)
+            return; // From official documentation, Path.GetDirectoryName("C:\") returns null
+        
+        var newFullPath = Path.Combine(parentPath, newName);
+
+        if ((File.Exists(newFullPath) || Directory.Exists(newFullPath))
+            && !string.Equals(newFullPath, item.FullPath, StringComparison.OrdinalIgnoreCase))
+            return;
+        
+        SuppressWatcher();
+
+        try
+        {
+            RelocateFileExplorerItem(item, newFullPath);
+            item.IsBeingEdited = false;
+            ItemRenamed?.Invoke(this, item);
+        }
+        finally
+        {
+            ResumeWatcher();
+        }
+    }
+
+    public void DeleteItem(FileExplorerItem item)
+    {
+        ArgumentNullException.ThrowIfNull(item);
+
+        SuppressWatcher();
+
+        try
+        {
+            var path = item.FullPath;
+            
+            if (item.IsDirectory && Directory.Exists(path))
+                Directory.Delete(path, recursive: true);
+            else if (item.IsFile && File.Exists(path))
+                File.Delete(path);
+            
+            ChildrenOf(item.Parent).Remove(item);
+            SelectedItems.Remove(item);
+            ItemDeleted?.Invoke(this, path);
+        }
+        finally
+        {
+            ResumeWatcher();
+        }
+    }
+
+    public void DeleteMultipleItems(IEnumerable<FileExplorerItem> items)
+    {
+        ArgumentNullException.ThrowIfNull(items);
+
+        List<Exception>? failures = null;
+
+        foreach (var item in items.ToList())
+        {
+            try
+            {
+                DeleteItem(item);
+            }
+            catch (Exception ex)
+            {
+                (failures ??= []).Add(ex);
+            }
+        }
+
+        if (failures is { Count: > 0})
+            throw new IOException($"{failures.Count} item(s) could not be deleted.", failures[0]);
+    }
+
+    public void ExpandItem(FileExplorerItem item)
+    {
+        ArgumentNullException.ThrowIfNull(item);
+
+        if (item.IsDirectory)
+            item.IsExpanded = true;
+    }
+
+    public void CollapseItem(FileExplorerItem item)
+    {
+        ArgumentNullException.ThrowIfNull(item);
+
+        if (item.IsDirectory)
+            item.IsExpanded = false;
+    }
+
+    public void ExpandAll(FileExplorerItem item)
+        => SetExpandedRecursive(item, setExpanded: true);
+
+    public void CollapseAll(FileExplorerItem item)
+        => SetExpandedRecursive(item, setExpanded: false);
+
+    public bool CanDrop(FileExplorerItem item, FileExplorerItem? targetFolder)
+    {
+        ArgumentNullException.ThrowIfNull(item);
+
+        if (targetFolder is null)
+            return true;
+        
+        if (!targetFolder.IsDirectory)
+            return false;
+        
+        if (item == targetFolder)
+            return false;
+        
+        return !IsAncestor(ancestor: item, candidate: targetFolder);
+    }
+
+    public void MoveItem(FileExplorerItem item, FileExplorerItem? targetFolder)
+    {
+        ArgumentNullException.ThrowIfNull(item);
+
+        if (!CanDrop(item, targetFolder))
+            return;
+        
+        var targetPath = PathOf(targetFolder);
+        var currentParent = Path.GetDirectoryName(Path.TrimEndingDirectorySeparator(item.FullPath));
+
+        if (string.Equals(currentParent, Path.TrimEndingDirectorySeparator(targetPath), StringComparison.OrdinalIgnoreCase))
+            return;
+        
+        SuppressWatcher();
+
+        try
+        {
+            var newPath = DirectoryHelper.MakeUniquePath(targetPath, item.Name, isFile: item.IsFile);
+
+            RelocateFileExplorerItem(item, newPath);
+            ChildrenOf(item.Parent).Remove(item);
+
+            item.Parent = targetFolder;
+
+            InsertSorted(ChildrenOf(targetFolder), item);
+
+            targetFolder?.IsExpanded = true;
+        }
+        finally
+        {
+            ResumeWatcher();
+        }
+    }
+
+    public void ClipboardCopyItems(IEnumerable<FileExplorerItem> items)
+        => Clipboard.SetCopy(items);
+
+    public void ClipboardCutItems(IEnumerable<FileExplorerItem> items)
+        => Clipboard.SetCut(items);
+
+    public void ClipboardPasteItems(FileExplorerItem? targetFolder)
+    {
+        if (!Clipboard.HasItems)
+            return;
+
+        SuppressWatcher();
+
+        try
+        {
+            var targetPath = targetFolder?.FullPath ?? _rootPath;
+            List<Exception>? failures = null;
+
+            foreach (var item in Clipboard.Snapshot())
+            {
+                try
+                {
+                    if (Clipboard.Operation == ClipboardOperation.Copy)
+                    {
+                        if (item.IsDirectory && (targetPath + Path.DirectorySeparatorChar)
+                                .StartsWith(item.FullPath + Path.DirectorySeparatorChar, StringComparison.OrdinalIgnoreCase))
+                            continue;
+
+                        var newPath = DirectoryHelper.MakeUniquePath(targetPath, item.Name, isFile: item.IsFile);
+
+                        if (item.IsDirectory)
+                            CopyDirectory(item.FullPath, newPath, overwrite: false);
+                        else
+                            File.Copy(item.FullPath, newPath);
+
+                        var copy = BuildSingleItem(newPath, targetFolder);
+                        InsertSorted(ChildrenOf(targetFolder), copy);
+                        ItemCreated?.Invoke(this, copy);
+                    }
+                    else
+                    {
+                        MoveItem(item, targetFolder);
+                        item.IsCut = false;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    (failures ??= []).Add(ex);
+                }
+            }
+
+            if (Clipboard.Operation == ClipboardOperation.Cut)
+                Clipboard.SetNone();
+
+            targetFolder?.IsExpanded = true;
+
+            if (failures is { Count: > 0 })
+                throw new IOException($"{failures.Count} item(s) could not be pasted.", failures[0]);
+        }
+        finally
+        {
+            ResumeWatcher();
+        }
+    }
 
     public void Dispose()
     {
@@ -78,7 +320,7 @@ public sealed class FileExplorerService : IFileExplorerService
         foreach (var item in BuildTree(_rootPath, parent: null))
             RootItems.Add(item);
         
-        if (Options.AutoExpandRootOnOpen)
+        if (Options.Service.AutoExpandRootOnOpen)
             foreach (var root in RootItems)
                 root.IsExpanded = true;
     }
@@ -100,7 +342,7 @@ public sealed class FileExplorerService : IFileExplorerService
         {
             return items;
         }
-        
+
         var applyFolderFilters = !Options.Service.FolderNameFilter.IsWhitelist || parent is null;
 
         foreach (var dir in dirs)
@@ -113,13 +355,13 @@ public sealed class FileExplorerService : IFileExplorerService
                 if (!Options.Service.ShowHiddenFiles && dir.Attributes.HasFlag(FileAttributes.Hidden))
                     continue;
 
-                var item = FileExplorerItemFactory.FromPath(dir.FullName, parent);
+                var item = FileExplorerItemFactory(dir.FullName, parent);
 
-                // Junctions / symlinks can point back up the tree resulting in infinite loop
+                // Junctions and symlinks can point back up the tree resulting in endless cycle recursion
                 if (!dir.Attributes.HasFlag(FileAttributes.ReparsePoint))
                     foreach (var c in BuildTree(dir.FullName, item))
                         item.Children.Add(c);
-
+                
                 items.Add(item);
             }
             catch (Exception ex) when (ex is UnauthorizedAccessException or IOException)
@@ -138,7 +380,7 @@ public sealed class FileExplorerService : IFileExplorerService
                 if (!Options.Service.FileExtensionFilter.Passes(file.Extension))
                     continue;
 
-                items.Add(FileExplorerItemFactory.FromPath(file.FullName, parent));
+                items.Add(FileExplorerItemFactory(file.FullName, parent));
             }
             catch (Exception ex) when (ex is UnauthorizedAccessException or IOException)
             {
@@ -151,6 +393,9 @@ public sealed class FileExplorerService : IFileExplorerService
 
     private FileExplorerItem CreateFileExplorerItem(FileExplorerItem? parent, string name, bool isFile)
     {
+        if (string.IsNullOrWhiteSpace(name))
+            throw new ArgumentException($"{nameof(name)} cannot be null or whitespace.");
+        
         SuppressWatcher();
 
         try
@@ -162,7 +407,7 @@ public sealed class FileExplorerService : IFileExplorerService
             else
                 Directory.CreateDirectory(fullPath);
             
-            var item = FileExplorerItemFactory.FromPath(fullPath, parent);
+            var item = FileExplorerItemFactory(fullPath, parent);
             InsertSorted(ChildrenOf(parent), item);
             ItemCreated?.Invoke(this, item);
 
@@ -172,6 +417,30 @@ public sealed class FileExplorerService : IFileExplorerService
         {
             ResumeWatcher();
         }
+    }
+
+    private static FileExplorerItem FileExplorerItemFactory(string path, FileExplorerItem? parent = null)
+    {
+        FileSystemInfo info = Directory.Exists(path)
+            ? new DirectoryInfo(path)
+            : new FileInfo(path);
+        
+        var attrs = info.Attributes;
+
+        return new FileExplorerItem
+        {
+            Name = info.Name,
+            FullPath = info.FullName,
+            Extension = info is FileInfo fi ? fi.Extension.ToLowerInvariant() : "",
+            IsDirectory = info is DirectoryInfo,
+            Size = info is FileInfo fileInfo ? fileInfo.Length : 0L,
+            CreatedAt = info.CreationTime,
+            LastModifiedAt = info.LastWriteTime,
+            IsHidden = attrs.HasFlag(FileAttributes.Hidden),
+            IsSymLink = attrs.HasFlag(FileAttributes.ReparsePoint),
+            IsReadOnly = attrs.HasFlag(FileAttributes.ReadOnly),
+            Parent = parent
+        };
     }
 
     private static void RelocateFileExplorerItem(FileExplorerItem item, string newPath)
@@ -192,9 +461,31 @@ public sealed class FileExplorerService : IFileExplorerService
             UpdateDescendantPaths(item);
     }
 
+    private static void InsertSorted(ObservableCollection<FileExplorerItem> collection, FileExplorerItem item)
+    {
+        var index = 0;
+
+        for (; index < collection.Count; index++)
+        {
+            var existing = collection[index];
+
+            if (item.IsDirectory && existing.IsFile)
+                break;
+            
+            if (!item.IsDirectory && existing.IsDirectory)
+                continue;
+            
+            if (item.IsDirectory == existing.IsDirectory
+                && string.Compare(item.Name, existing.Name, StringComparison.OrdinalIgnoreCase) < 0)
+                break;
+        }
+
+        collection.Insert(index, item);
+    }
+
     private FileExplorerItem BuildSingleItem(string path, FileExplorerItem? parent)
     {
-        var item = FileExplorerItemFactory.FromPath(path, parent);
+        var item = FileExplorerItemFactory(path, parent);
 
         if (item.IsDirectory)
             foreach (var child in BuildTree(path, item))
@@ -203,11 +494,30 @@ public sealed class FileExplorerService : IFileExplorerService
         return item;
     }
 
+    private static void CopyDirectory(string source, string destination, bool overwrite = false)
+    {
+        Directory.CreateDirectory(destination);
+
+        foreach (var file in Directory.GetFiles(source))
+            File.Copy(file, Path.Combine(destination, Path.GetFileName(file)), overwrite);
+
+        foreach (var dir in Directory.GetDirectories(source))
+        {
+            if ((File.GetAttributes(dir) & FileAttributes.ReparsePoint) != 0)
+                continue;
+            CopyDirectory(dir, Path.Combine(destination, Path.GetFileName(dir)), overwrite);
+        }
+    }
+
     private static void SetExpandedRecursive(FileExplorerItem item, bool setExpanded)
     {
+        ArgumentNullException.ThrowIfNull(item);
+        
         if (!item.IsDirectory)
             return;
+        
         item.IsExpanded = setExpanded;
+
         foreach (var child in item.Children)
             SetExpandedRecursive(child, setExpanded);
     }
@@ -218,6 +528,7 @@ public sealed class FileExplorerService : IFileExplorerService
         {
             if (!item.IsDirectory || !item.IsExpanded)
                 continue;
+            
             paths.Add(item.FullPath);
             CollectExpandedPaths(item.Children, paths);
         }
@@ -229,6 +540,7 @@ public sealed class FileExplorerService : IFileExplorerService
         {
             if (!item.IsDirectory)
                 continue;
+            
             if (paths.Contains(item.FullPath))
             {
                 item.IsExpanded = true;
@@ -240,10 +552,12 @@ public sealed class FileExplorerService : IFileExplorerService
     private static bool IsAncestor(FileExplorerItem ancestor, FileExplorerItem candidate)
     {
         var current = candidate.Parent;
+
         while (current is not null)
         {
             if (current == ancestor)
                 return true;
+            
             current = current.Parent;
         }
         return false;
@@ -264,13 +578,17 @@ public sealed class FileExplorerService : IFileExplorerService
         if (Volatile.Read(ref _internalOpCount) > 0)
             return;
         
-        DispatcherHelper.PostOnUIThread(() =>
+        _dispatcher.Post(() =>
         {
-            var expandedPaths = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-            CollectExpandedPaths(RootItems, expandedPaths);
-            RebuildRoot();
-            RestoreExpandedPaths(RootItems, expandedPaths);
-            ExplorerRefreshed?.Invoke(this, EventArgs.Empty);
+            try
+            {
+                var expandedPaths = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+                CollectExpandedPaths(RootItems, expandedPaths);
+                RebuildRoot();
+                RestoreExpandedPaths(RootItems, expandedPaths);
+                ExplorerRefreshed?.Invoke(this, EventArgs.Empty);
+            }
+            catch { }
         });
     }
 

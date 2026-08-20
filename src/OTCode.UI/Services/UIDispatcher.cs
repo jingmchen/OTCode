@@ -1,12 +1,13 @@
 // Copyright (c) Tan Jing Ming. Use of this software is governed by LICENSE.md.
 
 using System.Windows;
+using OTCode.Core.Abstractions.UI;
 
-namespace OTCode.UI.Utils;
+namespace OTCode.UI.Services;
 
-internal static class DispatcherHelper
+public sealed class UIDispatcher : IUIDispatcher
 {
-    internal static void PostOnUIThread(Action action)
+    public void Post(Action action)
     {
         var dispatcher = Application.Current!.Dispatcher;
 

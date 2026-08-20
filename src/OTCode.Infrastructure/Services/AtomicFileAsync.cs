@@ -55,7 +55,7 @@ public sealed class AtomicFileAsync : IAtomicFileAsync
     }
 
     public Task FlushAsync()
-        => Task.WhenAll(_queue.Values.ToArray());
+        => Task.WhenAll([.. _queue.Values]);
 
     // ─── PRIVATE METHODS ───────────────────────
     private async Task EnqueueAsync(string sourcePath, string destinationPath, Action<string, string> operation)

@@ -11,12 +11,12 @@ using OTCode.Core.Abstractions.UI;
 using OTCode.Core.Configuration.AppSettings;
 using OTCode.Core.Enums;
 using OTCode.UI.Constants;
-using OTCode.UI.Utils;
 
 namespace OTCode.UI.Services;
 
 public sealed class ThemeService : IThemeService
 {
+    private readonly IUIDispatcher _dispatcher;
     private readonly ISettingsProvider<AppSettings> _settings;
     private readonly ILogger<ThemeService> _logger;
     private ResourceDictionary? _themeSlot;
@@ -32,10 +32,15 @@ public sealed class ThemeService : IThemeService
     public AppAccent CurrentAccent {get; private set;}
     public event EventHandler<ThemeChangedEventArgs>? ThemeChanged;
     
-    public ThemeService(ISettingsProvider<AppSettings> settings, ILogger<ThemeService> logger, IUriPaths uriPaths)
+    public ThemeService(
+        IUIDispatcher dispatcher,
+        ISettingsProvider<AppSettings> settings,
+        ILogger<ThemeService> logger,
+        IUriPaths uriPaths)
     {
         ArgumentNullException.ThrowIfNull(uriPaths);
         
+        _dispatcher = dispatcher ?? throw new ArgumentNullException(nameof(dispatcher));
         _settings = settings ?? throw new ArgumentNullException(nameof(settings));
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         _themeTemplate = CompositeFormat.Parse(uriPaths.ThemeTemplate);
@@ -88,7 +93,7 @@ public sealed class ThemeService : IThemeService
         if (theme == CurrentTheme && accent == CurrentAccent)
             return;
 
-        DispatcherHelper.PostOnUIThread(() => ApplyCore(theme, accent, fireEvent: true, persist: true));
+        _dispatcher.Post(() => ApplyCore(theme, accent, fireEvent: true, persist: true));
     }
 
     public void Dispose()
@@ -147,7 +152,7 @@ public sealed class ThemeService : IThemeService
         if (_disposed || CurrentTheme != AppTheme.System)
             return;
 
-        DispatcherHelper.PostOnUIThread(
+        _dispatcher.Post(
             () => ApplyCore(AppTheme.System, CurrentAccent, fireEvent: true, persist: true));
     }
     

@@ -12,11 +12,7 @@ public sealed class FileExplorerItem : NotifyPropertyChangedBase
     public required string Name
     {
         get;
-        set
-        {
-            if (SetField(ref field, value))
-                OnPropertyChanged(nameof(Icon));
-        }
+        set => SetField(ref field, value);
     }
 
     public required string FullPath
@@ -32,11 +28,7 @@ public sealed class FileExplorerItem : NotifyPropertyChangedBase
     public string Extension
     {
         get;
-        set
-        {
-            if (SetField(ref field, value))
-                OnPropertyChanged(nameof(Icon));
-        }
+        set => SetField(ref field, value);
     } = "";
 
     // UI state
@@ -61,11 +53,7 @@ public sealed class FileExplorerItem : NotifyPropertyChangedBase
     public bool IsExpanded
     {
         get;
-        set
-        {
-            if (SetField(ref field, value))
-                OnPropertyChanged(nameof(Icon));
-        }
+        set => SetField(ref field, value);
     }
 
     public bool IsCut
@@ -93,4 +81,22 @@ public sealed class FileExplorerItem : NotifyPropertyChangedBase
     // Hierarchy
     public ObservableCollection<FileExplorerItem> Children {get; set;} = [];
     public FileExplorerItem? Parent {get; set;}
+
+    // Convenience
+    public string FormattedSize => IsDirectory
+        ? ""
+        : Format(Size);
+
+    public string Tooltip => IsDirectory
+        ? $"{FullPath}\nModified: {LastModifiedAt:yyyy-MM-dd HH:mm}"
+        : $"{FullPath}\nSize: {FormattedSize}\nModified: {LastModifiedAt:yyyy-MM-dd HH:mm}";
+    
+    // Helpers
+    private static string Format(long bytes) => bytes switch
+    {
+        < 1_024L => FormattableString.Invariant($"{bytes} B"),
+        < 1_048_576L => FormattableString.Invariant($"{bytes / (double)1_024L:F1} KB"),
+        < 1_073_741_824L => FormattableString.Invariant($"{bytes / (double)1_048_576L:F1} MB"),
+        _ => FormattableString.Invariant($"{bytes / (double)1_073_741_824L:F2} GB")
+    };
 }
