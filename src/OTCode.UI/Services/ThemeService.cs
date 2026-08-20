@@ -36,15 +36,15 @@ public sealed class ThemeService : IThemeService
         IUIDispatcher dispatcher,
         ISettingsProvider<AppSettings> settings,
         ILogger<ThemeService> logger,
-        IUriPaths uriPaths)
+        IResourceUriProvider uri)
     {
-        ArgumentNullException.ThrowIfNull(uriPaths);
+        ArgumentNullException.ThrowIfNull(uri);
         
         _dispatcher = dispatcher ?? throw new ArgumentNullException(nameof(dispatcher));
         _settings = settings ?? throw new ArgumentNullException(nameof(settings));
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-        _themeTemplate = CompositeFormat.Parse(uriPaths.ThemeTemplate);
-        _accentTemplate = CompositeFormat.Parse(uriPaths.AccentTemplate);
+        _themeTemplate = CompositeFormat.Parse(uri.ThemeTemplate);
+        _accentTemplate = CompositeFormat.Parse(uri.AccentTemplate);
 
         Initialize();
     }

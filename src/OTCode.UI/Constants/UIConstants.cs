@@ -12,13 +12,18 @@ internal static class UIConstants
             internal const string Accents = "Accents";
             internal const string Icons = "Icons";
             internal const string Markdowns = "Markdowns";
-            internal const string Themes = "Themes";
             internal const string Styles = "Styles";
+            internal const string Themes = "Themes";
         }
 
         internal static class FileName
         {
-            internal const string TermsConditions = "TERMS_CONDITIONS.md";
+            internal const string AccentTemplate = "{0}Accent.xaml";
+            internal const string IconTemplate = "{0}.png";
+            internal const string MarkdownTemplate = "{0}.md";
+            internal const string StyleTemplate = "{0}.xaml";
+            internal const string ThemeTemplate = "{0}Theme.xaml";
+            internal const string TermsConditionsMarkdown = "TERMS_CONDITIONS.md";
         }
     }
 

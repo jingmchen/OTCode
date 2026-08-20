@@ -2,11 +2,12 @@
 
 namespace OTCode.Core.Abstractions.UI;
 
-public interface IUriPaths
+public interface IResourceUriProvider
 {
-    string ThemeTemplate {get;}
     string AccentTemplate {get;}
-    string StyleTemplate {get;}
     string IconTemplate {get;}
-    string TermsCondition {get;}
+    string MarkdownTemplate {get;}
+    string StyleTemplate {get;}
+    string ThemeTemplate {get;}
+    string TermsConditionsMarkdown {get;}
 }

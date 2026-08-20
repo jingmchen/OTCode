@@ -16,13 +16,13 @@ namespace OTCode.UI.Services;
 public sealed partial class TermsService : ITermsService
 {
     private readonly ISettingsProvider<UserStateSettings> _settings;
-    private readonly IUriPaths _paths;
+    private readonly IResourceUriProvider _uri;
     private readonly ILogger<TermsService> _logger;
     
-    public TermsService(ISettingsProvider<UserStateSettings> settings, IUriPaths paths, ILogger<TermsService> logger)
+    public TermsService(ISettingsProvider<UserStateSettings> settings, IResourceUriProvider uri, ILogger<TermsService> logger)
     {
         _settings = settings ?? throw new ArgumentNullException(nameof(settings));
-        _paths = paths ?? throw new ArgumentNullException(nameof(paths));
+        _uri = uri ?? throw new ArgumentNullException(nameof(uri));
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
 
@@ -67,13 +67,13 @@ public sealed partial class TermsService : ITermsService
     {
         try
         {
-            var resource = Application.GetResourceStream(new Uri(_paths.TermsCondition, UriKind.Relative));
+            var resource = Application.GetResourceStream(new Uri(_uri.TermsConditionsMarkdown, UriKind.Relative));
             using var reader = new StreamReader(resource.Stream, Encoding.UTF8);
             return reader.ReadToEnd();
         }
         catch (Exception ex)
         {
-            LogTermsUnavailable(ex, _paths.TermsCondition);
+            LogTermsUnavailable(ex, _uri.TermsConditionsMarkdown);
             return null;
         }
     }
