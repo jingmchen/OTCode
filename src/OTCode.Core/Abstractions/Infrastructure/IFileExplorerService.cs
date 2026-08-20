@@ -24,8 +24,8 @@ public interface IFileExplorerService
     FileExplorerItem CreateFile(FileExplorerItem? parent, string name);
     FileExplorerItem CreateFolder(FileExplorerItem? parent, string name);
     void RenameItem(FileExplorerItem item, string newName);
-    void DeleteItem(FileExplorerItem item);
-    void DeleteMultipleItems(IEnumerable<FileExplorerItem> items);
+    Task DeleteItemAsync(FileExplorerItem item, CancellationToken ct = default);
+    Task DeleteMultipleItemsAsync(IEnumerable<FileExplorerItem> items, CancellationToken ct = default);
 
     void ExpandItem(FileExplorerItem item);
     void CollapseItem(FileExplorerItem item);
@@ -36,5 +36,5 @@ public interface IFileExplorerService
     void MoveItem(FileExplorerItem item, FileExplorerItem? targetFolder);
     void ClipboardCopyItems(IEnumerable<FileExplorerItem> items);
     void ClipboardCutItems(IEnumerable<FileExplorerItem> items);
-    void ClipboardPasteItems(FileExplorerItem? targetFolder);
+    Task ClipboardPasteItemsAsync(FileExplorerItem? targetFolder, CancellationToken ct = default);
 }

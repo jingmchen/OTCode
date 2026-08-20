@@ -117,20 +117,25 @@ public sealed class FileExplorerService : IFileExplorerService
         }
     }
 
-    public void DeleteItem(FileExplorerItem item)
+    public async Task DeleteItemAsync(FileExplorerItem item, CancellationToken ct = default)
     {
         ArgumentNullException.ThrowIfNull(item);
+
+        var path = item.FullPath;
+        var isDirectory = item.IsDirectory;
+        var isFile = item.IsFile;
 
         SuppressWatcher();
 
         try
         {
-            var path = item.FullPath;
-            
-            if (item.IsDirectory && Directory.Exists(path))
-                Directory.Delete(path, recursive: true);
-            else if (item.IsFile && File.Exists(path))
-                File.Delete(path);
+            await Task.Run(() =>
+            {
+                if (isDirectory && Directory.Exists(path))
+                    Directory.Delete(path, recursive: true);
+                else if (isFile && File.Exists(path))
+                    File.Delete(path);
+            }, ct);
             
             ChildrenOf(item.Parent).Remove(item);
             SelectedItems.Remove(item);
@@ -142,26 +147,57 @@ public sealed class FileExplorerService : IFileExplorerService
         }
     }
 
-    public void DeleteMultipleItems(IEnumerable<FileExplorerItem> items)
+    public async Task DeleteMultipleItemsAsync(IEnumerable<FileExplorerItem> items, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(items);
 
-        List<Exception>? failures = null;
+        var targets = items
+            .Select(i => (item: i, path: i.FullPath, isDirectory: i.IsDirectory, isFile: i.IsFile))
+            .ToList();
 
-        foreach (var item in items.ToList())
+        SuppressWatcher();
+
+        try
         {
-            try
-            {
-                DeleteItem(item);
-            }
-            catch (Exception ex)
-            {
-                (failures ??= []).Add(ex);
-            }
-        }
+            var deleted = new List<FileExplorerItem>(targets.Count);
+            List<Exception>? failures = null;
 
-        if (failures is { Count: > 0})
-            throw new IOException($"{failures.Count} item(s) could not be deleted.", failures[0]);
+            await Task.Run(() =>
+            {
+                foreach (var (item, path, isDirectory, isFile) in targets)
+                {
+                    cancellationToken.ThrowIfCancellationRequested();
+
+                    try
+                    {
+                        if (isDirectory && Directory.Exists(path))
+                            Directory.Delete(path, recursive: true);
+                        else if (isFile && File.Exists(path))
+                            File.Delete(path);
+
+                        deleted.Add(item);
+                    }
+                    catch (Exception ex)
+                    {
+                        (failures ??= []).Add(ex);
+                    }
+                }
+            }, cancellationToken);
+            
+            foreach (var item in deleted)
+            {
+                ChildrenOf(item.Parent).Remove(item);
+                SelectedItems.Remove(item);
+                ItemDeleted?.Invoke(this, item.FullPath);
+            }
+
+            if (failures is { Count: > 0 })
+                throw new IOException($"{failures.Count} item(s) could not be deleted.", failures[0]);
+        }
+        finally
+        {
+            ResumeWatcher();
+        }
     }
 
     public void ExpandItem(FileExplorerItem item)
@@ -242,58 +278,95 @@ public sealed class FileExplorerService : IFileExplorerService
     public void ClipboardCutItems(IEnumerable<FileExplorerItem> items)
         => Clipboard.SetCut(items);
 
-    public void ClipboardPasteItems(FileExplorerItem? targetFolder)
+    public async Task ClipboardPasteItemsAsync(FileExplorerItem? targetFolder, CancellationToken cancellationToken = default)
     {
         if (!Clipboard.HasItems)
             return;
+
+        var operation = Clipboard.Operation;
+        var snapshot = Clipboard.Snapshot();
+        var targetPath = targetFolder?.FullPath ?? _rootPath;
 
         SuppressWatcher();
 
         try
         {
-            var targetPath = targetFolder?.FullPath ?? _rootPath;
-            List<Exception>? failures = null;
-
-            foreach (var item in Clipboard.Snapshot())
+            if (operation == ClipboardOperation.Copy)
             {
-                try
+                var newPaths = new List<string>(snapshot.Count);
+                List<Exception>? failures = null;
+
+                await Task.Run(() =>
                 {
-                    if (Clipboard.Operation == ClipboardOperation.Copy)
+                    foreach (var item in snapshot)
                     {
-                        if (item.IsDirectory && (targetPath + Path.DirectorySeparatorChar)
-                                .StartsWith(item.FullPath + Path.DirectorySeparatorChar, StringComparison.OrdinalIgnoreCase))
-                            continue;
+                        cancellationToken.ThrowIfCancellationRequested();
 
-                        var newPath = DirectoryHelper.MakeUniquePath(targetPath, item.Name, isFile: item.IsFile);
+                        try
+                        {
+                            // Pasting a folder into itself or its own subtree causes recursion loop
+                            if (item.IsDirectory
+                                    && (targetPath + Path.DirectorySeparatorChar)
+                                    .StartsWith(item.FullPath + Path.DirectorySeparatorChar, StringComparison.OrdinalIgnoreCase))
+                                continue;
 
-                        if (item.IsDirectory)
-                            DirectoryHelper.CopyDirectory(item.FullPath, newPath, overwrite: false);
-                        else
-                            File.Copy(item.FullPath, newPath);
+                            var newPath = DirectoryHelper.MakeUniquePath(targetPath, item.Name, isFile: item.IsFile);
 
-                        var copy = BuildSingleItem(newPath, targetFolder);
-                        InsertSorted(ChildrenOf(targetFolder), copy);
-                        ItemCreated?.Invoke(this, copy);
+                            if (item.IsDirectory)
+                                DirectoryHelper.CopyDirectory(item.FullPath, newPath, overwrite: false);
+                            else
+                                File.Copy(item.FullPath, newPath);
+
+                            newPaths.Add(newPath);
+                        }
+                        catch (Exception ex)
+                        {
+                            (failures ??= []).Add(ex);
+                        }
                     }
-                    else
+                }, cancellationToken);
+
+                // Return to UI thread and insert the copied items into the tree
+                foreach (var newPath in newPaths)
+                {
+                    var copy = BuildSingleItem(newPath, targetFolder);
+                    InsertSorted(ChildrenOf(targetFolder), copy);
+                    ItemCreated?.Invoke(this, copy);
+                }
+
+                targetFolder?.IsExpanded = true;
+
+                if (failures is { Count: > 0 })
+                    throw new IOException($"{failures.Count} item(s) could not be pasted.", failures[0]);
+            }
+            else
+            {
+                // Cut = move. A same-volume move is an O(1) rename with no bytes to copy, so this
+                // stays synchronous on the UI thread; MoveItem does the tree fix-up itself.
+                // Cut is move which can stay sync on UI thread
+                List<Exception>? failures = null;
+
+                foreach (var item in snapshot)
+                {
+                    try
                     {
                         MoveItem(item, targetFolder);
                         item.IsCut = false;
                     }
+                    catch (Exception ex)
+                    {
+                        (failures ??= []).Add(ex);
+                    }
                 }
-                catch (Exception ex)
-                {
-                    (failures ??= []).Add(ex);
-                }
-            }
 
-            if (Clipboard.Operation == ClipboardOperation.Cut)
                 Clipboard.SetNone();
 
-            targetFolder?.IsExpanded = true;
+                if (targetFolder is not null)
+                    targetFolder.IsExpanded = true;
 
-            if (failures is { Count: > 0 })
-                throw new IOException($"{failures.Count} item(s) could not be pasted.", failures[0]);
+                if (failures is { Count: > 0 })
+                    throw new IOException($"{failures.Count} item(s) could not be pasted.", failures[0]);
+            }
         }
         finally
         {

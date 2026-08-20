@@ -34,6 +34,7 @@ public sealed class FileExplorerClipboard
         SetNone();
         Operation = operation;
         Items = [.. items];
+
         foreach (var item in Items)
             item.IsCut = cut;
     }
