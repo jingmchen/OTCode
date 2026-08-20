@@ -14,11 +14,11 @@ internal static class DirectoryHelper
         foreach (var dir in Directory.GetDirectories(source))
         {
             if ((File.GetAttributes(dir) & FileAttributes.ReparsePoint) != 0)
-                continue; // Ignore reparse points
+                continue;
             CopyDirectory(dir, Path.Combine(destination, Path.GetFileName(dir)), overwrite);
         }
     }
-
+    
     internal static string MakeUniquePath(string directory, string name, bool isFile = true)
     {
         var baseName = isFile

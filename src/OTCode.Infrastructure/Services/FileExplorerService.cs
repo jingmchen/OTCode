@@ -267,7 +267,7 @@ public sealed class FileExplorerService : IFileExplorerService
                         var newPath = DirectoryHelper.MakeUniquePath(targetPath, item.Name, isFile: item.IsFile);
 
                         if (item.IsDirectory)
-                            CopyDirectory(item.FullPath, newPath, overwrite: false);
+                            DirectoryHelper.CopyDirectory(item.FullPath, newPath, overwrite: false);
                         else
                             File.Copy(item.FullPath, newPath);
 
@@ -469,21 +469,6 @@ public sealed class FileExplorerService : IFileExplorerService
                 item.Children.Add(child);
 
         return item;
-    }
-
-    private static void CopyDirectory(string source, string destination, bool overwrite = false)
-    {
-        Directory.CreateDirectory(destination);
-
-        foreach (var file in Directory.GetFiles(source))
-            File.Copy(file, Path.Combine(destination, Path.GetFileName(file)), overwrite);
-
-        foreach (var dir in Directory.GetDirectories(source))
-        {
-            if ((File.GetAttributes(dir) & FileAttributes.ReparsePoint) != 0)
-                continue;
-            CopyDirectory(dir, Path.Combine(destination, Path.GetFileName(dir)), overwrite);
-        }
     }
 
     private static void SetExpandedRecursive(FileExplorerItem item, bool setExpanded)

@@ -27,4 +27,25 @@ internal static class UIConstants
         internal const string SystemAccentColor = "SystemAccentColor";
         internal const string AccentBrush = "AccentBrush";
     }
+
+    internal static class Service
+    {
+        internal static class FileWatcher
+        {
+            internal const int DebounceMs = 400;
+        }
+    }
+
+    internal static class Control
+    {
+        internal static class FileExplorer
+        {
+            internal const double DragThreshold = 4.0;
+            internal const int AutoExpandDelayMs = 600;
+            internal const double DefaultZoom = 13.0;
+            internal const double MinZoom = 9.0;
+            internal const double MaxZoom = 28.0;
+            internal const double ZoomStep = 1.0;
+        }
+    }
 }
