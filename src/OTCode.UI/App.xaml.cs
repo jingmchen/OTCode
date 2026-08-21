@@ -25,6 +25,21 @@ public sealed partial class App : Application
         DispatcherUnhandledException += OnDispatcherUnhandledException;
     }
 
+    private void RunTermsConditionsGate()
+    {
+        var terms = _services.GetRequiredService<ITermsService>();
+        var accepted = terms.CheckAcceptance();
+
+        if (!accepted)
+        {
+            this.Shutdown();
+            return;
+        }
+
+        MainWindow = _services.GetRequiredService<MainWindow>();
+        MainWindow.Show();
+    }
+
     protected override void OnStartup(StartupEventArgs e)
     {
         base.OnStartup(e);
@@ -36,8 +51,7 @@ public sealed partial class App : Application
 
             ShutdownMode = ShutdownMode.OnLastWindowClose;
 
-            MainWindow = _services.GetRequiredService<MainWindow>();
-            MainWindow.Show();
+            RunTermsConditionsGate();
         }
     }
 
