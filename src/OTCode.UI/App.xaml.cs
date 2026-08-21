@@ -31,18 +31,17 @@ public sealed partial class App : Application
 
         if (_services is { } services)
         {
-            ShutdownMode = ShutdownMode.OnMainWindowClose;
-
+            ShutdownMode = ShutdownMode.OnExplicitShutdown;
             var themeService = services.GetRequiredService<IThemeService>();
-            themeService.Initialize();
-
             RunTermsConditionsGate();
         }
     }
 
     protected override void OnExit(ExitEventArgs e)
     {
-        MainWindow.Closed -= OnMainWindowClosed;
+        MainWindow?.Closed -= OnMainWindowClosed;
+        DispatcherUnhandledException -= OnDispatcherUnhandledException;
+
         base.OnExit(e);
     }
 

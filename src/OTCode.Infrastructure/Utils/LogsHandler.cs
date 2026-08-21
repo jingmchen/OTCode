@@ -26,7 +26,8 @@ public sealed class LogsHandler
 
     public void ArchivePreviousLatestLogFile()
     {
-        if (!File.Exists(_latestLogFilePath)) return;
+        if (!File.Exists(_latestLogFilePath))
+            return;
         
         var date = DateTime.Now.ToString("dd-MMM-yyyy", CultureInfo.InvariantCulture);
         var archiveLogBaseName = Path.GetFileNameWithoutExtension(InfrastructureConstants.UserData.FileName.ArchivedLog);
@@ -35,7 +36,7 @@ public sealed class LogsHandler
         
         for (var i = 1; File.Exists(candidate); i++)
         {
-            candidate = Path.Combine(_logsFolderPath, $"{archiveLogBaseName}-{date}{i}{archiveLogExt}");
+            candidate = Path.Combine(_logsFolderPath, $"{archiveLogBaseName}-{date}({i}){archiveLogExt}");
         }
 
         try
