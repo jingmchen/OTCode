@@ -29,10 +29,6 @@ public sealed partial class TermsDialog : Window
     {
         Loaded -= OnLoaded;
 
-        // FlowDocumentScrollViewer has no scroll events or offset properties of
-        // its own — the real ScrollViewer lives inside its template as the
-        // standard "PART_ContentHost" part, so dig it out after the template
-        // has been applied.
         TermsViewer.ApplyTemplate();
         _scroll = TermsViewer.Template?.FindName("PART_ContentHost", TermsViewer) as ScrollViewer;
 
@@ -54,10 +50,7 @@ public sealed partial class TermsDialog : Window
     {
         if (_reachedEnd || _scroll is null)
             return;
-
-        // ExtentHeight == 0 means the FlowDocument hasn't been formatted yet,
-        // so "nothing to scroll" can't be trusted at that moment. ScrollChanged
-        // fires again once the content gets its real size.
+        
         if (_scroll.ExtentHeight == 0)
             return;
 
@@ -70,7 +63,6 @@ public sealed partial class TermsDialog : Window
 
     private void ActivateAcceptButton()
     {
-        // Latched: scrolling back up afterwards doesn't re-disable Accept.
         _reachedEnd = true;
         AcceptButton.IsEnabled = true;
 
