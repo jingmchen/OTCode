@@ -11,10 +11,11 @@ using OTCode.Core.Abstractions.UI;
 using OTCode.Core.Configuration.AppSettings;
 using OTCode.Core.Enums;
 using OTCode.UI.Constants;
+using OTCode.Core.Logging;
 
 namespace OTCode.UI.Services;
 
-public sealed class ThemeService : IThemeService
+public sealed partial class ThemeService : IThemeService
 {
     private readonly IUIDispatcher _dispatcher;
     private readonly ISettingsProvider<AppSettings> _settings;
@@ -54,7 +55,7 @@ public sealed class ThemeService : IThemeService
     {
         if (_isInitialized)
         {
-            _logger.LogWarning("{ThemeService} is already initialized.", nameof(ThemeService));
+            LogAlreadyInitialized();
             return;
         }
 
@@ -226,4 +227,10 @@ public sealed class ThemeService : IThemeService
 
     private void ThrowIfDisposed()
         => ObjectDisposedException.ThrowIf(_disposed, nameof(ThemeService));
+    
+    [LoggerMessage(
+        EventId = LogEventIDs.UI.ThemeService.AlreadyInitialized,
+        Level = LogLevel.Warning,
+        Message = $"{nameof(ThemeService)} is already initialized.")]
+    private partial void LogAlreadyInitialized();
 }

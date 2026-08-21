@@ -8,8 +8,3 @@ using System.Diagnostics.CodeAnalysis;
     Target = "~M:OTCode.UI.App.OnDispatcherUnhandledException(" +
         "System.Object," +
         "System.Windows.Threading.DispatcherUnhandledExceptionEventArgs)")]
-
-[assembly: SuppressMessage("Performance", "CA1848",
-    Justification = "Runs once at application startup.",
-    Scope = "member",
-    Target = "~M:OTCode.UI.Services.ThemeService.Initialize")]

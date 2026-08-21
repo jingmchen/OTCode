@@ -21,7 +21,7 @@ public sealed partial class TermsDialog : Window
         Loaded += OnLoaded;
     }
 
-    public void CheckAcceptance(string termsConditionsText)
+    public void ShowTermsConditions(string termsConditionsText)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(termsConditionsText);
 

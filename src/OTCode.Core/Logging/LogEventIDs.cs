@@ -27,9 +27,14 @@ public static class LogEventIDs
             public const int UnableToLocateScrollViewer = 2005;
         }
 
+        public static class ThemeService
+        {
+            public const int AlreadyInitialized = 2101;
+        }
+
         public static class FileWatcher
         {
-            public const int UnexpectedError = 2101;
+            public const int UnexpectedError = 2201;
         }
     }
 }
