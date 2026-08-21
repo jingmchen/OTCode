@@ -15,19 +15,25 @@ namespace OTCode.UI.Services;
 
 public sealed partial class TermsService : ITermsService
 {
+    private readonly TermsDialog _termsDialog;
     private readonly ISettingsProvider<UserStateSettings> _settings;
     private readonly IResourceUriProvider _uri;
     private readonly ILogger<TermsService> _logger;
     
-    public TermsService(ISettingsProvider<UserStateSettings> settings, IResourceUriProvider uri, ILogger<TermsService> logger)
+    public TermsService(
+        TermsDialog termsDialog,
+        ISettingsProvider<UserStateSettings> settings,
+        IResourceUriProvider uri,
+        ILogger<TermsService> logger)
     {
+        _termsDialog = termsDialog ?? throw new ArgumentNullException(nameof(termsDialog));
         _settings = settings ?? throw new ArgumentNullException(nameof(settings));
         _uri = uri ?? throw new ArgumentNullException(nameof(uri));
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
 
     // ─── PUBLIC METHODS ────────────────────────
-    public async Task<bool> EnsureAcceptedAsync()
+    public bool CheckAcceptance()
     {
         var text = LoadBundledTermsConditions()
             ?? throw new InvalidDataException($"Bundled Terms Conditions invalid or not found.");
@@ -37,9 +43,9 @@ public sealed partial class TermsService : ITermsService
         if (string.Equals(_settings.Current.Terms.AcceptedTermsHash, hash, StringComparison.Ordinal))
             return true;
         
-        bool accepted = await TermsDialog.ShowStandaloneAsync(text);
+        var accepted = _termsDialog.ShowDialog();
 
-        if (!accepted)
+        if (accepted != true)
         {
             LogTermsDeclined(hash);
             return false;

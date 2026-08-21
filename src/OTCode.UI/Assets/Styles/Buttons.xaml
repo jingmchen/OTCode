@@ -1,0 +1,89 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+  <!-- Keyboard focus ring, drawn as an adorner on top of the button. -->
+  <Style x:Key="ThemedButtonFocusVisualStyle">
+    <Setter Property="Control.Template">
+      <Setter.Value>
+        <ControlTemplate>
+          <Rectangle Margin="2"
+                     RadiusX="3" RadiusY="3"
+                     StrokeThickness="1"
+                     StrokeDashArray="1 2"
+                     Stroke="{DynamicResource ThemeFg0Brush}"
+                     SnapsToDevicePixels="True" />
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
+
+  <!-- Shared template for all themed buttons -->
+  <ControlTemplate x:Key="ThemedButtonTemplate" TargetType="Button">
+    <Grid>
+      <Border x:Name="Chrome"
+              Background="{TemplateBinding Background}"
+              BorderBrush="{TemplateBinding BorderBrush}"
+              BorderThickness="{TemplateBinding BorderThickness}"
+              CornerRadius="4"
+              SnapsToDevicePixels="True" />
+
+      <Border x:Name="StateOverlay"
+              Background="{TemplateBinding Foreground}"
+              CornerRadius="4"
+              Opacity="0"
+              IsHitTestVisible="False" />
+
+      <ContentPresenter Margin="{TemplateBinding Padding}"
+                        HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                        VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                        RecognizesAccessKey="True"
+                        SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+    </Grid>
+
+    <ControlTemplate.Triggers>
+      <!-- Subtle ring on whichever button Enter would activate. -->
+      <Trigger Property="IsDefaulted" Value="True">
+        <Setter TargetName="Chrome" Property="BorderBrush"
+                Value="{DynamicResource ThemeFg0Brush}" />
+      </Trigger>
+      <Trigger Property="IsMouseOver" Value="True">
+        <Setter TargetName="StateOverlay" Property="Opacity" Value="0.08" />
+      </Trigger>
+      <Trigger Property="IsPressed" Value="True">
+        <Setter TargetName="StateOverlay" Property="Opacity" Value="0.16" />
+      </Trigger>
+      <Trigger Property="IsEnabled" Value="False">
+        <Setter Property="Opacity" Value="0.45" />
+      </Trigger>
+    </ControlTemplate.Triggers>
+  </ControlTemplate>
+
+  <!-- TODO: adjust the three brush keys eg ThemeBg1Brush -->
+  <Style x:Key="ThemedButtonStyle" TargetType="Button">
+    <Setter Property="FocusVisualStyle" Value="{StaticResource ThemedButtonFocusVisualStyle}" />
+    <Setter Property="Background" Value="{DynamicResource ThemeBg1Brush}" />
+    <Setter Property="Foreground" Value="{DynamicResource ThemeFg0Brush}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource ThemeFg2Brush}" />
+    <Setter Property="BorderThickness" Value="1" />
+    <Setter Property="Padding" Value="14,6" />
+    <Setter Property="SnapsToDevicePixels" Value="True" />
+    <Setter Property="Template" Value="{StaticResource ThemedButtonTemplate}" />
+  </Style>
+
+  <!-- TODO: adjust Background/BorderBrush. -->
+  <Style x:Key="AccentButtonStyle" TargetType="Button"
+         BasedOn="{StaticResource ThemedButtonStyle}">
+    <Setter Property="Background" Value="{DynamicResource ThemeAccentBrush}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource ThemeAccentBrush}" />
+    <Setter Property="Foreground" Value="White" />
+    <Setter Property="FontWeight" Value="SemiBold" />
+  </Style>
+
+  <!--Editor Frame -->
+  <Style x:Key="EditorFrameStyle" TargetType="Border">
+    <Setter Property="BorderBrush" Value="{DynamicResource ThemeFg2Brush}" />
+    <Setter Property="BorderThickness" Value="1" />
+    <Setter Property="CornerRadius" Value="4" />
+  </Style>
+
+</ResourceDictionary>

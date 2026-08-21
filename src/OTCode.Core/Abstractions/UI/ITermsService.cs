@@ -4,5 +4,5 @@ namespace OTCode.Core.Abstractions.UI;
 
 public interface ITermsService
 {
-    Task<bool> EnsureAcceptedAsync();
+    bool CheckAcceptance();
 }

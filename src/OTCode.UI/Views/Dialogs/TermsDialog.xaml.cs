@@ -3,6 +3,7 @@
 using System.Windows;
 using System.Windows.Controls;
 using Microsoft.Extensions.Logging;
+using OTCode.Core.Logging;
 using OTCode.UI.Utils;
 
 namespace OTCode.UI.Views.Dialogs;
@@ -12,14 +13,15 @@ public sealed partial class TermsDialog : Window
     private readonly ILogger<TermsDialog> _logger;
     private ScrollViewer? _scroll;
     private bool _reachedEnd;
-    private bool _accepted;
 
-    public TermsDialog(string termsConditionText)
+    public TermsDialog(ILogger<TermsDialog> logger, string termsConditionText)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(termsConditionText);
 
+        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+
         InitializeComponent();
-        TermsViewer.Document = MarkdownRenderer.Render(termsConditionText);
+        TermsViewer.Document = MarkdownRenderer.RenderDocument(termsConditionText);
         Loaded += OnLoaded;
     }
 
@@ -36,9 +38,7 @@ public sealed partial class TermsDialog : Window
 
         if (_scroll is null)
         {
-            _logger.LogError("error");
-            // Template part missing (e.g. a restyled control) — fail open
-            // rather than locking the user out of accepting.
+            LogUnableToLocateScrollViewer();
             ActivateAcceptButton();
             return;
         }
@@ -74,7 +74,7 @@ public sealed partial class TermsDialog : Window
         _reachedEnd = true;
         AcceptButton.IsEnabled = true;
 
-        _scrollViewer?.ScrollChanged -= OnTermsScrollChanged;
+        _scroll?.ScrollChanged -= OnTermsScrollChanged;
     }
 
     private void OnAccept(object? sender, RoutedEventArgs e)
@@ -82,4 +82,10 @@ public sealed partial class TermsDialog : Window
 
     private void OnDecline(object? sender, RoutedEventArgs e)
         => DialogResult = false;
+    
+    [LoggerMessage(
+        EventId = LogEventIDs.UI.TermsService.UnableToLocateScrollViewer,
+        Level = LogLevel.Warning,
+        Message = "Could not locate Scroll Viewer part.")]
+    private partial void LogUnableToLocateScrollViewer();
 }
