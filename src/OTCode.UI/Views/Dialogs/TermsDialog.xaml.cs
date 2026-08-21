@@ -14,15 +14,18 @@ public sealed partial class TermsDialog : Window
     private ScrollViewer? _scroll;
     private bool _reachedEnd;
 
-    public TermsDialog(ILogger<TermsDialog> logger, string termsConditionText)
+    public TermsDialog(ILogger<TermsDialog> logger)
     {
-        ArgumentException.ThrowIfNullOrWhiteSpace(termsConditionText);
-
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-
         InitializeComponent();
-        TermsViewer.Document = MarkdownRenderer.RenderDocument(termsConditionText);
         Loaded += OnLoaded;
+    }
+
+    public void CheckAcceptance(string termsConditionsText)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(termsConditionsText);
+
+        TermsViewer.Document = MarkdownRenderer.RenderDocument(termsConditionsText);
     }
 
     private void OnLoaded(object sender, RoutedEventArgs e)
