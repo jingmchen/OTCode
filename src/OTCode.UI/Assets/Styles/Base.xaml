@@ -6,6 +6,7 @@
   <!-- ═══════════════════════════════════════════════════════════ -->
   <!--  WINDOW                                                     -->
   <!-- ═══════════════════════════════════════════════════════════ -->
+  
   <Style TargetType="{x:Type Window}">
     <Setter Property="Background" Value="{DynamicResource ThemeBg0Brush}" />
     <Setter Property="Foreground" Value="{DynamicResource ThemeFg0Brush}" />

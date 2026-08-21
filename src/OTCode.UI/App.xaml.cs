@@ -49,7 +49,7 @@ public sealed partial class App : Application
             var themeService = services.GetRequiredService<IThemeService>();
             themeService.Initialize();
 
-            ShutdownMode = ShutdownMode.OnLastWindowClose;
+            ShutdownMode = ShutdownMode.OnExplicitShutdown;
 
             RunTermsConditionsGate();
         }
