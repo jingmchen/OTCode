@@ -1,11 +1,12 @@
 // Copyright (c) Tan Jing Ming. Use of this software is governed by LICENSE.md.
 
 using Microsoft.Extensions.DependencyInjection;
+using Serilog.Core;
 using OTCode.Core.Abstractions.UI;
 using OTCode.UI.Services;
 using OTCode.UI.ViewModels;
 using OTCode.UI.Views;
-using Serilog.Core;
+using OTCode.UI.Views.Dialogs;
 
 namespace OTCode.UI.DependencyInjection;
 

@@ -15,18 +15,15 @@ namespace OTCode.UI.Services;
 
 public sealed partial class TermsService : ITermsService
 {
-    private readonly TermsDialog _termsDialog;
     private readonly ISettingsProvider<UserStateSettings> _settings;
     private readonly IResourceUriProvider _uri;
     private readonly ILogger<TermsService> _logger;
     
     public TermsService(
-        TermsDialog termsDialog,
         ISettingsProvider<UserStateSettings> settings,
         IResourceUriProvider uri,
         ILogger<TermsService> logger)
     {
-        _termsDialog = termsDialog ?? throw new ArgumentNullException(nameof(termsDialog));
         _settings = settings ?? throw new ArgumentNullException(nameof(settings));
         _uri = uri ?? throw new ArgumentNullException(nameof(uri));
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
@@ -43,7 +40,8 @@ public sealed partial class TermsService : ITermsService
         if (string.Equals(_settings.Current.Terms.AcceptedTermsHash, hash, StringComparison.Ordinal))
             return true;
         
-        var accepted = _termsDialog.ShowDialog();
+        var termsDialog = new TermsDialog(text);
+        var accepted = termsDialog.ShowDialog();
 
         if (accepted != true)
         {
@@ -73,7 +71,7 @@ public sealed partial class TermsService : ITermsService
     {
         try
         {
-            var resource = Application.GetResourceStream(new Uri(_uri.TermsConditionsMarkdown, UriKind.Relative));
+            var resource = Application.GetResourceStream(new Uri(_uri.TermsConditionsMarkdown, UriKind.Absolute));
             using var reader = new StreamReader(resource.Stream, Encoding.UTF8);
             return reader.ReadToEnd();
         }

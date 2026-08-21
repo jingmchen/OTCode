@@ -24,7 +24,6 @@ public static class LogEventIDs
             public const int TermsDeclined = 2002;
             public const int TermsUnavailable = 2003;
             public const int UnableToPersistAcceptance = 2004;
-            public const int UnableToLocateScrollViewer = 2005;
         }
 
         public static class ThemeService

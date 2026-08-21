@@ -75,6 +75,6 @@ public sealed partial class App : Application
             "CLX Transpiler",
             MessageBoxButton.OK,
             MessageBoxImage.Error);
-        e.Handled = true;
+        e.Handled = false;
     }
 }

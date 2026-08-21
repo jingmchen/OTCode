@@ -23,4 +23,8 @@
     <ProjectReference Include="..\OTCode.Transpiler\OTCode.Transpiler.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Resource Include="Assets\**" Exclude="Assets\**\*.axaml" />
+  </ItemGroup>
+
 </Project>
