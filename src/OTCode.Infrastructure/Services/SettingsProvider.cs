@@ -20,6 +20,7 @@ public abstract partial class SettingsProvider<T> : ISettingsProvider<T> where T
         PropertyNameCaseInsensitive = true,
         Converters = {new JsonStringEnumConverter()}
     };
+    protected virtual bool EnableAdditionalLogging => true;
     public T Current {get; private set;} = null!;
 
     protected SettingsProvider(ILogger logger, string settingsPath)
@@ -28,6 +29,7 @@ public abstract partial class SettingsProvider<T> : ISettingsProvider<T> where T
         _settingsPath = settingsPath;
 
         var dir = Path.GetDirectoryName(_settingsPath);
+
         if (!string.IsNullOrEmpty(dir))
             Directory.CreateDirectory(dir);
         
@@ -41,6 +43,22 @@ public abstract partial class SettingsProvider<T> : ISettingsProvider<T> where T
             WriteToDisk(Current);
     }
 
+    public bool TrySave(out Exception? err)
+    {
+        try
+        {
+            Save();
+            err = null;
+            return true;
+        }
+        catch (Exception ex)
+        {
+            err = ex;
+            LogFileUnableToSave(ex, Path.GetFileName(_settingsPath));
+            return false;
+        }
+    }
+
     public void Reload()
     {
         lock(_gate)
@@ -51,15 +69,7 @@ public abstract partial class SettingsProvider<T> : ISettingsProvider<T> where T
     private void WriteToDisk(T settings)
     {
         var json = JsonSerializer.Serialize(settings, _jsonOptions);
-
-        try
-        {
-            AtomicFile.WriteTo(_settingsPath, json);
-        }
-        catch (Exception ex)
-        {
-            LogFileUnableToSave(ex, Path.GetFileName(_settingsPath));
-        }
+        AtomicFile.WriteTo(_settingsPath, json);
     }
 
     private void ReloadCore()
@@ -69,7 +79,9 @@ public abstract partial class SettingsProvider<T> : ISettingsProvider<T> where T
             if (_logger.IsEnabled(LogLevel.Information))
             {
                 var fileName = Path.GetFileName(_settingsPath);
-                LogFileNotFoundCreateDefaults(fileName);
+
+                if (EnableAdditionalLogging)
+                    LogFileNotFoundCreateDefaults(fileName);
             }
             ApplyDefaults();
             return;
@@ -108,30 +120,30 @@ public abstract partial class SettingsProvider<T> : ISettingsProvider<T> where T
     [LoggerMessage(
         EventId = LogEventIDs.Infrastructure.SettingsProvider.FileNotFound,
         Level = LogLevel.Information,
-        Message = "File: '{FileName}' - Unable to be found. Reverting to factory defaults.")]
+        Message = "File: {FileName} - Unable to be found. Reverting to factory defaults.")]
     private partial void LogFileNotFoundCreateDefaults(string fileName);
 
     [LoggerMessage(
         EventId = LogEventIDs.Infrastructure.SettingsProvider.FileUnableToRead,
         Level = LogLevel.Warning,
-        Message = "File: '{FileName}' - Unable to be read. Reverting to factory defaults.")]
+        Message = "File: {FileName} - Unable to be read. Reverting to factory defaults.")]
     private partial void LogFileUnableToReadCreateDefaults(Exception ex, string fileName);
 
     [LoggerMessage(
         EventId = LogEventIDs.Infrastructure.SettingsProvider.FileInvalidOrEmpty,
         Level = LogLevel.Warning,
-        Message = "File: '{FileName}' was empty or invalid. Reverting to factory defaults.")]
+        Message = "File: {FileName} was empty or invalid. Reverting to factory defaults.")]
     private partial void LogFileInvalidOrEmptyCreateDefaults(string fileName);
 
     [LoggerMessage(
         EventId = LogEventIDs.Infrastructure.SettingsProvider.FileUnableToSave,
         Level = LogLevel.Warning,
-        Message = "File: '{FileName}' - Unable to save.")]
+        Message = "File: {FileName} - Unable to save.")]
     private partial void LogFileUnableToSave(Exception ex, string fileName);
 
     [LoggerMessage(
         EventId = LogEventIDs.Infrastructure.SettingsProvider.TempCleanupFailed,
         Level = LogLevel.Debug,
-        Message = "Temp File: Could not be removed at '{Path}'; it may be overwritten on the next successful save.")]
+        Message = "Temp File: Could not be removed at {Path}.")]
     private partial void LogTempCleanupFailed(Exception ex, string path);
 }

@@ -25,31 +25,16 @@ public sealed partial class App : Application
         DispatcherUnhandledException += OnDispatcherUnhandledException;
     }
 
-    private void RunTermsConditionsGate()
-    {
-        var terms = _services.GetRequiredService<ITermsService>();
-        var accepted = terms.CheckAcceptance();
-
-        if (!accepted)
-        {
-            this.Shutdown();
-            return;
-        }
-
-        MainWindow = _services.GetRequiredService<MainWindow>();
-        MainWindow.Show();
-    }
-
     protected override void OnStartup(StartupEventArgs e)
     {
         base.OnStartup(e);
 
         if (_services is { } services)
         {
+            ShutdownMode = ShutdownMode.OnMainWindowClose;
+
             var themeService = services.GetRequiredService<IThemeService>();
             themeService.Initialize();
-
-            ShutdownMode = ShutdownMode.OnExplicitShutdown;
 
             RunTermsConditionsGate();
         }
@@ -57,13 +42,39 @@ public sealed partial class App : Application
 
     protected override void OnExit(ExitEventArgs e)
     {
+        MainWindow.Closed -= OnMainWindowClosed;
+        base.OnExit(e);
+    }
+
+    private void RunTermsConditionsGate()
+    {
+        var terms = _services.GetRequiredService<ITermsService>();
+
+        if (!terms.CheckAcceptance())
+        {
+            _ = ShutdownAsync();
+            return;
+        }
+
+        MainWindow = _services.GetRequiredService<MainWindow>();
+        MainWindow.Closed += OnMainWindowClosed;
+        MainWindow.Show();
+    }
+
+    private async void OnMainWindowClosed(object? sender, EventArgs e)
+    {
+        await ShutdownAsync();
+    }
+    
+    private async Task ShutdownAsync()
+    {
         try
         {
-            _fileWriter.FlushAsync().GetAwaiter().GetResult();
+            await _fileWriter.FlushAsync();
         }
         finally
         {
-            base.OnExit(e);
+            Shutdown();
         }
     }
 

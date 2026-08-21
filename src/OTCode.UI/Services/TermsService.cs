@@ -45,7 +45,7 @@ public sealed partial class TermsService : ITermsService
 
         if (accepted != true)
         {
-            LogTermsDeclined(hash);
+            LogTermsDeclined();
             return false;
         }
         
@@ -53,16 +53,12 @@ public sealed partial class TermsService : ITermsService
         _settings.Current.Terms.AcceptedAtUtc = DateTime.UtcNow;
         _settings.Current.Terms.AcceptedBy = Environment.UserName;
 
-        try
+        if (!_settings.TrySave(out var error) && error is not null)
         {
-            _settings.Save();
-        }
-        catch (Exception ex)
-        {
-            LogUnableToPersistAcceptance(ex);
+            LogUnableToPersistAcceptance(error);
         }
 
-        LogTermsAccepted(hash);
+        LogTermsAccepted();
         return true;
     }
 
@@ -85,14 +81,14 @@ public sealed partial class TermsService : ITermsService
     [LoggerMessage(
         EventId = LogEventIDs.UI.TermsService.TermsAccepted,
         Level = LogLevel.Information,
-        Message = "Terms and Conditions (version {TermsHash}) accepted.")]
-    private partial void LogTermsAccepted(string termsHash);
+        Message = "Terms and Conditions accepted.")]
+    private partial void LogTermsAccepted();
 
     [LoggerMessage(
         EventId = LogEventIDs.UI.TermsService.TermsDeclined,
         Level = LogLevel.Warning,
-        Message = "Terms and Conditions (version {TermsHash}) declined — shutting down application.")]
-    private partial void LogTermsDeclined(string termsHash);
+        Message = "Terms and Conditions declined — shutting down application.")]
+    private partial void LogTermsDeclined();
 
     [LoggerMessage(
         EventId = LogEventIDs.UI.TermsService.TermsUnavailable,

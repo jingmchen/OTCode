@@ -8,6 +8,8 @@ namespace OTCode.Infrastructure.Services;
 
 public sealed class UserStateSettingsProvider : SettingsProvider<UserStateSettings>
 {
+    protected override bool EnableAdditionalLogging => false;
+    
     public UserStateSettingsProvider(ILogger<UserStateSettingsProvider> logger, IAppPaths appPaths)
         : base(logger, appPaths.UserStateSettingsFile)
     {
