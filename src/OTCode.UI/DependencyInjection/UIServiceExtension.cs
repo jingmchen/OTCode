@@ -3,6 +3,8 @@
 using Microsoft.Extensions.DependencyInjection;
 using OTCode.Core.Abstractions.UI;
 using OTCode.UI.Services;
+using OTCode.UI.ViewModels;
+using OTCode.UI.Views;
 using Serilog.Core;
 
 namespace OTCode.UI.DependencyInjection;
@@ -13,20 +15,33 @@ public static class UIServiceExtension
     {
         ArgumentNullException.ThrowIfNull(services);
         
-        services.AddMisc();
+        services.AddSingleton<App>();
+        
+        services.AddConsoleLog();
+        services.AddWindows();
 
+        services.AddSingleton<IFilePickerService, FilePickerService>();
+        services.AddSingleton<IHoverTracker, HoverTracker>();
         services.AddSingleton<IResourceUriProvider, ResourceUriProvider>();
+        services.AddSingleton<ITermsService, TermsService>();
         services.AddSingleton<IThemeService, ThemeService>();
         services.AddSingleton<IHoverTracker, HoverTracker>();
         services.AddSingleton<IUIDispatcher, UIDispatcher>();
         return services;
     }
 
-    private static IServiceCollection AddMisc(this IServiceCollection services)
+    private static IServiceCollection AddConsoleLog(this IServiceCollection services)
     {
         services.AddSingleton<ConsoleLog>();
         services.AddSingleton<IConsoleLog>(sp => sp.GetRequiredService<ConsoleLog>());
         services.AddSingleton<ILogEventSink>(sp => sp.GetRequiredService<ConsoleLog>());
+        return services;
+    }
+
+    private static IServiceCollection AddWindows(this IServiceCollection services)
+    {
+        services.AddSingleton<MainWindow>();
+        services.AddSingleton<MainWindowViewModel>();
         return services;
     }
 }
