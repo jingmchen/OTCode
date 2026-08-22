@@ -36,5 +36,18 @@ public static class LogEventIDs
         {
             public const int AlreadyInitialized = 2101;
         }
+
+        public static class FileExplorerViewModel
+        {
+            public const int FailedToLoadDirectory = 2201;
+            public const int FailedToOpen = 2202;
+            public const int FailedToShowProperties = 2203;
+            public const int FailedToMoveOnDragOver = 2204;
+            public const int FailedToCreate = 2205;
+            public const int FailedToRename = 2206;
+            public const int FailedToPaste = 2207;
+            public const int FailedToDelete = 2208;
+            public const int FailedToRefreshDirectory = 2209;
+        }
     }
 }

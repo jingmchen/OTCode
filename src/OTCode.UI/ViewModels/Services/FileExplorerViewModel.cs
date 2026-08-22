@@ -11,6 +11,7 @@ using OTCode.Core.Domains.Behaviors;
 using OTCode.Core.Domains.FileExplorer;
 using OTCode.UI.Constants;
 using OTCode.Core.Utils;
+using OTCode.Core.Logging;
 
 namespace OTCode.UI.ViewModels.Services;
 
@@ -24,38 +25,38 @@ public sealed partial class FileExplorerViewModel : ObservableObject, IHoverTrac
     private bool _disposed;
 
     [ObservableProperty]
-    private string _statusMessage = "No folder loaded.";
+    public partial string StatusMessage {get; set;} = "No folder loaded.";
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(IsCreating))]
-    private bool _isCreatingFolder;
+    public partial bool IsCreatingFolder {get; set;}
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(IsCreating))]
-    private bool _isCreatingFile;
+    public partial bool IsCreatingFile {get; set;}
 
     [ObservableProperty]
-    private string _newItemName = string.Empty;
+    public partial string NewItemName {get; set;} = "";
 
     [ObservableProperty]
-    private string _renameText = string.Empty;
+    public partial string RenameText {get; set;} = "";
 
     [ObservableProperty]
-    private FileExplorerItem? _contextItem;
+    public partial FileExplorerItem? ContextItem {get; set;}
 
     [ObservableProperty]
-    private bool _hasDirectory;
+    public partial bool HasDirectory {get; set;}
 
     [ObservableProperty]
-    private string _currentRootPath = string.Empty;
+    public partial string CurrentRootPath {get; set;} = "";
 
     [ObservableProperty]
-    private double _zoom = UIConstants.Control.FileExplorer.DefaultZoom;
+    public partial double Zoom {get; set;} = UIConstants.Control.FileExplorer.DefaultZoom;
 
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(DeleteHoveredCommand))]
     [NotifyCanExecuteChangedFor(nameof(BeginRenameHoveredCommand))]
-    private FileExplorerItem? _hoveredItem;
+    public partial FileExplorerItem? HoveredItem {get; set;}
 
     public ObservableCollection<FileExplorerItem> RootItems => _service.RootItems;
     public ObservableCollection<FileExplorerItem> SelectedItems => _service.SelectedItems;
@@ -74,19 +75,6 @@ public sealed partial class FileExplorerViewModel : ObservableObject, IHoverTrac
         _service.ItemRenamed += OnItemRenamed;
         _service.ItemDeleted += OnItemDeleted;
         _service.ExplorerRefreshed += OnExplorerRefreshed;
-    }
-
-    public void Dispose()
-    {
-        if (_disposed)
-            return;
-        
-        _disposed = true;
-
-        _service.ItemCreated -= OnItemCreated;
-        _service.ItemRenamed -= OnItemRenamed;
-        _service.ItemDeleted -= OnItemDeleted;
-        _service.ExplorerRefreshed -= OnExplorerRefreshed;
     }
 
     public void LoadDirectory()
@@ -108,7 +96,7 @@ public sealed partial class FileExplorerViewModel : ObservableObject, IHoverTrac
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Failed to load directory '{Path}'", path);
+            LogFailedToLoadDirectory(ex, path);
             SetStatus($"Could not open '{path}': {ex.Message}");
             return;
         }
@@ -170,6 +158,19 @@ public sealed partial class FileExplorerViewModel : ObservableObject, IHoverTrac
     {
         if (ReferenceEquals(HoveredItem, item))
             HoveredItem = null;
+    }
+
+    public void Dispose()
+    {
+        if (_disposed)
+            return;
+        
+        _disposed = true;
+
+        _service.ItemCreated -= OnItemCreated;
+        _service.ItemRenamed -= OnItemRenamed;
+        _service.ItemDeleted -= OnItemDeleted;
+        _service.ExplorerRefreshed -= OnExplorerRefreshed;
     }
 
     [RelayCommand]
@@ -660,5 +661,12 @@ public sealed partial class FileExplorerViewModel : ObservableObject, IHoverTrac
         return count;
     }
 
-    private void SetStatus(string message) => StatusMessage = message;
+    private void SetStatus(string message)
+        => StatusMessage = message;
+    
+    [LoggerMessage(
+        EventId = LogEventIDs.UI.FileExplorerViewModel.FailedToLoadDirectory,
+        Level = LogLevel.Error,
+        Message = "Failed to load directory at '{Path}'.")]
+    private partial void LogFailedToLoadDirectory(Exception ex, string path);
 }

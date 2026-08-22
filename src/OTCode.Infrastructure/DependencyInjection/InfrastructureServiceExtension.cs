@@ -1,7 +1,9 @@
 // Copyright (c) Tan Jing Ming. Use of this software is governed by LICENSE.md.
 
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using OTCode.Core.Abstractions.Infrastructure;
+using OTCode.Core.Abstractions.UI;
 using OTCode.Core.Configuration.AppSettings;
 using OTCode.Core.Configuration.UserStateSettings;
 using OTCode.Infrastructure.Services;
@@ -21,6 +23,7 @@ public static class InfrastructureServiceExtension
         services.AddSingleton<IAtomicFileAsync, AtomicFileAsync>();
         services.AddSingleton<IFileWatcherService, FileWatcherService>();
         services.AddSingleton<IFileExplorerService, FileExplorerService>();
+        services.TryAddSingleton<IFileExplorerItemActions, FileExplorerItemActions>();
         return services;
     }
 }
