@@ -3,14 +3,12 @@
 using System.Globalization;
 using System.Text;
 using System.Windows;
-using System.Windows.Media;
 using Windows.UI.ViewManagement;
 using Microsoft.Extensions.Logging;
 using OTCode.Core.Abstractions.Infrastructure;
 using OTCode.Core.Abstractions.UI;
 using OTCode.Core.Configuration.AppSettings;
 using OTCode.Core.Enums;
-using OTCode.UI.Constants;
 using OTCode.Core.Logging;
 
 namespace OTCode.UI.Services;
@@ -130,9 +128,6 @@ public sealed partial class ThemeService : IThemeService
 
         _accentSlot?.MergedDictionaries.Clear();
         _accentSlot?.MergedDictionaries.Add(accentDictionary);
-        
-        // Call EditorSyntax to update palette - keep this here, I will implement AvalonEditor later
-        // EditorSyntax.SetTheme(isDark, GetColor(accentDictionary));
 
         if (persist)
             Persist();
@@ -172,20 +167,6 @@ public sealed partial class ThemeService : IThemeService
     
     private static bool IsColorLight(Windows.UI.Color c)
         => (5 * c.G + 2 * c.R + c.B) > 8 * 128;
-    
-    // Color helpers for AvalonEditor
-    private Color GetColor(ResourceDictionary dictionary)
-    {
-        if (dictionary.Contains(UIConstants.XAMLThemeKey.SystemAccentColor)
-            && dictionary[UIConstants.XAMLThemeKey.SystemAccentColor] is Color color)
-                return color;
-        
-        if (dictionary.Contains(UIConstants.XAMLThemeKey.AccentBrush)
-            && dictionary[UIConstants.XAMLThemeKey.AccentBrush] is SolidColorBrush brush)
-                return brush.Color;
-
-        throw new KeyNotFoundException($"Accent keys not found in {CurrentAccent}.");
-    }
 
     // Cache helpers
     private static ResourceDictionary GetOrLoadDictionary<TKey>(

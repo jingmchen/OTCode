@@ -6,7 +6,7 @@ namespace OTCode.Core.Extensions;
 
 public static class AppFontExtension
 {
-    public static string ToExactString(this AppFont font) => font switch
+    public static string ToAvalonEditorFont(this AppFont font) => font switch
     {
         AppFont.SegoeUI => "Segoe UI",
         AppFont.SegoeUIVariable => "Segoe UI Variable",

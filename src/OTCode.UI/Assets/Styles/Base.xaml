@@ -3,9 +3,10 @@
                     xmlns:fonts="clr-namespace:OTCode.Core.Enums;assembly=OTCode.Core">
 
   <!-- ═══════════════════════════════════════════════════════════ -->
-  <!--  APPFONTS                                                   -->
+  <!--  APP FONTS                                                  -->
   <!-- ═══════════════════════════════════════════════════════════ -->
-  <!-- UI fonts -->
+
+  <!-- General UI with fall backs -->
   <FontFamily x:Key="{x:Static fonts:AppFont.SegoeUI}">
     Segoe UI, Arial
   </FontFamily>
@@ -30,7 +31,7 @@
     Verdana, Segoe UI
   </FontFamily>
 
-  <!-- Monospace / coding fonts -->
+  <!-- Monospace and coding fonts with fall backs -->
   <FontFamily x:Key="{x:Static fonts:AppFont.CascadiaCode}">
     Cascadia Code, Consolas, Courier New
   </FontFamily>
@@ -76,7 +77,7 @@
   </FontFamily>
 
   <!-- ═══════════════════════════════════════════════════════════ -->
-  <!--  WINDOW                                                     -->
+  <!--  APPLICATION WINDOW DEFAULTS                                -->
   <!-- ═══════════════════════════════════════════════════════════ -->
 
   <Style TargetType="{x:Type Window}">
@@ -99,77 +100,187 @@
   </Style>
 
   <!-- ═══════════════════════════════════════════════════════════ -->
-  <!--  TEXTBLOCK                                                  -->
+  <!--  TEXT FOUNDATIONS                                           -->
   <!-- ═══════════════════════════════════════════════════════════ -->
-  
-  <Style x:Key="DefaultTextBlockStyle" TargetType="{x:Type TextBlock}" />
-  <Style TargetType="{x:Type TextBlock}" BasedOn="{StaticResource DefaultTextBlockStyle}" />
 
-  <!-- Read-only TextBox. -->
-  <Style x:Key="SelectableTextBlock" TargetType="{x:Type TextBox}">
-    <Setter Property="IsReadOnly" Value="True" />
-    <Setter Property="AcceptsReturn" Value="True" />
-    <Setter Property="TextWrapping" Value="Wrap" />
-    <Setter Property="Background" Value="Transparent" />
-    <Setter Property="BorderThickness" Value="0" />
-    <Setter Property="Padding" Value="0" />
-    <Setter Property="SelectionBrush" Value="{DynamicResource ThemeSelectedBrush}" />
+  <!-- Named foundation for all TextBlock roles -->
+  <Style x:Key="DefaultTextBlockStyle"
+         TargetType="{x:Type TextBlock}" />
+
+  <!-- Applies the foundation automatically to unstyled TextBlock controls -->
+  <Style TargetType="{x:Type TextBlock}"
+         BasedOn="{StaticResource DefaultTextBlockStyle}" />
+
+  <!-- Selectable TextBlock with read-only body text -->
+  <Style x:Key="SelectableTextBlock"
+         TargetType="{x:Type TextBox}">
+
+    <Setter Property="IsReadOnly"
+            Value="True" />
+
+    <Setter Property="AcceptsReturn"
+            Value="True" />
+
+    <Setter Property="TextWrapping"
+            Value="Wrap" />
+
+    <Setter Property="Background"
+            Value="Transparent" />
+
+    <Setter Property="BorderThickness"
+            Value="0" />
+
+    <Setter Property="Padding"
+            Value="0" />
+
+    <Setter Property="SelectionBrush"
+            Value="{DynamicResource ThemeSelectedBrush}" />
+
   </Style>
 
-  <!-- TYPOGRAPHY SCALE -->
-  <Style x:Key="h1" TargetType="{x:Type TextBlock}" BasedOn="{StaticResource DefaultTextBlockStyle}">
-    <Setter Property="FontSize" Value="32" />
-    <Setter Property="FontWeight" Value="Bold" />
-    <Setter Property="Foreground" Value="{DynamicResource ThemeFg0Brush}" />
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <!--  TYPOGRAPHY SCALE                                           -->
+  <!-- ═══════════════════════════════════════════════════════════ -->
+
+  <Style x:Key="h1"
+         TargetType="{x:Type TextBlock}"
+         BasedOn="{StaticResource DefaultTextBlockStyle}">
+
+    <Setter Property="FontSize"
+            Value="32" />
+
+    <Setter Property="FontWeight"
+            Value="Bold" />
+
+    <Setter Property="Foreground"
+            Value="{DynamicResource ThemeFg0Brush}" />
+
   </Style>
 
-  <Style x:Key="h2" TargetType="{x:Type TextBlock}" BasedOn="{StaticResource DefaultTextBlockStyle}">
-    <Setter Property="FontSize" Value="24" />
-    <Setter Property="FontWeight" Value="SemiBold" />
-    <Setter Property="Foreground" Value="{DynamicResource ThemeFg0Brush}" />
+  <Style x:Key="h2"
+         TargetType="{x:Type TextBlock}"
+         BasedOn="{StaticResource DefaultTextBlockStyle}">
+
+    <Setter Property="FontSize"
+            Value="24" />
+
+    <Setter Property="FontWeight"
+            Value="SemiBold" />
+
+    <Setter Property="Foreground"
+            Value="{DynamicResource ThemeFg0Brush}" />
+
   </Style>
 
-  <Style x:Key="h3" TargetType="{x:Type TextBlock}" BasedOn="{StaticResource DefaultTextBlockStyle}">
-    <Setter Property="FontSize" Value="18" />
-    <Setter Property="FontWeight" Value="SemiBold" />
-    <Setter Property="Foreground" Value="{DynamicResource ThemeFg1Brush}" />
+  <Style x:Key="h3"
+         TargetType="{x:Type TextBlock}"
+         BasedOn="{StaticResource DefaultTextBlockStyle}">
+
+    <Setter Property="FontSize"
+            Value="18" />
+
+    <Setter Property="FontWeight"
+            Value="SemiBold" />
+
+    <Setter Property="Foreground"
+            Value="{DynamicResource ThemeFg1Brush}" />
+
   </Style>
 
-  <Style x:Key="subtle" TargetType="{x:Type TextBlock}" BasedOn="{StaticResource DefaultTextBlockStyle}">
-    <Setter Property="Foreground" Value="{DynamicResource ThemeFg2Brush}" />
+  <Style x:Key="subtle"
+         TargetType="{x:Type TextBlock}"
+         BasedOn="{StaticResource DefaultTextBlockStyle}">
+
+    <Setter Property="Foreground"
+            Value="{DynamicResource ThemeFg2Brush}" />
+
   </Style>
 
-  <Style x:Key="caption" TargetType="{x:Type TextBlock}" BasedOn="{StaticResource DefaultTextBlockStyle}">
-    <Setter Property="FontSize" Value="12" />
-    <Setter Property="Foreground" Value="{DynamicResource ThemeFg3Brush}" />
+  <Style x:Key="caption"
+         TargetType="{x:Type TextBlock}"
+         BasedOn="{StaticResource DefaultTextBlockStyle}">
+
+    <Setter Property="FontSize"
+            Value="12" />
+
+    <Setter Property="Foreground"
+            Value="{DynamicResource ThemeFg3Brush}" />
+
   </Style>
 
-  <!-- APP-SPECIFIC TEXT ROLES -->
-  <Style x:Key="paneHeader" TargetType="{x:Type TextBlock}" BasedOn="{StaticResource DefaultTextBlockStyle}">
-    <Setter Property="FontWeight" Value="SemiBold" />
-    <Setter Property="FontSize" Value="11" />
-    <Setter Property="Foreground" Value="{DynamicResource ThemeFg2Brush}" />
-    <Setter Property="Margin" Value="0,4,0,4" />
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <!--  APPLICATION-SPECIFIC TEXT ROLES                            -->
+  <!-- ═══════════════════════════════════════════════════════════ -->
+
+  <!-- Pane Header -->
+  <Style x:Key="paneHeader"
+         TargetType="{x:Type TextBlock}"
+         BasedOn="{StaticResource DefaultTextBlockStyle}">
+
+    <Setter Property="FontWeight"
+            Value="SemiBold" />
+
+    <Setter Property="FontSize"
+            Value="11" />
+
+    <Setter Property="Foreground"
+            Value="{DynamicResource ThemeFg2Brush}" />
+
+    <Setter Property="Margin"
+            Value="0,4,0,4" />
+
   </Style>
 
-  <Style x:Key="statusText" TargetType="{x:Type TextBlock}" BasedOn="{StaticResource DefaultTextBlockStyle}">
-    <Setter Property="FontSize" Value="12" />
-    <Setter Property="Opacity" Value="0.7" />
-    <Setter Property="TextTrimming" Value="CharacterEllipsis" />
+  <!-- Status Text -->
+  <Style x:Key="statusText"
+         TargetType="{x:Type TextBlock}"
+         BasedOn="{StaticResource DefaultTextBlockStyle}">
+
+    <Setter Property="FontSize"
+            Value="12" />
+
+    <Setter Property="Opacity"
+            Value="0.7" />
+
+    <Setter Property="TextTrimming"
+            Value="CharacterEllipsis" />
+
   </Style>
 
-  <Style x:Key="typeTag" TargetType="{x:Type TextBlock}" BasedOn="{StaticResource DefaultTextBlockStyle}">
-    <Setter Property="FontSize" Value="11" />
-    <Setter Property="Foreground" Value="{DynamicResource ThemeFg2Brush}" />
+  <!-- Type Tag -->
+  <Style x:Key="typeTag"
+         TargetType="{x:Type TextBlock}"
+         BasedOn="{StaticResource DefaultTextBlockStyle}">
+
+    <Setter Property="FontSize"
+            Value="11" />
+
+    <Setter Property="Foreground"
+            Value="{DynamicResource ThemeFg2Brush}" />
+
   </Style>
 
-  <Style x:Key="columnHeader" TargetType="{x:Type TextBlock}" BasedOn="{StaticResource DefaultTextBlockStyle}">
-    <Setter Property="FontSize" Value="11" />
-    <Setter Property="Foreground" Value="{DynamicResource ThemeFg2Brush}" />
+  <!-- Column Header -->
+  <Style x:Key="columnHeader"
+         TargetType="{x:Type TextBlock}"
+         BasedOn="{StaticResource DefaultTextBlockStyle}">
+
+    <Setter Property="FontSize"
+            Value="11" />
+
+    <Setter Property="Foreground"
+            Value="{DynamicResource ThemeFg2Brush}" />
+
   </Style>
 
-  <Style x:Key="errorText" TargetType="{x:Type TextBlock}" BasedOn="{StaticResource DefaultTextBlockStyle}">
-    <Setter Property="Foreground" Value="{DynamicResource ThemeErrorBrush}" />
+  <!-- Error Text -->
+  <Style x:Key="errorText"
+         TargetType="{x:Type TextBlock}"
+         BasedOn="{StaticResource DefaultTextBlockStyle}">
+
+    <Setter Property="Foreground"
+            Value="{DynamicResource ThemeErrorBrush}" />
+
   </Style>
 
 </ResourceDictionary>
