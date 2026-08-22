@@ -70,7 +70,7 @@ internal static class MarkdownRenderer
 
         var doc = new FlowDocument
         {
-            FontFamily = SystemFonts.MessageFontFamily, // TODO swap in FontFamily here
+            AppFont = SystemFonts.MessageAppFont, // TODO swap in AppFont here
             FontSize = BodyFontSize,
             TextAlignment = TextAlignment.Left,
             PagePadding = new Thickness(14, 10, 14, 10),

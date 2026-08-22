@@ -56,7 +56,7 @@
   <Style x:Key="mono"
          TargetType="{x:Type TextBox}"
          BasedOn="{StaticResource DefaultTextBoxStyle}">
-    <Setter Property="FontFamily" Value="{DynamicResource MonoFontFamily}" />
+    <Setter Property="AppFont" Value="{DynamicResource MonoAppFont}" />
   </Style>
 
   <!-- CHECKBOX -->

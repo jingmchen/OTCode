@@ -3,6 +3,7 @@
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Threading;
 using Microsoft.Xaml.Behaviors;
 
 namespace OTCode.UI.Behaviors;
@@ -53,7 +54,6 @@ public class DropTargetBehavior : Behavior<Control>
         AssociatedObject.RemoveHandler(DragDrop.DropEvent, new DragEventHandler(OnDrop));
         
         AssociatedObject.AllowDrop = false;
-
         SetIsDropOk(AssociatedObject, false);
         OnDragOverEnded();
 
@@ -62,6 +62,11 @@ public class DropTargetBehavior : Behavior<Control>
 
     protected virtual object? BuildCommandParameter(DragEventArgs e)
         => TryGetPayload(e);
+    
+    protected static string? TryGetPayload(DragEventArgs e)
+        => e.Data.GetDataPresent(DataFormats.Text)
+            ? e.Data.GetData(DataFormats.Text) as string
+            : null;
 
     protected virtual void OnValidDragOver() { }
 
@@ -98,18 +103,22 @@ public class DropTargetBehavior : Behavior<Control>
         OnDragOverEnded();
 
         var parameter = BuildCommandParameter(e);
+        var command = DropCommand;
 
-        if (parameter is not null && DropCommand?.CanExecute(parameter) == true)
-        {
-            DropCommand.Execute(parameter);
-            e.Handled = true;
-        }
-    }
-    
-    private static string? TryGetPayload(DragEventArgs e)
-    {
-        if (!e.Data.GetDataPresent(DataFormats.Text))
-            return null;
-        return e.Data.GetData(DataFormats.Text) as string;
+        if (parameter is null || command is null || !command.CanExecute(parameter))
+            return;
+
+        e.Handled = true;
+
+        ICommand deferredCommand = command;
+        object deferredParameter = parameter;
+        AssociatedObject.Dispatcher.BeginInvoke(
+            DispatcherPriority.Background,
+            new Action(() =>
+            {
+                // Re-check as state may have changed between drop and this turn.
+                if (deferredCommand.CanExecute(deferredParameter))
+                    deferredCommand.Execute(deferredParameter);
+            }));
     }
 }

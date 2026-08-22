@@ -1,13 +1,12 @@
 // Copyright (c) Tan Jing Ming. Use of this software is governed by LICENSE.md.
 
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Input;
 using Microsoft.Xaml.Behaviors;
 
 namespace OTCode.UI.Behaviors;
 
-public sealed class DragSourceBehavior : Behavior<Control>
+public sealed class DragSourceBehavior : Behavior<FrameworkElement>
 {
     private Point _origin;
     private bool _pressed;
@@ -98,10 +97,7 @@ public sealed class DragSourceBehavior : Behavior<Control>
         {
             DragDrop.DoDragDrop(AssociatedObject, data, DragDropEffects.Move);
         }
-        catch
-        {
-            // Nothing to clean up
-        }
+        catch { /* nothing to clean up */ }
     }
     
     private Point PointerPosition(MouseEventArgs e)

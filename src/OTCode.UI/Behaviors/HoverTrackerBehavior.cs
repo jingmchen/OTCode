@@ -1,14 +1,13 @@
 // Copyright (c) Tan Jing Ming. Use of this software is governed by LICENSE.md.
 
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Input;
 using Microsoft.Xaml.Behaviors;
 using OTCode.Core.Abstractions.UI;
 
 namespace OTCode.UI.Behaviors;
 
-public sealed class HoverTrackerBehavior : Behavior<Control>
+public sealed class HoverTrackerBehavior : Behavior<FrameworkElement>
 {
     public static readonly DependencyProperty ItemProperty =
         DependencyProperty.Register(

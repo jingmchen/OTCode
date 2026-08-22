@@ -690,7 +690,7 @@ public sealed class FileExplorerService : IFileExplorerService
                 RestoreExpandedPaths(RootItems, expandedPaths);
                 ExplorerRefreshed?.Invoke(this, EventArgs.Empty);
             }
-            catch { }
+            catch { /* nothing to clean up */ }
         });
     }
 

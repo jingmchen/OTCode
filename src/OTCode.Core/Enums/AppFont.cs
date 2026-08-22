@@ -2,7 +2,7 @@
 
 namespace OTCode.Core.Enums;
 
-public enum FontFamily
+public enum AppFont
 {
     // General UI fonts
     SegoeUI, SegoeUIVariable, Arial, Calibri, Tahoma, Verdana,

@@ -24,7 +24,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Resource Include="Assets\**" Exclude="Assets\**\*.axaml" />
+    <Resource Include="Assets\**" Exclude="Assets\**\*.xaml" />
   </ItemGroup>
 
 </Project>
