@@ -6,6 +6,7 @@ using OTCode.Core.Abstractions.UI;
 using OTCode.Core.Domains.FileExplorer;
 using OTCode.Core.Enums;
 using OTCode.Core.Options.FileExplorer;
+using OTCode.Core.Utils;
 using OTCode.Infrastructure.Factories;
 using OTCode.Infrastructure.Utils;
 
@@ -99,7 +100,7 @@ public sealed class FileExplorerService : IFileExplorerService
         var newFullPath = Path.Combine(parentPath, newName);
 
         if ((File.Exists(newFullPath) || Directory.Exists(newFullPath))
-            && DirectoryHelper.SamePath(newFullPath, item.FullPath))
+            && PathHelper.SamePath(newFullPath, item.FullPath))
             return;
         
         SuppressWatcher();
@@ -237,7 +238,7 @@ public sealed class FileExplorerService : IFileExplorerService
         var targetPath = PathOf(targetFolder);
         var currentParent = Path.GetDirectoryName(Path.TrimEndingDirectorySeparator(item.FullPath));
 
-        if (DirectoryHelper.SamePath(currentParent, targetPath))
+        if (PathHelper.SamePath(currentParent, targetPath))
             return;
         
         var source = item.FullPath;
@@ -299,7 +300,7 @@ public sealed class FileExplorerService : IFileExplorerService
                         try
                         {
                             // Pasting a folder into itself or its own subtree causes recursion loop
-                            if (item.IsDirectory && DirectoryHelper.IsUnder(targetPath, item.FullPath))
+                            if (item.IsDirectory && PathHelper.IsUnder(targetPath, item.FullPath))
                                 continue;
 
                             var newPath = DirectoryHelper.MakeUniquePath(targetPath, item.Name, isFile: item.IsFile);
@@ -343,7 +344,7 @@ public sealed class FileExplorerService : IFileExplorerService
 
                     var currentParent = Path.GetDirectoryName(Path.TrimEndingDirectorySeparator(item.FullPath));
 
-                    if (DirectoryHelper.SamePath(currentParent, targetPath))
+                    if (PathHelper.SamePath(currentParent, targetPath))
                         continue;
 
                     plan.Add((item, item.FullPath, item.Name, item.IsDirectory, item.IsFile));
@@ -671,7 +672,7 @@ public sealed class FileExplorerService : IFileExplorerService
         {
             try
             {
-                var expandedPaths = new HashSet<string>(DirectoryHelper.Comparer);
+                var expandedPaths = new HashSet<string>(PathHelper.Comparer);
                 CollectExpandedPaths(RootItems, expandedPaths);
                 RebuildRoot();
                 RestoreExpandedPaths(RootItems, expandedPaths);
@@ -737,7 +738,7 @@ public sealed class FileExplorerService : IFileExplorerService
 
     // Helpers
     private static bool SameRoot(string a, string b)
-        => DirectoryHelper.SamePath(
+        => PathHelper.SamePath(
             Path.GetPathRoot(Path.GetFullPath(a)),
             Path.GetPathRoot(Path.GetFullPath(b)));
     
