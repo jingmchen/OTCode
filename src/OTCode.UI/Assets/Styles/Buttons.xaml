@@ -45,7 +45,6 @@
                         SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
 
     </Border>
-
     <ControlTemplate.Triggers>
 
       <!-- Accent ring on whichever button Enter would activate -->

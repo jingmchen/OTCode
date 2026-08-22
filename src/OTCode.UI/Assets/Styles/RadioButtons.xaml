@@ -5,39 +5,68 @@
   <!--  COLOR SWATCH RADIO BUTTON                                  -->
   <!-- ═══════════════════════════════════════════════════════════ -->
 
-  <!-- Apply with Style="{StaticResource Swatch}". -->
-  <Style x:Key="Swatch" TargetType="{x:Type RadioButton}">
-    <Setter Property="Foreground" Value="{DynamicResource ThemeFg0Brush}" />
-    <Setter Property="Padding" Value="0" />
-    <Setter Property="Margin" Value="4" />
-    <Setter Property="Background" Value="Transparent" />
-    <Setter Property="Cursor" Value="Hand" />
+  <Style x:Key="Swatch"
+         TargetType="{x:Type RadioButton}">
+
+    <Setter Property="Foreground"
+            Value="{DynamicResource ThemeFg0Brush}" />
+
+    <Setter Property="Padding"
+            Value="0" />
+
+    <Setter Property="Margin"
+            Value="4" />
+
+    <Setter Property="Background"
+            Value="Transparent" />
+
+    <Setter Property="Cursor"
+            Value="Hand" />
+
     <Setter Property="Template">
+
       <Setter.Value>
+
         <ControlTemplate TargetType="{x:Type RadioButton}">
+
           <Border x:Name="SelectionRing"
                   Padding="2"
                   Background="{TemplateBinding Background}"
                   BorderBrush="Transparent"
                   BorderThickness="2"
                   CornerRadius="999">
+
             <ContentPresenter ContentSource="Content"
                               HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                               VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+
           </Border>
           <ControlTemplate.Triggers>
-            <Trigger Property="IsMouseOver" Value="True">
+
+            <Trigger Property="IsMouseOver"
+                     Value="True">
+
               <Setter TargetName="SelectionRing"
                       Property="BorderBrush"
                       Value="{DynamicResource ThemeBorderStrongBrush}" />
+
             </Trigger>
-            <Trigger Property="IsChecked" Value="True">
+
+            <Trigger Property="IsChecked"
+                     Value="True">
+
               <Setter TargetName="SelectionRing"
                       Property="BorderBrush"
                       Value="{DynamicResource AccentBrush}" />
+
             </Trigger>
-            <Trigger Property="IsEnabled" Value="False">
-              <Setter Property="Opacity" Value="0.5" />
+
+            <Trigger Property="IsEnabled"
+                     Value="False">
+
+              <Setter Property="Opacity"
+                      Value="0.5" />
+                      
             </Trigger>
           </ControlTemplate.Triggers>
         </ControlTemplate>
