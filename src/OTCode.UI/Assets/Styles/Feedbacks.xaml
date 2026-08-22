@@ -42,6 +42,7 @@
                 Value="Visible" />
 
         <Trigger.EnterActions>
+        
           <BeginStoryboard x:Name="HorizontalProgressPulse">
 
             <Storyboard RepeatBehavior="Forever"

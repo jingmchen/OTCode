@@ -8,6 +8,7 @@
   <!-- Drawn by WPF's focus adorner above the button template -->
   <Style x:Key="ThemedButtonFocusVisualStyle">
     <Setter Property="Control.Template">
+
       <Setter.Value>
         <ControlTemplate>
 
