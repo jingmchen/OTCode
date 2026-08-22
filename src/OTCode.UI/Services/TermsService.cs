@@ -93,7 +93,7 @@ public sealed partial class TermsService : ITermsService
     [LoggerMessage(
         EventId = LogEventIDs.UI.TermsService.TermsUnavailable,
         Level = LogLevel.Error,
-        Message = "Bundled Terms and Conditions could not be loaded from {Uri} — shutting down application.")]
+        Message = "Bundled Terms and Conditions could not be loaded from '{Uri}' — shutting down application.")]
     private partial void LogTermsUnavailable(Exception ex, string uri);
 
     [LoggerMessage(

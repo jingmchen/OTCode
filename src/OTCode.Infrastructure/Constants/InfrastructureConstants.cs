@@ -41,6 +41,7 @@ internal static class InfrastructureConstants
 
         internal static class FileWatcher
         {
+            internal const int DebounceTimer = 400;
             internal const int InternalBufferSize = 65_536;
         }
     }

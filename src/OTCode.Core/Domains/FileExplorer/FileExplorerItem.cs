@@ -32,12 +32,6 @@ public sealed class FileExplorerItem : NotifyPropertyChangedBase
     } = "";
 
     // UI state
-    public bool IsHovered
-    {
-        get;
-        set => SetField(ref field, value);
-    }
-
     public bool IsSelected
     {
         get;
@@ -57,12 +51,6 @@ public sealed class FileExplorerItem : NotifyPropertyChangedBase
     }
 
     public bool IsCut
-    {
-        get;
-        set => SetField(ref field, value);
-    }
-
-    public bool IsDragOver
     {
         get;
         set => SetField(ref field, value);

@@ -14,6 +14,12 @@ public static class LogEventIDs
             public const int FileUnableToSave = 1004;
             public const int TempCleanupFailed = 1005;
         }
+
+        public static class FileWatcher
+        {
+            public const int FailedToStartMonitoring = 2201;
+            public const int UnexpectedError = 2202;
+        }
     }
 
     public static class UI
@@ -29,11 +35,6 @@ public static class LogEventIDs
         public static class ThemeService
         {
             public const int AlreadyInitialized = 2101;
-        }
-
-        public static class FileWatcher
-        {
-            public const int UnexpectedError = 2201;
         }
     }
 }

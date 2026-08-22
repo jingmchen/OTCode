@@ -32,7 +32,10 @@ public sealed partial class App : Application
         if (_services is { } services)
         {
             ShutdownMode = ShutdownMode.OnExplicitShutdown;
-            var themeService = services.GetRequiredService<IThemeService>();
+            
+            var theme = services.GetRequiredService<IThemeService>();
+            theme.Initialize();
+
             RunTermsConditionsGate();
         }
     }

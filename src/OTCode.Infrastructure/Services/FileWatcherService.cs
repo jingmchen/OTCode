@@ -19,10 +19,10 @@ public sealed partial class FileWatcherService : IFileWatcherService, IDisposabl
 
     public event EventHandler<FileSystemEventArgs>? Changed;
 
-    public FileWatcherService(ILogger<FileWatcherService> logger, TimeSpan debounce)
+    public FileWatcherService(ILogger<FileWatcherService> logger, TimeSpan? debounce)
     {
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-        _debounce = debounce;
+        _debounce = debounce ?? TimeSpan.FromMilliseconds(InfrastructureConstants.Service.FileWatcher.DebounceTimer);
     }
     
     // ─── PUBLIC METHODS ────────────────────────
@@ -36,27 +36,34 @@ public sealed partial class FileWatcherService : IFileWatcherService, IDisposabl
         if (!Directory.Exists(path))
             return;
 
-        var watcher = new FileSystemWatcher(path)
+        try
         {
-            NotifyFilter =
-                NotifyFilters.FileName |
-                NotifyFilters.DirectoryName |
-                NotifyFilters.LastWrite |
-                NotifyFilters.Size |
-                NotifyFilters.Attributes,
-            IncludeSubdirectories = true,
-            InternalBufferSize = InfrastructureConstants.Service.FileWatcher.InternalBufferSize
-        };
+            var watcher = new FileSystemWatcher(path)
+            {
+                NotifyFilter =
+                    NotifyFilters.FileName |
+                    NotifyFilters.DirectoryName |
+                    NotifyFilters.LastWrite |
+                    NotifyFilters.Size |
+                    NotifyFilters.Attributes,
+                IncludeSubdirectories = true,
+                InternalBufferSize = InfrastructureConstants.Service.FileWatcher.InternalBufferSize
+            };
 
-        watcher.Changed += OnWatcherEvent;
-        watcher.Created += OnWatcherEvent;
-        watcher.Deleted += OnWatcherEvent;
-        watcher.Renamed += OnWatcherEvent;
-        watcher.Error += OnError;
-        watcher.EnableRaisingEvents = true;
+            watcher.Changed += OnWatcherEvent;
+            watcher.Created += OnWatcherEvent;
+            watcher.Deleted += OnWatcherEvent;
+            watcher.Renamed += OnWatcherEvent;
+            watcher.Error += OnError;
+            watcher.EnableRaisingEvents = true;
 
-        lock(_gate)
-            _watcher = watcher;
+            lock(_gate)
+                _watcher = watcher;
+        }
+        catch (Exception ex)
+        {
+            LogFailedToStartMonitoring(ex, path);
+        }
     }
 
     public void StopWatching()
@@ -124,9 +131,16 @@ public sealed partial class FileWatcherService : IFileWatcherService, IDisposabl
         => ObjectDisposedException.ThrowIf(_disposed, nameof(FileWatcherService));
     
     [LoggerMessage(
-        EventId = LogEventIDs.UI.FileWatcher.UnexpectedError,
+        EventId = LogEventIDs.Infrastructure.FileWatcher.FailedToStartMonitoring,
+        Level = LogLevel.Error,
+        Message = "Could not start watching '{Path}'"
+    )]
+    private partial void LogFailedToStartMonitoring(Exception ex, string path);
+
+    [LoggerMessage(
+        EventId = LogEventIDs.Infrastructure.FileWatcher.UnexpectedError,
         Level = LogLevel.Information,
-        Message = "FileWatcherService encountered an error."
+        Message = "Encountered an unexpected error."
     )]
     private partial void LogUnexpectedError(Exception ex);
 }

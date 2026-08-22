@@ -23,6 +23,5 @@ public sealed class ServiceOptions
     public string? RootPath { get; set; }
     public bool AutoExpandRootOnOpen {get; set;} = true;
     public bool CreateRootIfMissing {get; set;} = true;
-    public int MaxSearchResults {get; set;} = 200;
     public bool EnableFileWatcher {get; set;} = true;
 }

@@ -44,8 +44,6 @@ public sealed partial class ThemeService : IThemeService
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         _themeTemplate = CompositeFormat.Parse(uri.ThemeTemplate);
         _accentTemplate = CompositeFormat.Parse(uri.AccentTemplate);
-
-        Initialize();
     }
 
     // ─── PUBLIC METHODS ────────────────────────
@@ -212,6 +210,6 @@ public sealed partial class ThemeService : IThemeService
     [LoggerMessage(
         EventId = LogEventIDs.UI.ThemeService.AlreadyInitialized,
         Level = LogLevel.Warning,
-        Message = $"{nameof(ThemeService)} is already initialized.")]
+        Message = "Service is already initialized.")]
     private partial void LogAlreadyInitialized();
 }

@@ -730,10 +730,6 @@ public sealed class FileExplorerService : IFileExplorerService
         if (!service.NewFileExt.StartsWith('.'))
             throw new ArgumentException(
                 $"{nameof(service.NewFileExt)} must include a leading dot.");
-             
-        if (service.MaxSearchResults < 1)
-            throw new ArgumentException(
-                $"{nameof(service.MaxSearchResults)} must be at least 1.");
 
         if (service.NewFileName.IndexOfAny(Path.GetInvalidFileNameChars()) >= 0 ||
             service.NewFolderName.IndexOfAny(Path.GetInvalidFileNameChars()) >= 0)
