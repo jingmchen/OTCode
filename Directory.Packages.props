@@ -28,7 +28,7 @@
   </ItemGroup>
 
   <ItemGroup Label="Others">
-    <PackageVersion Include="CommunityToolkit.Mvvm" Version="8.4.2"/>
+    <PackageVersion Include="CommunityToolkit.Mvvm" Version="8.4.2" />
     <PackageVersion Include="AvalonEdit" Version="6.3.1.120" />
   </ItemGroup>
 
