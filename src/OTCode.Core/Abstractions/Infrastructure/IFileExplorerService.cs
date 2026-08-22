@@ -19,6 +19,7 @@ public interface IFileExplorerService
     event EventHandler? ExplorerRefreshed;
 
     void LoadDirectory(string rootPath);
+    void LoadDirectory();
     void RefreshDirectory();
 
     FileExplorerItem CreateFile(FileExplorerItem? parent, string name);
