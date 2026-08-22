@@ -3,6 +3,7 @@
 using System.Windows;
 using System.Windows.Input;
 using Microsoft.Xaml.Behaviors;
+using OTCode.UI.Constants;
 
 namespace OTCode.UI.Behaviors;
 
@@ -22,7 +23,7 @@ public sealed class DragSourceBehavior : Behavior<FrameworkElement>
             nameof(Threshold),
             typeof(double),
             typeof(DragSourceBehavior),
-            new PropertyMetadata(4.0));
+            new PropertyMetadata(UIConstants.Behavior.DragSource.DragThreshold));
     
     // Stable id to hand to the drop target
     public string? Payload

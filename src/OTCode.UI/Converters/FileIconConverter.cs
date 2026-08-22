@@ -7,6 +7,11 @@ namespace OTCode.UI.Converters;
 
 public sealed class FileIconConverter : IValueConverter
 {
+    private const int Name = 0;
+    private const int Extension = 1;
+    private const int IsDirectory = 2;
+    private const int IsExpanded = 3;
+    
     private FileIconConverter() {}
     public static readonly FileIconConverter Instance = new();
 

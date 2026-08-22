@@ -74,21 +74,32 @@ public class DropTargetBehavior : Behavior<Control>
 
     private void OnDragOver(object? sender, DragEventArgs e)
     {
-        var parameter = BuildCommandParameter(e);
-        var ok = parameter is not null && DropCommand?.CanExecute(parameter) == true;
-        
-        e.Effects = ok
-            ? DragDropEffects.Move
-            : DragDropEffects.None;
-        
-        SetIsDropOk(AssociatedObject, ok);
+        try
+        {
+            var parameter = BuildCommandParameter(e);
+            var ok = parameter is not null && DropCommand?.CanExecute(parameter) == true;
 
-        if (ok)
-            OnValidDragOver();
-        else
+            e.Effects = ok
+                ? DragDropEffects.Move
+                : DragDropEffects.None;
+            
+            SetIsDropOk(AssociatedObject, ok);
+
+            if (ok)
+                OnValidDragOver();
+            else
+                OnDragOverEnded();
+        }
+        catch
+        {
+            e.Effects = DragDropEffects.None;
+            SetIsDropOk(AssociatedObject, false);
             OnDragOverEnded();
-        
-        e.Handled = true;
+        }
+        finally
+        {
+            e.Handled = true;
+        }
     }
 
     private void OnDragLeave(object? sender, RoutedEventArgs e)
@@ -102,7 +113,17 @@ public class DropTargetBehavior : Behavior<Control>
         SetIsDropOk(AssociatedObject, false);
         OnDragOverEnded();
 
-        var parameter = BuildCommandParameter(e);
+        object? parameter;
+
+        try
+        {
+            parameter = BuildCommandParameter(e);
+        }
+        catch
+        {
+            return;
+        }
+
         var command = DropCommand;
 
         if (parameter is null || command is null || !command.CanExecute(parameter))
@@ -112,6 +133,7 @@ public class DropTargetBehavior : Behavior<Control>
 
         ICommand deferredCommand = command;
         object deferredParameter = parameter;
+        
         AssociatedObject.Dispatcher.BeginInvoke(
             DispatcherPriority.Background,
             new Action(() =>

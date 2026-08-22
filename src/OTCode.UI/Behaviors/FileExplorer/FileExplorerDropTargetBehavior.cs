@@ -38,16 +38,16 @@ public sealed class FileExplorerDropTargetBehavior : DropTargetBehavior
 
     private DispatcherTimer? _autoExpandTimer;
 
-    // Enrich the base's text payload with this row's item, so the VM's drop command gets
-    // both the dragged path and the destination folder.
+    // VM drop command gets both the dragged path and destination folder
     protected override object? BuildCommandParameter(DragEventArgs e)
         => TryGetPayload(e) is { } payload
             ? new FileDropRequest(payload, TargetContext)
             : null;
-
+    
     protected override void OnValidDragOver()
     {
-        if (AutoExpand) ArmAutoExpand();
+        if (AutoExpand)
+            ArmAutoExpand();
     }
 
     protected override void OnDragOverEnded() => CancelAutoExpand();
@@ -57,7 +57,7 @@ public sealed class FileExplorerDropTargetBehavior : DropTargetBehavior
         if (_autoExpandTimer is not null)
             return;
         
-        if (TargetContext is not FileExplorerItem { IsDirectory: true, IsExpanded: false } folder)
+        if (TargetContext is not FileExplorerItem {IsDirectory: true, IsExpanded: false} folder)
             return;
 
         _autoExpandTimer = new DispatcherTimer
@@ -68,6 +68,7 @@ public sealed class FileExplorerDropTargetBehavior : DropTargetBehavior
         _autoExpandTimer.Tick += (_, _) =>
         {
             CancelAutoExpand();
+            
             try
             {
                 folder.IsExpanded = true;
