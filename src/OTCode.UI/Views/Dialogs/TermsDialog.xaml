@@ -2,9 +2,12 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         x:Class="OTCode.UI.Views.Dialogs.TermsDialog"
         Title="Terms and Conditions"
-        Width="680" Height="680" MinWidth="540" MinHeight="460"
-        WindowStartupLocation="CenterScreen"
-        Background="{DynamicResource ThemeBg0Brush}">
+        Width="680"
+        Height="680"
+        MinWidth="540"
+        MinHeight="460"
+        Background="{DynamicResource ThemeBg0Brush}"
+        WindowStartupLocation="CenterScreen">
 
   <DockPanel Margin="16">
 
