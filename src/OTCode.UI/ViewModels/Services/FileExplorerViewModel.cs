@@ -193,7 +193,7 @@ public sealed partial class FileExplorerViewModel : ObservableObject, IHoverTrac
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Open of '{Path}' failed", item.FullPath);
+            LogFailedToOpen(ex, item.FullPath);
             SetStatus($"Could not open '{item.Name}': {ex.Message}");
         }
     }
@@ -212,7 +212,7 @@ public sealed partial class FileExplorerViewModel : ObservableObject, IHoverTrac
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "ShowProperties of '{Path}' failed", item.FullPath);
+            LogFailedToShowProperties(ex, item.FullPath);
             SetStatus($"Could not show properties for '{item.Name}': {ex.Message}");
         }
     }
@@ -231,7 +231,7 @@ public sealed partial class FileExplorerViewModel : ObservableObject, IHoverTrac
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Move of '{Path}' failed", source.FullPath);
+            LogFailedToMoveOnDragDrop(ex, source.FullPath);
             SetStatus($"Move failed: {ex.Message}");
         }
     }
@@ -316,7 +316,7 @@ public sealed partial class FileExplorerViewModel : ObservableObject, IHoverTrac
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Create '{Name}' failed", name);
+            LogFailedToCreate(ex, name);
             SetStatus($"Error: {ex.Message}");
         }
         finally
@@ -402,7 +402,7 @@ public sealed partial class FileExplorerViewModel : ObservableObject, IHoverTrac
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Rename of '{Path}' failed", item.FullPath);
+            LogFailedToRename(ex, item.FullPath);
             SetStatus($"Rename failed: {ex.Message}");
         }
         finally
@@ -480,7 +480,7 @@ public sealed partial class FileExplorerViewModel : ObservableObject, IHoverTrac
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Paste failed");
+            LogFailedToPaste(ex);
             SetStatus($"Paste failed: {ex.Message}");
         }
     }
@@ -497,7 +497,7 @@ public sealed partial class FileExplorerViewModel : ObservableObject, IHoverTrac
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Delete of '{Path}' failed", item.FullPath);
+            LogFailedToDelete(ex, item.FullPath);
             SetStatus($"Delete failed: {ex.Message}");
         }
     }
@@ -510,11 +510,11 @@ public sealed partial class FileExplorerViewModel : ObservableObject, IHoverTrac
 
         try
         {
-            await _service.DeleteMultipleItemsAsync(SelectedItems.ToList());
+            await _service.DeleteMultipleItemsAsync([.. SelectedItems]);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Delete of selection failed");
+            LogFailedToDeleteMultiple(ex);
             SetStatus($"Delete failed: {ex.Message}");
         }
     }
@@ -540,7 +540,7 @@ public sealed partial class FileExplorerViewModel : ObservableObject, IHoverTrac
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Refresh failed");
+            LogFailedToRefreshDirectory(ex);
             SetStatus($"Refresh failed: {ex.Message}");
         }
     }
@@ -667,6 +667,60 @@ public sealed partial class FileExplorerViewModel : ObservableObject, IHoverTrac
     [LoggerMessage(
         EventId = LogEventIDs.UI.FileExplorerViewModel.FailedToLoadDirectory,
         Level = LogLevel.Error,
-        Message = "Failed to load directory at '{Path}'.")]
+        Message = "Failed to load directory at: {Path}.")]
     private partial void LogFailedToLoadDirectory(Exception ex, string path);
+
+    [LoggerMessage(
+        EventId = LogEventIDs.UI.FileExplorerViewModel.FailedToOpen,
+        Level = LogLevel.Error,
+        Message = "Failed to open at: {Path}.")]
+    private partial void LogFailedToOpen(Exception ex, string path);
+
+    [LoggerMessage(
+        EventId = LogEventIDs.UI.FileExplorerViewModel.FailedToShowProperties,
+        Level = LogLevel.Error,
+        Message = "Failed to show properties for: {Path}.")]
+    private partial void LogFailedToShowProperties(Exception ex, string path);
+
+    [LoggerMessage(
+        EventId = LogEventIDs.UI.FileExplorerViewModel.FailedToMoveOnDragDrop,
+        Level = LogLevel.Error,
+        Message = "Move from drop command failed at: {Path}")]
+    private partial void LogFailedToMoveOnDragDrop(Exception ex, string path);
+
+    [LoggerMessage(
+        EventId = LogEventIDs.UI.FileExplorerViewModel.FailedToCreate,
+        Level = LogLevel.Error,
+        Message = "Create of item '{Name}' failed.")]
+    private partial void LogFailedToCreate(Exception ex, string name);
+
+    [LoggerMessage(
+        EventId = LogEventIDs.UI.FileExplorerViewModel.FailedToRename,
+        Level = LogLevel.Error,
+        Message = "Rename to '{Name}' failed.")]
+    private partial void LogFailedToRename(Exception ex, string name);
+
+    [LoggerMessage(
+        EventId = LogEventIDs.UI.FileExplorerViewModel.FailedToPaste,
+        Level = LogLevel.Error,
+        Message = "Clipboard paste failed.")]
+    private partial void LogFailedToPaste(Exception ex);
+
+    [LoggerMessage(
+        EventId = LogEventIDs.UI.FileExplorerViewModel.FailedToDelete,
+        Level = LogLevel.Error,
+        Message = "Delete of item failed at: {Path}.")]
+    private partial void LogFailedToDelete(Exception ex, string path);
+
+    [LoggerMessage(
+        EventId = LogEventIDs.UI.FileExplorerViewModel.FailedToDeleteMultiple,
+        Level = LogLevel.Error,
+        Message = "Delete of multiple items failed.")]
+    private partial void LogFailedToDeleteMultiple(Exception ex);
+
+    [LoggerMessage(
+        EventId = LogEventIDs.UI.FileExplorerViewModel.FailedToRefreshDirectory,
+        Level = LogLevel.Error,
+        Message = "Failed to refresh directory.")]
+    private partial void LogFailedToRefreshDirectory(Exception ex);
 }
