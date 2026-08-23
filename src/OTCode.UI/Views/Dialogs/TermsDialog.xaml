@@ -21,13 +21,10 @@
       <!-- Header -->
       <StackPanel DockPanel.Dock="Top"
                   Margin="0,0,0,16">
-
         <TextBlock Style="{StaticResource DialogTitleStyle}"
                    Text="Terms and Conditions" />
-        
         <TextBlock Style="{StaticResource DialogDescriptionStyle}"
                    Text="Please review the terms below. Accepting them is required to use the app." />
-      
       </StackPanel>
 
       <!-- Actions -->
@@ -54,14 +51,13 @@
 
       <!-- Terms document -->
       <Border Style="{StaticResource EditorFrameStyle}">
-
         <FlowDocumentScrollViewer x:Name="TermsViewer"
                                   FontFamily="{DynamicResource {x:Static fonts:AppFont.SegoeUIVariable}}"
                                   FontSize="14"
                                   TextOptions.TextFormattingMode="Ideal"
                                   VerticalScrollBarVisibility="Auto" />
-        
       </Border>
+      
     </DockPanel>
   </Border>
 

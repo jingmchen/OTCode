@@ -17,7 +17,7 @@
   <!--  KEYBOARD COMMANDS                                          -->
   <!-- ═══════════════════════════════════════════════════════════ -->
 
-  <!-- Hover-sensitive commands resolve their target in the view model. -->
+  <!-- Hover-sensitive commands resolve their target in the view model -->
   <UserControl.InputBindings>
 
     <KeyBinding Key="C"
@@ -93,55 +93,73 @@
     <!--  LOCAL BUTTON VARIANTS                                      -->
     <!-- ═══════════════════════════════════════════════════════════ -->
 
-    <!-- Shared templates supply hover, pressed, disabled and focus states. -->
+    <!-- Shared templates supply hover, pressed, disabled and focus states -->
     <Style x:Key="FileExplorerToolButtonStyle"
            TargetType="{x:Type Button}"
            BasedOn="{StaticResource ThemedButtonStyle}">
-      <Setter Property="Background" Value="Transparent" />
-      <Setter Property="BorderBrush" Value="Transparent" />
-      <Setter Property="BorderThickness" Value="0" />
-      <Setter Property="Padding" Value="8,5" />
-      <Setter Property="MinWidth" Value="30" />
-      <Setter Property="MinHeight" Value="30" />
-      <Setter Property="Cursor" Value="Hand" />
+      <Setter Property="Background"
+              Value="Transparent" />
+      <Setter Property="BorderBrush"
+              Value="Transparent" />
+      <Setter Property="BorderThickness"
+              Value="0" />
+      <Setter Property="Padding"
+              Value="8,5" />
+      <Setter Property="MinWidth"
+              Value="30" />
+      <Setter Property="MinHeight"
+              Value="30" />
+      <Setter Property="Cursor"
+              Value="Hand" />
     </Style>
 
     <Style x:Key="FileExplorerBrowseButtonStyle"
            TargetType="{x:Type Button}"
            BasedOn="{StaticResource ThemedButtonStyle}">
-      <Setter Property="Padding" Value="12,5" />
-      <Setter Property="MinHeight" Value="30" />
-      <Setter Property="FontSize" Value="12" />
-      <Setter Property="Cursor" Value="Hand" />
+      <Setter Property="Padding"
+              Value="12,5" />
+      <Setter Property="MinHeight"
+              Value="30" />
+      <Setter Property="FontSize"
+              Value="12" />
+      <Setter Property="Cursor"
+              Value="Hand" />
     </Style>
 
     <Style x:Key="FileExplorerConfirmButtonStyle"
            TargetType="{x:Type Button}"
            BasedOn="{StaticResource AccentButtonStyle}">
-      <Setter Property="MinWidth" Value="34" />
-      <Setter Property="MinHeight" Value="28" />
-      <Setter Property="Padding" Value="8,4" />
+      <Setter Property="MinWidth"
+              Value="34" />
+      <Setter Property="MinHeight"
+              Value="28" />
+      <Setter Property="Padding"
+              Value="8,4" />
     </Style>
 
     <Style x:Key="FileExplorerCancelButtonStyle"
            TargetType="{x:Type Button}"
            BasedOn="{StaticResource ThemedButtonStyle}">
-      <Setter Property="MinWidth" Value="34" />
-      <Setter Property="MinHeight" Value="28" />
-      <Setter Property="Padding" Value="8,4" />
+      <Setter Property="MinWidth"
+              Value="34" />
+      <Setter Property="MinHeight"
+              Value="28" />
+      <Setter Property="Padding"
+              Value="8,4" />
     </Style>
 
     <!-- ═══════════════════════════════════════════════════════════ -->
     <!--  LOCAL MENU VARIANTS                                        -->
     <!-- ═══════════════════════════════════════════════════════════ -->
 
-    <!-- ContextMenu is a Popup and establishes typography explicitly. -->
+    <!-- ContextMenu is a Popup and establishes typography explicitly -->
     <Style x:Key="FileExplorerContextMenuStyle"
            TargetType="{x:Type ContextMenu}"
            BasedOn="{StaticResource {x:Type ContextMenu}}">
       <Setter Property="FontFamily"
               Value="{DynamicResource {x:Static fonts:AppFont.SegoeUIVariable}}" />
-      <Setter Property="FontSize" Value="13" />
+      <Setter Property="FontSize"
+              Value="13" />
     </Style>
 
     <Style x:Key="FileExplorerDangerMenuItemStyle"
@@ -153,13 +171,17 @@
 
     <Style x:Key="FileExplorerMenuSeparatorStyle"
            TargetType="{x:Type Separator}">
-      <Setter Property="Margin" Value="4,3" />
+      <Setter Property="Margin"
+              Value="4,3" />
       <Setter Property="Template">
+
         <Setter.Value>
+
           <ControlTemplate TargetType="{x:Type Separator}">
             <Border Height="1"
                     Background="{DynamicResource ThemeBorderBrush}" />
           </ControlTemplate>
+
         </Setter.Value>
       </Setter>
     </Style>
@@ -171,27 +193,38 @@
     <Style x:Key="FileExplorerPathBoxStyle"
            TargetType="{x:Type TextBox}"
            BasedOn="{StaticResource mono}">
-      <Setter Property="FontSize" Value="12" />
-      <Setter Property="MinHeight" Value="30" />
-      <Setter Property="Padding" Value="8,4" />
-      <Setter Property="VerticalContentAlignment" Value="Center" />
+      <Setter Property="FontSize"
+              Value="12" />
+      <Setter Property="MinHeight"
+              Value="30" />
+      <Setter Property="Padding"
+              Value="8,4" />
+      <Setter Property="VerticalContentAlignment"
+              Value="Center" />
     </Style>
 
     <Style x:Key="FileExplorerInlineInputStyle"
            TargetType="{x:Type TextBox}"
            BasedOn="{StaticResource DefaultTextBoxStyle}">
-      <Setter Property="FontSize" Value="12" />
-      <Setter Property="MinHeight" Value="28" />
-      <Setter Property="Padding" Value="8,4" />
-      <Setter Property="VerticalContentAlignment" Value="Center" />
+      <Setter Property="FontSize"
+              Value="12" />
+      <Setter Property="MinHeight"
+              Value="28" />
+      <Setter Property="Padding"
+              Value="8,4" />
+      <Setter Property="VerticalContentAlignment"
+              Value="Center" />
     </Style>
 
     <Style x:Key="FileExplorerRenameBoxStyle"
            TargetType="{x:Type TextBox}"
            BasedOn="{StaticResource FileExplorerInlineInputStyle}">
-      <Setter Property="MinWidth" Value="100" />
-      <Setter Property="MinHeight" Value="26" />
-      <Setter Property="Padding" Value="6,2" />
+      <Setter Property="MinWidth"
+              Value="100" />
+      <Setter Property="MinHeight"
+              Value="26" />
+      <Setter Property="Padding"
+              Value="6,2" />
     </Style>
 
     <!-- ═══════════════════════════════════════════════════════════ -->
@@ -201,13 +234,21 @@
     <Style x:Key="FileExplorerNameTextStyle"
            TargetType="{x:Type TextBlock}"
            BasedOn="{StaticResource DefaultTextBlockStyle}">
-      <Setter Property="VerticalAlignment" Value="Center" />
-      <Setter Property="TextTrimming" Value="CharacterEllipsis" />
-      <Setter Property="IsHitTestVisible" Value="False" />
+      <Setter Property="VerticalAlignment"
+              Value="Center" />
+      <Setter Property="TextTrimming"
+              Value="CharacterEllipsis" />
+      <Setter Property="IsHitTestVisible"
+              Value="False" />
+
       <Style.Triggers>
-        <DataTrigger Binding="{Binding IsDirectory}" Value="True">
-          <Setter Property="FontWeight" Value="SemiBold" />
+
+        <DataTrigger Binding="{Binding IsDirectory}"
+                     Value="True">
+          <Setter Property="FontWeight"
+                  Value="SemiBold" />
         </DataTrigger>
+
       </Style.Triggers>
     </Style>
 
@@ -216,9 +257,12 @@
            BasedOn="{StaticResource caption}">
       <Setter Property="FontFamily"
               Value="{DynamicResource {x:Static fonts:AppFont.CascadiaMono}}" />
-      <Setter Property="FontSize" Value="11" />
-      <Setter Property="VerticalAlignment" Value="Center" />
-      <Setter Property="IsHitTestVisible" Value="False" />
+      <Setter Property="FontSize"
+              Value="11" />
+      <Setter Property="VerticalAlignment"
+              Value="Center" />
+      <Setter Property="IsHitTestVisible"
+              Value="False" />
     </Style>
 
     <!-- ═══════════════════════════════════════════════════════════ -->
@@ -228,18 +272,29 @@
     <Style x:Key="FileExplorerRowStyle"
            TargetType="{x:Type Border}"
            BasedOn="{StaticResource AppSurfaceStyle}">
-      <Setter Property="Background" Value="Transparent" />
-      <Setter Property="BorderBrush" Value="Transparent" />
-      <Setter Property="BorderThickness" Value="1" />
-      <Setter Property="CornerRadius" Value="5" />
-      <Setter Property="Padding" Value="7,1" />
-      <Setter Property="Margin" Value="2,1" />
-      <Setter Property="MinHeight" Value="30" />
-      <Setter Property="Cursor" Value="Hand" />
-      <Setter Property="SnapsToDevicePixels" Value="True" />
+      <Setter Property="Background"
+              Value="Transparent" />
+      <Setter Property="BorderBrush"
+              Value="Transparent" />
+      <Setter Property="BorderThickness"
+              Value="1" />
+      <Setter Property="CornerRadius"
+              Value="5" />
+      <Setter Property="Padding"
+              Value="7,1" />
+      <Setter Property="Margin"
+              Value="2,1" />
+      <Setter Property="MinHeight"
+              Value="30" />
+      <Setter Property="Cursor"
+              Value="Hand" />
+      <Setter Property="SnapsToDevicePixels"
+              Value="True" />
 
       <Style.Triggers>
-        <Trigger Property="IsMouseOver" Value="True">
+
+        <Trigger Property="IsMouseOver"
+                 Value="True">
           <Setter Property="Background"
                   Value="{DynamicResource ThemeHoverBrush}" />
         </Trigger>
@@ -252,26 +307,31 @@
         </DataTrigger>
 
         <MultiDataTrigger>
+
           <MultiDataTrigger.Conditions>
-            <Condition Binding="{Binding IsSelected}" Value="True" />
+            <Condition Binding="{Binding IsSelected}"
+                       Value="True" />
             <Condition Binding="{Binding IsMouseOver,
                                          RelativeSource={RelativeSource Self}}"
                        Value="True" />
           </MultiDataTrigger.Conditions>
+
           <Setter Property="Background"
                   Value="{DynamicResource AccentSubtleBrush}" />
           <Setter Property="BorderBrush"
                   Value="{DynamicResource AccentHoverBrush}" />
+
         </MultiDataTrigger>
 
         <DataTrigger Binding="{Binding (behaviorsfileexplorer:FileExplorerDropTargetBehavior.IsDropOk),
-                                       RelativeSource={RelativeSource Self}}"
+                              RelativeSource={RelativeSource Self}}"
                      Value="True">
           <Setter Property="Background"
                   Value="{DynamicResource ThemeSelectedBrush}" />
           <Setter Property="BorderBrush"
                   Value="{DynamicResource AccentBrush}" />
         </DataTrigger>
+
       </Style.Triggers>
     </Style>
 
@@ -280,17 +340,23 @@
            BasedOn="{StaticResource InheritedForegroundControlStyle}">
       <Setter Property="IsExpanded"
               Value="{Binding IsExpanded, Mode=TwoWay}" />
-      <Setter Property="Background" Value="Transparent" />
-      <Setter Property="Padding" Value="0" />
-      <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-      <Setter Property="Focusable" Value="True" />
+      <Setter Property="Background"
+              Value="Transparent" />
+      <Setter Property="Padding"
+              Value="0" />
+      <Setter Property="HorizontalContentAlignment"
+              Value="Stretch" />
+      <Setter Property="Focusable"
+              Value="True" />
     </Style>
 
   </UserControl.Resources>
 
-  <!-- Establish the neutral surface/foreground pair once for the control. -->
+  <!-- Neutral surface/foreground pair for control -->
   <Border Style="{StaticResource AppSurfaceStyle}">
+
     <Grid>
+
       <Grid.RowDefinitions>
         <RowDefinition Height="Auto" />
         <RowDefinition Height="Auto" />
@@ -308,7 +374,9 @@
               BorderThickness="0,0,0,1"
               CornerRadius="0"
               Padding="8,6">
+
         <Grid>
+
           <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto" />
             <ColumnDefinition Width="*" />
@@ -324,7 +392,7 @@
                      VerticalAlignment="Center"
                      IsHitTestVisible="False" />
 
-          <!-- OneWay: Enter commits the current text in code-behind. -->
+          <!-- OneWay: Enter commits the current text in code-behind -->
           <TextBox Grid.Column="1"
                    x:Name="PathBox"
                    Style="{StaticResource FileExplorerPathBoxStyle}"
@@ -338,6 +406,7 @@
                   Margin="6,0,0,0"
                   ToolTip="Choose a folder"
                   Click="OnBrowseClick" />
+
         </Grid>
       </Border>
 
@@ -351,30 +420,35 @@
               BorderThickness="0,0,0,1"
               Padding="5,4"
               IsEnabled="{Binding HasDirectory}">
+
         <WrapPanel Orientation="Horizontal">
 
           <Button Style="{StaticResource FileExplorerToolButtonStyle}"
                   Command="{Binding BeginCreateFileCommand}"
                   CommandParameter="{Binding ContextItem}"
                   ToolTip="New file">
+
             <Rectangle Width="15"
                        Height="15"
                        Fill="{Binding Foreground,
-                                      RelativeSource={RelativeSource AncestorType={x:Type Button}}}"
+                             RelativeSource={RelativeSource AncestorType={x:Type Button}}}"
                        OpacityMask="{StaticResource MaskNewFile}"
                        IsHitTestVisible="False" />
+
           </Button>
 
           <Button Style="{StaticResource FileExplorerToolButtonStyle}"
                   Command="{Binding BeginCreateFolderCommand}"
                   CommandParameter="{Binding ContextItem}"
                   ToolTip="New folder (Ctrl+Shift+N)">
+
             <Rectangle Width="15"
                        Height="15"
                        Fill="{Binding Foreground,
-                                      RelativeSource={RelativeSource AncestorType={x:Type Button}}}"
+                             RelativeSource={RelativeSource AncestorType={x:Type Button}}}"
                        OpacityMask="{StaticResource MaskNewFolder}"
                        IsHitTestVisible="False" />
+
           </Button>
 
           <Button Style="{StaticResource FileExplorerToolButtonStyle}"
@@ -383,9 +457,10 @@
             <Rectangle Width="15"
                        Height="15"
                        Fill="{Binding Foreground,
-                                      RelativeSource={RelativeSource AncestorType={x:Type Button}}}"
+                             RelativeSource={RelativeSource AncestorType={x:Type Button}}}"
                        OpacityMask="{StaticResource MaskRefresh}"
                        IsHitTestVisible="False" />
+
           </Button>
 
           <Button Style="{StaticResource FileExplorerToolButtonStyle}"
@@ -394,11 +469,11 @@
             <Rectangle Width="15"
                        Height="15"
                        Fill="{Binding Foreground,
-                                      RelativeSource={RelativeSource AncestorType={x:Type Button}}}"
+                             RelativeSource={RelativeSource AncestorType={x:Type Button}}}"
                        OpacityMask="{StaticResource MaskCollapse}"
                        IsHitTestVisible="False" />
-          </Button>
 
+          </Button>
         </WrapPanel>
       </Border>
 
@@ -412,7 +487,8 @@
               BorderThickness="0,0,0,1"
               Padding="8,6"
               Visibility="{Binding IsCreating,
-                                   Converter={StaticResource BoolToVisibility}}">
+                          Converter={StaticResource BoolToVisibility}}">
+
         <StackPanel Orientation="Horizontal"
                     VerticalAlignment="Center">
 
@@ -421,44 +497,47 @@
                      Margin="0,0,8,0"
                      VerticalAlignment="Center"
                      Visibility="{Binding IsCreatingFolder,
-                                          Converter={StaticResource BoolToVisibility}}" />
+                                 Converter={StaticResource BoolToVisibility}}" />
 
           <TextBlock Style="{StaticResource subtle}"
                      Text="File name"
                      Margin="0,0,8,0"
                      VerticalAlignment="Center"
                      Visibility="{Binding IsCreatingFile,
-                                          Converter={StaticResource BoolToVisibility}}" />
+                                 Converter={StaticResource BoolToVisibility}}" />
 
           <TextBox Style="{StaticResource FileExplorerInlineInputStyle}"
                    Width="200"
                    Margin="0,0,8,0"
                    Text="{Binding NewItemName,
-                                  UpdateSourceTrigger=PropertyChanged}" />
+                         UpdateSourceTrigger=PropertyChanged}" />
 
           <Button Style="{StaticResource FileExplorerConfirmButtonStyle}"
                   Command="{Binding ConfirmCreateCommand}"
                   Margin="0,0,6,0"
                   ToolTip="Create">
+
             <Rectangle Width="12"
                        Height="12"
                        Fill="{Binding Foreground,
-                                      RelativeSource={RelativeSource AncestorType={x:Type Button}}}"
+                             RelativeSource={RelativeSource AncestorType={x:Type Button}}}"
                        OpacityMask="{StaticResource MaskCheck}"
                        IsHitTestVisible="False" />
+
           </Button>
 
           <Button Style="{StaticResource FileExplorerCancelButtonStyle}"
                   Command="{Binding CancelCreateCommand}"
                   ToolTip="Cancel">
+
             <Rectangle Width="12"
                        Height="12"
                        Fill="{Binding Foreground,
-                                      RelativeSource={RelativeSource AncestorType={x:Type Button}}}"
+                             RelativeSource={RelativeSource AncestorType={x:Type Button}}}"
                        OpacityMask="{StaticResource MaskClose}"
                        IsHitTestVisible="False" />
-          </Button>
 
+          </Button>
         </StackPanel>
       </Border>
 
@@ -483,6 +562,7 @@
                 PreviewMouseLeftButtonUp="OnTreePreviewMouseLeftButtonUp">
 
         <i:Interaction.Behaviors>
+
           <behaviors:WheelRouterBehavior
               CtrlWheelCommand="{Binding ApplyZoomCommand}"
               ShiftWheelCommand="{Binding StepSelectionCommand}" />
@@ -491,9 +571,10 @@
               DropCommand="{Binding DropCommand}"
               TargetContext="{x:Null}"
               AutoExpand="False" />
-        </i:Interaction.Behaviors>
 
+        </i:Interaction.Behaviors>
         <TreeView.Resources>
+
           <!-- FileExplorerRowStyle owns multi-selection rendering. -->
           <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}"
                            Color="Transparent" />
@@ -506,94 +587,98 @@
 
             <Border Style="{StaticResource FileExplorerRowStyle}"
                     Opacity="{Binding IsCut,
-                                      Converter={x:Static conv:BoolToOpacityConverter.Instance}}"
+                             Converter={x:Static conv:BoolToOpacityConverter.Instance}}"
                     ToolTip="{Binding Tooltip}"
                     Tag="{Binding DataContext,
-                                  RelativeSource={RelativeSource AncestorType={x:Type controls:FileExplorerControl}}}">
+                         RelativeSource={RelativeSource AncestorType={x:Type controls:FileExplorerControl}}}">
 
               <i:Interaction.Behaviors>
+
                 <behaviors:HoverTrackerBehavior
                     Item="{Binding}"
                     Tracker="{Binding DataContext,
-                                      RelativeSource={RelativeSource AncestorType={x:Type controls:FileExplorerControl}}}" />
+                             RelativeSource={RelativeSource AncestorType={x:Type controls:FileExplorerControl}}}" />
 
-                <behaviors:DragSourceBehavior Payload="{Binding FullPath}" />
+                <behaviors:DragSourceBehavior
+                    Payload="{Binding FullPath}" />
 
                 <behaviorsfileexplorer:FileExplorerDropTargetBehavior
                     DropCommand="{Binding DataContext.DropCommand,
-                                          RelativeSource={RelativeSource AncestorType={x:Type controls:FileExplorerControl}}}"
+                                 RelativeSource={RelativeSource AncestorType={x:Type controls:FileExplorerControl}}}"
                     TargetContext="{Binding}" />
-              </i:Interaction.Behaviors>
 
+              </i:Interaction.Behaviors>
               <Border.ContextMenu>
+
                 <!-- Popup bindings reach the row through PlacementTarget. -->
                 <ContextMenu Style="{StaticResource FileExplorerContextMenuStyle}">
+
                   <MenuItem Header="Open"
                             InputGestureText="Enter"
                             Command="{Binding PlacementTarget.Tag.OpenCommand,
-                                              RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"
+                                     RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"
                             CommandParameter="{Binding PlacementTarget.DataContext,
-                                                       RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}" />
+                                              RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}" />
 
                   <Separator Style="{StaticResource FileExplorerMenuSeparatorStyle}" />
 
                   <MenuItem Header="New folder here"
                             Command="{Binding PlacementTarget.Tag.BeginCreateFolderCommand,
-                                              RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"
+                                     RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"
                             CommandParameter="{Binding PlacementTarget.DataContext,
-                                                       RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}" />
+                                              RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}" />
 
                   <MenuItem Header="New file here"
                             Command="{Binding PlacementTarget.Tag.BeginCreateFileCommand,
-                                              RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"
+                                     RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"
                             CommandParameter="{Binding PlacementTarget.DataContext,
-                                                       RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}" />
+                                              RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}" />
 
                   <Separator Style="{StaticResource FileExplorerMenuSeparatorStyle}" />
 
                   <MenuItem Header="Rename"
                             InputGestureText="F2"
                             Command="{Binding PlacementTarget.Tag.BeginRenameCommand,
-                                              RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"
+                                     RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"
                             CommandParameter="{Binding PlacementTarget.DataContext,
-                                                       RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}" />
+                                              RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}" />
 
                   <Separator Style="{StaticResource FileExplorerMenuSeparatorStyle}" />
 
                   <MenuItem Header="Copy"
                             InputGestureText="Ctrl+C"
                             Command="{Binding PlacementTarget.Tag.CopyCommand,
-                                              RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}" />
+                                     RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}" />
 
                   <MenuItem Header="Cut"
                             InputGestureText="Ctrl+X"
                             Command="{Binding PlacementTarget.Tag.CutCommand,
-                                              RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}" />
+                                     RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}" />
 
                   <MenuItem Header="Paste"
                             InputGestureText="Ctrl+V"
                             Command="{Binding PlacementTarget.Tag.PasteCommand,
-                                              RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}" />
+                                     RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}" />
 
                   <Separator Style="{StaticResource FileExplorerMenuSeparatorStyle}" />
 
                   <MenuItem Header="Expand all"
                             Visibility="{Binding PlacementTarget.DataContext.IsDirectory,
-                                                 RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}},
-                                                 Converter={StaticResource BoolToVisibility}}"
+                                        RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}},
+                                        Converter={StaticResource BoolToVisibility}}"
                             Command="{Binding PlacementTarget.Tag.ExpandAllCommand,
-                                              RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"
+                                     RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"
                             CommandParameter="{Binding PlacementTarget.DataContext,
-                                                       RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}" />
+                                              RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}" />
 
                   <MenuItem Header="Collapse all"
                             Visibility="{Binding PlacementTarget.DataContext.IsDirectory,
-                                                 RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}},
-                                                 Converter={StaticResource BoolToVisibility}}"
+                                        RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}},
+                                        Converter={StaticResource BoolToVisibility}}"
                             Command="{Binding PlacementTarget.Tag.CollapseAllCommand,
-                                              RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"
+                                     RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"
                             CommandParameter="{Binding PlacementTarget.DataContext,
-                                                       RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}" />
+                                              RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}" />
 
                   <Separator Style="{StaticResource FileExplorerMenuSeparatorStyle}" />
 
@@ -601,13 +686,15 @@
                             InputGestureText="Del"
                             Style="{StaticResource FileExplorerDangerMenuItemStyle}"
                             Command="{Binding PlacementTarget.Tag.DeleteItemCommand,
-                                              RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"
+                                     RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"
                             CommandParameter="{Binding PlacementTarget.DataContext,
-                                                       RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}" />
+                                              RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}" />
+
                 </ContextMenu>
               </Border.ContextMenu>
 
               <Grid MinHeight="28">
+
                 <Grid.ColumnDefinitions>
                   <ColumnDefinition Width="Auto" />
                   <ColumnDefinition Width="*" />
@@ -623,8 +710,9 @@
                            VerticalAlignment="Center"
                            IsHitTestVisible="False"
                            Visibility="{Binding PanelOptions.ShowIcons,
-                                                RelativeSource={RelativeSource AncestorType={x:Type controls:FileExplorerControl}},
-                                                Converter={StaticResource BoolToVisibility}}">
+                                       RelativeSource={RelativeSource AncestorType={x:Type controls:FileExplorerControl}},
+                                       Converter={StaticResource BoolToVisibility}}">
+
                   <Rectangle.OpacityMask>
                     <MultiBinding Converter="{x:Static conv:FileIconConverter.Instance}">
                       <Binding Path="Name" />
@@ -633,30 +721,32 @@
                       <Binding Path="IsExpanded" />
                     </MultiBinding>
                   </Rectangle.OpacityMask>
+
                 </Rectangle>
 
                 <TextBlock Grid.Column="1"
                            Style="{StaticResource FileExplorerNameTextStyle}"
                            Text="{Binding Name}"
                            Visibility="{Binding IsBeingEdited,
-                                                Converter={x:Static conv:InverseBooleanToVisibilityConverter.Instance}}" />
+                                       Converter={x:Static conv:InverseBooleanToVisibilityConverter.Instance}}" />
 
                 <TextBox Grid.Column="1"
                          Style="{StaticResource FileExplorerRenameBoxStyle}"
                          VerticalAlignment="Center"
                          Text="{Binding DataContext.RenameText,
-                                        RelativeSource={RelativeSource AncestorType={x:Type controls:FileExplorerControl}},
-                                        UpdateSourceTrigger=PropertyChanged}"
+                               RelativeSource={RelativeSource AncestorType={x:Type controls:FileExplorerControl}},
+                               UpdateSourceTrigger=PropertyChanged}"
                          Visibility="{Binding IsBeingEdited,
-                                              Converter={StaticResource BoolToVisibility}}" />
+                                     Converter={StaticResource BoolToVisibility}}" />
 
                 <TextBlock Grid.Column="2"
                            Style="{StaticResource FileExplorerMetadataTextStyle}"
                            Text="{Binding FormattedSize}"
                            Margin="12,0,0,0"
                            Visibility="{Binding PanelOptions.ShowFileSize,
-                                                RelativeSource={RelativeSource AncestorType={x:Type controls:FileExplorerControl}},
-                                                Converter={StaticResource BoolToVisibility}}" />
+                                       RelativeSource={RelativeSource AncestorType={x:Type controls:FileExplorerControl}},
+                                       Converter={StaticResource BoolToVisibility}}" />
+
               </Grid>
             </Border>
           </HierarchicalDataTemplate>
@@ -670,12 +760,15 @@
       <!-- StatusBar styles are implicit in Surfaces.xaml. -->
       <StatusBar Grid.Row="4"
                  HorizontalContentAlignment="Stretch">
+
         <StatusBarItem HorizontalContentAlignment="Stretch">
+
           <TextBlock Style="{StaticResource statusText}"
                      Text="{Binding StatusMessage}" />
+
         </StatusBarItem>
       </StatusBar>
-
     </Grid>
   </Border>
+  
 </UserControl>
