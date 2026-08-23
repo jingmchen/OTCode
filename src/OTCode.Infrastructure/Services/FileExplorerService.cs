@@ -39,7 +39,7 @@ public sealed class FileExplorerService : IFileExplorerService
         _dispatcher = dispatcher ?? throw new ArgumentNullException(nameof(dispatcher));
         Options = options ?? new FileExplorerOptions();
 
-        SanitizeValidate(Options);
+        Options.SanitizeValidate();
 
         if (Options.Service.EnableFileWatcher)
             _watcher.Changed += OnWatcherChanged;
@@ -696,44 +696,6 @@ public sealed class FileExplorerService : IFileExplorerService
         {
             _watcher.StartWatching(_rootPath);
         }
-    }
-
-    // Options
-    private static FileExplorerOptions SanitizeValidate(FileExplorerOptions options)
-    {
-        ArgumentNullException.ThrowIfNull(options);
-
-        options.Service ??= new();
-        options.Panel ??= new();
-
-        var service = options.Service;
-        var panel = options.Panel;
-
-        if (string.IsNullOrWhiteSpace(service.NewFileName))
-            service.NewFileName = "NewFile";
-        
-        if (string.IsNullOrWhiteSpace(service.NewFolderName))
-            service.NewFolderName = "NewFolder";
-        
-        if (!service.NewFileExt.StartsWith('.'))
-            throw new ArgumentException(
-                $"{nameof(service.NewFileExt)} must include a leading dot.");
-
-        if (service.NewFileName.IndexOfAny(Path.GetInvalidFileNameChars()) >= 0 ||
-            service.NewFolderName.IndexOfAny(Path.GetInvalidFileNameChars()) >= 0)
-            throw new ArgumentException("New file/folder names contain invalid path characters.");
-
-        if (service.RootPath is not null && string.IsNullOrWhiteSpace(service.RootPath))
-            throw new ArgumentException($"{nameof(service.RootPath)} must be null (no auto-load) or a non-blank path.");
-        
-        if (panel.MinWidth > panel.MaxWidth)
-            throw new ArgumentException(
-                $"{nameof(panel.MinWidth)} cannot be greater than {nameof(panel.MaxWidth)}.");
-        
-        if (panel.Width < panel.MinWidth || panel.Width > panel.MaxWidth)
-            panel.Width = Math.Clamp(panel.Width, panel.MinWidth, panel.MaxWidth);
-        
-        return options;
     }
 
     // Helpers

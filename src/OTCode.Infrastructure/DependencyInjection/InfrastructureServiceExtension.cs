@@ -23,7 +23,6 @@ public static class InfrastructureServiceExtension
         services.AddSingleton<IAtomicFileAsync, AtomicFileAsync>();
         services.AddSingleton<IFileWatcherService, FileWatcherService>();
         services.AddSingleton<IFileExplorerService, FileExplorerService>();
-        services.TryAddSingleton<IFileExplorerItemActions, FileExplorerItemActions>();
         return services;
     }
 }

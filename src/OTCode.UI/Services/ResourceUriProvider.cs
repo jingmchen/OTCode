@@ -15,10 +15,8 @@ public sealed class ResourceUriProvider : IResourceUriProvider
     public string ThemeTemplate {get;}
     public string TermsConditionsMarkdown {get;}
     
-    public ResourceUriProvider(IAppInfo appInfo)
+    public ResourceUriProvider()
     {
-        ArgumentNullException.ThrowIfNull(appInfo);
-        
         var assemblyName = typeof(ResourceUriProvider).Assembly.GetName().Name;
 
         AccentTemplate =

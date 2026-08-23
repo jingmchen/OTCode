@@ -7,6 +7,7 @@ using OTCode.UI.Services;
 using OTCode.UI.ViewModels;
 using OTCode.UI.Views;
 using OTCode.UI.Views.Dialogs;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace OTCode.UI.DependencyInjection;
 
@@ -28,6 +29,7 @@ public static class UIServiceExtension
         services.AddSingleton<IThemeService, ThemeService>();
         services.AddSingleton<IHoverTracker, HoverTracker>();
         services.AddSingleton<IUIDispatcher, UIDispatcher>();
+        services.TryAddSingleton<IFileExplorerItemActions, FileExplorerItemActions>();
         return services;
     }
 

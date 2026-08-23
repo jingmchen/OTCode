@@ -3,7 +3,7 @@
 using OTCode.Core.Abstractions.UI;
 using OTCode.Core.Domains.FileExplorer;
 
-namespace OTCode.Infrastructure.Services;
+namespace OTCode.UI.Services;
 
 public sealed class FileExplorerItemActions : IFileExplorerItemActions
 {
