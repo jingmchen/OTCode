@@ -2,6 +2,7 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
   <ResourceDictionary.MergedDictionaries>
+
     <ResourceDictionary Source="Base.xaml" />
     <ResourceDictionary Source="Surfaces.xaml" />
     <ResourceDictionary Source="ScrollBars.xaml" />
@@ -13,6 +14,7 @@
     <ResourceDictionary Source="Documents.xaml" />
     <ResourceDictionary Source="Dialogs.xaml" />
     <ResourceDictionary Source="Feedbacks.xaml" />
+    
   </ResourceDictionary.MergedDictionaries>
 
 </ResourceDictionary>

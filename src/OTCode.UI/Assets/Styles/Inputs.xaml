@@ -23,7 +23,6 @@
                     VerticalScrollBarVisibility="{TemplateBinding VerticalScrollBarVisibility}" />
 
     </Border>
-
     <ControlTemplate.Triggers>
 
       <Trigger Property="IsMouseOver"
@@ -51,7 +50,6 @@
       </Trigger>
 
     </ControlTemplate.Triggers>
-
   </ControlTemplate>
 
   <Style x:Key="DefaultTextBoxStyle"
@@ -100,6 +98,7 @@
 
     <BulletDecorator Background="Transparent"
                      SnapsToDevicePixels="True">
+
       <BulletDecorator.Bullet>
 
         <Border x:Name="CheckBorder"
@@ -111,6 +110,7 @@
                 CornerRadius="3">
 
           <Grid>
+
             <Path x:Name="CheckGlyph"
                   Margin="2"
                   Data="M 1,5 L 4,8 L 10,1"
@@ -119,13 +119,14 @@
                   StrokeStartLineCap="Round"
                   StrokeEndLineCap="Round"
                   Visibility="Collapsed" />
+
             <Rectangle x:Name="IndeterminateGlyph"
                        Width="8"
                        Height="2"
                        Fill="{DynamicResource AccentForegroundBrush}"
                        Visibility="Collapsed" />
-          </Grid>
 
+          </Grid>
         </Border>
       </BulletDecorator.Bullet>
 
@@ -134,7 +135,6 @@
                         RecognizesAccessKey="True" />
 
     </BulletDecorator>
-
     <ControlTemplate.Triggers>
 
       <Trigger Property="IsMouseOver"
@@ -177,7 +177,6 @@
       </Trigger>
 
     </ControlTemplate.Triggers>
-
   </ControlTemplate>
 
   <Style TargetType="{x:Type CheckBox}">
@@ -218,7 +217,6 @@
                    Visibility="Collapsed" />
 
         </Grid>
-
       </BulletDecorator.Bullet>
 
       <ContentPresenter Margin="{TemplateBinding Padding}"
@@ -226,7 +224,6 @@
                         RecognizesAccessKey="True" />
 
     </BulletDecorator>
-
     <ControlTemplate.Triggers>
 
       <Trigger Property="IsMouseOver"
@@ -253,7 +250,6 @@
       </Trigger>
 
     </ControlTemplate.Triggers>
-
   </ControlTemplate>
 
   <Style TargetType="{x:Type RadioButton}">
@@ -314,7 +310,6 @@
                               RecognizesAccessKey="True" />
 
           </Grid>
-
           <ControlTemplate.Triggers>
 
             <Trigger Property="IsMouseOver"
@@ -462,28 +457,20 @@
   </ControlTemplate>
 
   <Style TargetType="{x:Type ComboBox}">
-
     <Setter Property="Background"
             Value="{DynamicResource ThemeBg1Brush}" />
-
     <Setter Property="Foreground"
             Value="{DynamicResource ThemeFg0Brush}" />
-
     <Setter Property="BorderBrush"
             Value="{DynamicResource ThemeBorderBrush}" />
-
     <Setter Property="BorderThickness"
             Value="1" />
-
     <Setter Property="Padding"
             Value="10,6" />
-
     <Setter Property="MinHeight"
             Value="32" />
-
     <Setter Property="ScrollViewer.CanContentScroll"
             Value="True" />
-
     <Setter Property="Template"
             Value="{StaticResource ComboBoxTemplate}" />
 
@@ -491,25 +478,20 @@
 
       <Trigger Property="IsKeyboardFocusWithin"
                Value="True">
-
         <Setter Property="BorderBrush"
                 Value="{DynamicResource AccentBrush}" />
-
       </Trigger>
+
     </Style.Triggers>
   </Style>
 
   <Style TargetType="{x:Type ComboBoxItem}">
-
     <Setter Property="Padding"
             Value="10,6" />
-
     <Setter Property="Foreground"
             Value="{DynamicResource ThemeFg0Brush}" />
-
     <Setter Property="HorizontalContentAlignment"
             Value="Stretch" />
-
     <Setter Property="Template">
 
       <Setter.Value>
@@ -528,21 +510,18 @@
 
             <Trigger Property="IsMouseOver"
                      Value="True">
-
               <Setter TargetName="ItemBorder"
                       Property="Background"
                       Value="{DynamicResource ThemeHoverBrush}" />
-
             </Trigger>
 
             <Trigger Property="IsSelected"
                      Value="True">
-
               <Setter TargetName="ItemBorder"
                       Property="Background"
                       Value="{DynamicResource ThemeSelectedBrush}" />
-
             </Trigger>
+
           </ControlTemplate.Triggers>
         </ControlTemplate>
       </Setter.Value>
@@ -555,19 +534,16 @@
 
   <Style x:Key="SliderThumbStyle"
          TargetType="{x:Type Thumb}">
-
     <Setter Property="Width"
             Value="16" />
-
     <Setter Property="Height"
             Value="16" />
-
     <Setter Property="Background"
             Value="{DynamicResource AccentBrush}" />
-
     <Setter Property="Template">
 
       <Setter.Value>
+
         <ControlTemplate TargetType="{x:Type Thumb}">
 
           <Ellipse x:Name="ThumbEllipse"
@@ -579,12 +555,11 @@
 
             <Trigger Property="IsMouseOver"
                      Value="True">
-
               <Setter TargetName="ThumbEllipse"
                       Property="Fill"
                       Value="{DynamicResource AccentLight1Brush}" />
-
             </Trigger>
+
           </ControlTemplate.Triggers>
         </ControlTemplate>
       </Setter.Value>
@@ -633,10 +608,8 @@
 
   <Style x:Key="SliderDecreaseTrackButtonStyle"
          TargetType="{x:Type RepeatButton}">
-
     <Setter Property="Focusable"
             Value="False" />
-
     <Setter Property="Template"
             Value="{StaticResource SliderDecreaseHorizontalTemplate}" />
 
@@ -644,46 +617,37 @@
 
       <DataTrigger Binding="{Binding Orientation, RelativeSource={RelativeSource AncestorType={x:Type Slider}}}"
                    Value="Vertical">
-
         <Setter Property="Template"
                 Value="{StaticResource SliderDecreaseVerticalTemplate}" />
-
       </DataTrigger>
+      
     </Style.Triggers>
   </Style>
 
   <Style x:Key="SliderIncreaseTrackButtonStyle"
          TargetType="{x:Type RepeatButton}">
-
     <Setter Property="Focusable"
             Value="False" />
-
     <Setter Property="Template"
             Value="{StaticResource SliderIncreaseHorizontalTemplate}" />
-
     <Style.Triggers>
 
       <DataTrigger Binding="{Binding Orientation, RelativeSource={RelativeSource AncestorType={x:Type Slider}}}"
                    Value="Vertical">
-
         <Setter Property="Template"
                 Value="{StaticResource SliderIncreaseVerticalTemplate}" />
-
       </DataTrigger>
+
     </Style.Triggers>
   </Style>
 
   <Style TargetType="{x:Type Slider}">
-
     <Setter Property="Foreground"
             Value="{DynamicResource AccentBrush}" />
-
     <Setter Property="MinHeight"
             Value="20" />
-
     <Setter Property="MinWidth"
             Value="20" />
-
     <Setter Property="Template">
 
       <Setter.Value>
@@ -697,32 +661,27 @@
                    IsDirectionReversed="{TemplateBinding IsDirectionReversed}">
 
               <Track.DecreaseRepeatButton>
-
                 <RepeatButton Command="{x:Static Slider.DecreaseLarge}"
                               Style="{StaticResource SliderDecreaseTrackButtonStyle}" />
-
               </Track.DecreaseRepeatButton>
+
               <Track.Thumb>
-
                 <Thumb Style="{StaticResource SliderThumbStyle}" />
-
               </Track.Thumb>
-              <Track.IncreaseRepeatButton>
 
+              <Track.IncreaseRepeatButton>
                 <RepeatButton Command="{x:Static Slider.IncreaseLarge}"
                               Style="{StaticResource SliderIncreaseTrackButtonStyle}" />
-
               </Track.IncreaseRepeatButton>
+
             </Track>
           </Grid>
           <ControlTemplate.Triggers>
 
             <Trigger Property="IsEnabled"
                      Value="False">
-
               <Setter Property="Opacity"
                       Value="0.5" />
-
             </Trigger>
 
           </ControlTemplate.Triggers>

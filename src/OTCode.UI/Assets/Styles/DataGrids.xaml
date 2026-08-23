@@ -70,7 +70,6 @@
       </Trigger>
 
     </Style.Triggers>
-
   </Style>
 
   <!-- ═══════════════════════════════════════════════════════════ -->
@@ -101,7 +100,6 @@
       </Trigger>
 
     </Style.Triggers>
-    
   </Style>
 
 </ResourceDictionary>

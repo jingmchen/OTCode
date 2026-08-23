@@ -7,22 +7,16 @@
 
   <Style x:Key="Swatch"
          TargetType="{x:Type RadioButton}">
-
     <Setter Property="Foreground"
             Value="{DynamicResource ThemeFg0Brush}" />
-
     <Setter Property="Padding"
             Value="0" />
-
     <Setter Property="Margin"
             Value="4" />
-
     <Setter Property="Background"
             Value="Transparent" />
-
     <Setter Property="Cursor"
             Value="Hand" />
-
     <Setter Property="Template">
 
       <Setter.Value>
@@ -45,29 +39,24 @@
 
             <Trigger Property="IsMouseOver"
                      Value="True">
-
               <Setter TargetName="SelectionRing"
                       Property="BorderBrush"
                       Value="{DynamicResource ThemeBorderStrongBrush}" />
-
             </Trigger>
 
             <Trigger Property="IsChecked"
                      Value="True">
-
               <Setter TargetName="SelectionRing"
                       Property="BorderBrush"
                       Value="{DynamicResource AccentBrush}" />
-
             </Trigger>
 
             <Trigger Property="IsEnabled"
                      Value="False">
-
               <Setter Property="Opacity"
                       Value="0.5" />
-                      
             </Trigger>
+            
           </ControlTemplate.Triggers>
         </ControlTemplate>
       </Setter.Value>

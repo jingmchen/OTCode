@@ -26,39 +26,30 @@
 
       <Trigger Property="IsEnabled"
                Value="False">
-
         <Setter TargetName="ListBorder"
                 Property="Opacity"
                 Value="0.5" />
-
       </Trigger>
+
     </ControlTemplate.Triggers>
   </ControlTemplate>
 
   <Style x:Key="DefaultListBoxStyle"
          TargetType="{x:Type ListBox}">
-
     <Setter Property="Background"
             Value="{DynamicResource ThemeBg1Brush}" />
-
     <Setter Property="Foreground"
             Value="{DynamicResource ThemeFg0Brush}" />
-
     <Setter Property="BorderBrush"
             Value="{DynamicResource ThemeBorderBrush}" />
-
     <Setter Property="BorderThickness"
             Value="1" />
-
     <Setter Property="Padding"
             Value="4" />
-
     <Setter Property="ScrollViewer.CanContentScroll"
             Value="True" />
-
     <Setter Property="Template"
             Value="{StaticResource ListBoxTemplate}" />
-
   </Style>
 
   <Style TargetType="{x:Type ListBox}"
@@ -66,22 +57,16 @@
 
   <Style x:Key="DefaultListBoxItemStyle"
          TargetType="{x:Type ListBoxItem}">
-
     <Setter Property="Padding"
             Value="10,6" />
-
     <Setter Property="Background"
             Value="Transparent" />
-
     <Setter Property="Foreground"
             Value="{DynamicResource ThemeFg0Brush}" />
-
     <Setter Property="HorizontalContentAlignment"
             Value="Stretch" />
-
     <Setter Property="VerticalContentAlignment"
             Value="Center" />
-
     <Setter Property="Template">
 
       <Setter.Value>
@@ -102,32 +87,26 @@
 
             <Trigger Property="IsMouseOver"
                      Value="True">
-
               <Setter TargetName="ItemBorder"
                       Property="Background"
                       Value="{DynamicResource ThemeHoverBrush}" />
-
             </Trigger>
 
             <Trigger Property="IsSelected"
                      Value="True">
-
               <Setter TargetName="ItemBorder"
                       Property="Background"
                       Value="{DynamicResource AccentBrush}" />
-
               <Setter Property="Foreground"
                       Value="{DynamicResource AccentForegroundBrush}" />
-
             </Trigger>
 
             <Trigger Property="IsEnabled"
                      Value="False">
-
               <Setter Property="Opacity"
                       Value="0.5" />
-
             </Trigger>
+
           </ControlTemplate.Triggers>
         </ControlTemplate>
       </Setter.Value>
@@ -141,19 +120,15 @@
   <Style x:Key="ConsoleListBoxItemStyle"
          TargetType="{x:Type ListBoxItem}"
          BasedOn="{StaticResource DefaultListBoxItemStyle}">
-
     <Setter Property="Padding"
             Value="8,3" />
-
   </Style>
 
   <Style x:Key="console"
          TargetType="{x:Type ListBox}"
          BasedOn="{StaticResource DefaultListBoxStyle}">
-
     <Setter Property="ItemContainerStyle"
             Value="{StaticResource ConsoleListBoxItemStyle}" />
-
   </Style>
 
   <!-- ═══════════════════════════════════════════════════════════ -->
@@ -161,23 +136,17 @@
   <!-- ═══════════════════════════════════════════════════════════ -->
 
   <Style TargetType="{x:Type Menu}">
-
     <Setter Property="Background"
             Value="{DynamicResource ThemeBg1Brush}" />
-
     <Setter Property="Foreground"
             Value="{DynamicResource ThemeFg0Brush}" />
-
   </Style>
 
   <Style TargetType="{x:Type MenuItem}">
-
     <Setter Property="Background"
             Value="Transparent" />
-
     <Setter Property="Foreground"
             Value="{DynamicResource ThemeFg0Brush}" />
-
     <Setter Property="Padding"
             Value="10,6" />
 
@@ -185,19 +154,16 @@
 
       <Trigger Property="IsHighlighted"
                Value="True">
-
         <Setter Property="Background"
                 Value="{DynamicResource ThemeHoverBrush}" />
-
       </Trigger>
 
       <Trigger Property="IsEnabled"
                Value="False">
-
         <Setter Property="Opacity"
                 Value="0.5" />
-
       </Trigger>
+
     </Style.Triggers>
   </Style>
 
@@ -206,26 +172,19 @@
   <!-- ═══════════════════════════════════════════════════════════ -->
 
   <Style TargetType="{x:Type TabControl}">
-
     <Setter Property="Background"
             Value="Transparent" />
-
     <Setter Property="Padding"
             Value="0" />
-
   </Style>
 
   <Style TargetType="{x:Type TabItem}">
-
     <Setter Property="Foreground"
             Value="{DynamicResource ThemeFg2Brush}" />
-
     <Setter Property="FontSize"
             Value="14" />
-
     <Setter Property="Padding"
             Value="14,8" />
-
     <Setter Property="MinHeight"
             Value="36" />
 
@@ -233,19 +192,16 @@
 
       <Trigger Property="IsSelected"
                Value="True">
-
         <Setter Property="Foreground"
                 Value="{DynamicResource ThemeFg0Brush}" />
-
       </Trigger>
 
       <Trigger Property="IsMouseOver"
                Value="True">
-
         <Setter Property="Foreground"
                 Value="{DynamicResource ThemeFg0Brush}" />
-                
       </Trigger>
+      
     </Style.Triggers>
   </Style>
 
