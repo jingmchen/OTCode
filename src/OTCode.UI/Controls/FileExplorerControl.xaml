@@ -5,6 +5,7 @@
              xmlns:domains="clr-namespace:OTCode.Core.Domains.FileExplorer;assembly=OTCode.Core"
              xmlns:controls="clr-namespace:OTCode.UI.Controls"
              xmlns:behaviors="clr-namespace:OTCode.UI.Behaviors"
+             xmlns:behaviorsfileexplorer="clr-namespace:OTCode.UI.Behaviors.FileExplorer"
              xmlns:conv="clr-namespace:OTCode.UI.Converters"
              x:Class="OTCode.UI.Controls.FileExplorerControl"
              FontFamily="{DynamicResource {x:Static fonts:AppFont.SegoeUIVariable}}"
@@ -263,7 +264,7 @@
                   Value="{DynamicResource AccentHoverBrush}" />
         </MultiDataTrigger>
 
-        <DataTrigger Binding="{Binding (behaviors:FileExplorerDropTargetBehavior.IsDropOk),
+        <DataTrigger Binding="{Binding (behaviorsfileexplorer:FileExplorerDropTargetBehavior.IsDropOk),
                                        RelativeSource={RelativeSource Self}}"
                      Value="True">
           <Setter Property="Background"
@@ -486,7 +487,7 @@
               CtrlWheelCommand="{Binding ApplyZoomCommand}"
               ShiftWheelCommand="{Binding StepSelectionCommand}" />
 
-          <behaviors:FileExplorerDropTargetBehavior
+          <behaviorsfileexplorer:FileExplorerDropTargetBehavior
               DropCommand="{Binding DropCommand}"
               TargetContext="{x:Null}"
               AutoExpand="False" />
@@ -518,7 +519,7 @@
 
                 <behaviors:DragSourceBehavior Payload="{Binding FullPath}" />
 
-                <behaviors:FileExplorerDropTargetBehavior
+                <behaviorsfileexplorer:FileExplorerDropTargetBehavior
                     DropCommand="{Binding DataContext.DropCommand,
                                           RelativeSource={RelativeSource AncestorType={x:Type controls:FileExplorerControl}}}"
                     TargetContext="{Binding}" />
