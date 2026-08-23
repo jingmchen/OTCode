@@ -22,6 +22,8 @@ public sealed partial class App : Application
         _fileWriter = services.GetRequiredService<IAtomicFileAsync>();
         _logger = services.GetRequiredService<ILogger<App>>();
 
+        InitializeComponent();
+        
         DispatcherUnhandledException += OnDispatcherUnhandledException;
     }
 

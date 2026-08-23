@@ -64,7 +64,6 @@ internal sealed class Program
             try
             {
                 var app = host.Services.GetRequiredService<App>();
-                app.InitializeComponent();
                 return app.Run();
             }
             finally
