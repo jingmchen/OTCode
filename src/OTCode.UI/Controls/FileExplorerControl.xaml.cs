@@ -30,16 +30,18 @@ public sealed partial class FileExplorerControl : UserControl, IDisposable
     private FileExplorerViewModel? ViewModel => DataContext as FileExplorerViewModel;
 
     public FileExplorerControl(
+        IFileExplorerService service,
         FileExplorerOptions options,
         IFileExplorerItemActions? itemActions = null,
         ILoggerFactory? loggerFactory = null)
     {
+        _service = service ?? throw new ArgumentNullException(nameof(service));
         Options = options ?? throw new ArgumentNullException(nameof(options));
 
         options.SanitizeValidate();
 
         var effectiveLoggerFactory = loggerFactory ?? NullLoggerFactory.Instance;
-
+        
         _viewModel = new FileExplorerViewModel(
             effectiveLoggerFactory.CreateLogger<FileExplorerViewModel>(),
             _service,
