@@ -14,56 +14,51 @@
             ClipToBounds="True">
 
       <Grid>
-
         <Border x:Name="PART_Indicator"
                 HorizontalAlignment="Left"
                 Background="{TemplateBinding Foreground}"
                 CornerRadius="3" />
-
         <Border x:Name="PART_GlowRect"
                 Background="{DynamicResource AccentLight1Brush}"
                 CornerRadius="3"
                 Opacity="0.25"
                 Visibility="Collapsed" />
-        
       </Grid>
+
     </Border>
+
     <ControlTemplate.Triggers>
 
       <Trigger Property="IsIndeterminate"
                Value="True">
-
         <Setter TargetName="PART_Indicator"
                 Property="Visibility"
                 Value="Collapsed" />
-
         <Setter TargetName="PART_GlowRect"
                 Property="Visibility"
                 Value="Visible" />
 
         <Trigger.EnterActions>
-        
           <BeginStoryboard x:Name="HorizontalProgressPulse">
-
             <Storyboard RepeatBehavior="Forever"
                         AutoReverse="True">
-
               <DoubleAnimation Storyboard.TargetName="PART_GlowRect"
                                Storyboard.TargetProperty="Opacity"
                                From="0.25"
                                To="0.85"
                                Duration="0:0:0.75" />
-
             </Storyboard>
           </BeginStoryboard>
         </Trigger.EnterActions>
+
         <Trigger.ExitActions>
-
           <StopStoryboard BeginStoryboardName="HorizontalProgressPulse" />
-
         </Trigger.ExitActions>
+
       </Trigger>
+
     </ControlTemplate.Triggers>
+
   </ControlTemplate>
 
   <ControlTemplate x:Key="VerticalProgressBarTemplate"
@@ -73,42 +68,33 @@
             Background="{TemplateBinding Background}"
             CornerRadius="3"
             ClipToBounds="True">
-
       <Grid>
-
         <Border x:Name="PART_Indicator"
                 VerticalAlignment="Bottom"
                 Background="{TemplateBinding Foreground}"
                 CornerRadius="3" />
-
         <Border x:Name="PART_GlowRect"
                 Background="{DynamicResource AccentLight1Brush}"
                 CornerRadius="3"
                 Opacity="0.25"
                 Visibility="Collapsed" />
-
       </Grid>
     </Border>
-    <ControlTemplate.Triggers>
 
+    <ControlTemplate.Triggers>
       <Trigger Property="IsIndeterminate"
                Value="True">
-
         <Setter TargetName="PART_Indicator"
                 Property="Visibility"
                 Value="Collapsed" />
-
         <Setter TargetName="PART_GlowRect"
                 Property="Visibility"
                 Value="Visible" />
 
         <Trigger.EnterActions>
-
           <BeginStoryboard x:Name="VerticalProgressPulse">
-
             <Storyboard RepeatBehavior="Forever"
                         AutoReverse="True">
-
               <DoubleAnimation Storyboard.TargetName="PART_GlowRect"
                                Storyboard.TargetProperty="Opacity"
                                From="0.25"
@@ -118,32 +104,27 @@
             </Storyboard>
           </BeginStoryboard>
         </Trigger.EnterActions>
+
         <Trigger.ExitActions>
-
           <StopStoryboard BeginStoryboardName="VerticalProgressPulse" />
-
         </Trigger.ExitActions>
+
       </Trigger>
     </ControlTemplate.Triggers>
+
   </ControlTemplate>
 
   <Style TargetType="{x:Type ProgressBar}">
-
     <Setter Property="Background"
             Value="{DynamicResource ThemeBg2Brush}" />
-
     <Setter Property="Foreground"
             Value="{DynamicResource AccentBrush}" />
-
     <Setter Property="Height"
             Value="6" />
-
     <Setter Property="MinWidth"
             Value="80" />
-
     <Setter Property="SnapsToDevicePixels"
             Value="True" />
-
     <Setter Property="Template"
             Value="{StaticResource HorizontalProgressBarTemplate}" />
 
@@ -151,32 +132,26 @@
 
       <Trigger Property="Orientation"
                Value="Vertical">
-
         <Setter Property="Width"
                 Value="6" />
-
         <Setter Property="Height"
                 Value="120" />
-
         <Setter Property="MinWidth"
                 Value="0" />
-
         <Setter Property="MinHeight"
                 Value="80" />
-
         <Setter Property="Template"
                 Value="{StaticResource VerticalProgressBarTemplate}" />
-
       </Trigger>
 
       <Trigger Property="IsEnabled"
                Value="False">
-
         <Setter Property="Opacity"
                 Value="0.45" />
-
       </Trigger>
+      
     </Style.Triggers>
+
   </Style>
 
   <!-- ═══════════════════════════════════════════════════════════ -->
@@ -187,19 +162,17 @@
 
     <Grid>
       <AdornedElementPlaceholder />
-
       <Border BorderBrush="{DynamicResource ThemeErrorBrush}"
               BorderThickness="1"
               CornerRadius="6"
               IsHitTestVisible="False" />
-
     </Grid>
+
   </ControlTemplate>
 
   <Style x:Key="ValidatedTextBoxStyle"
          TargetType="{x:Type TextBox}"
          BasedOn="{StaticResource DefaultTextBoxStyle}">
-
     <Setter Property="Validation.ErrorTemplate"
             Value="{StaticResource ValidationErrorTemplate}" />
 
@@ -207,21 +180,19 @@
 
       <Trigger Property="Validation.HasError"
                Value="True">
-
         <Setter Property="BorderBrush"
                 Value="{DynamicResource ThemeErrorBrush}" />
-
         <Setter Property="ToolTip"
                 Value="{Binding RelativeSource={RelativeSource Self}, Path=(Validation.Errors)[0].ErrorContent}" />
-
       </Trigger>
+
     </Style.Triggers>
+
   </Style>
 
   <Style x:Key="ValidatedComboBoxStyle"
          TargetType="{x:Type ComboBox}"
          BasedOn="{StaticResource {x:Type ComboBox}}">
-
     <Setter Property="Validation.ErrorTemplate"
             Value="{StaticResource ValidationErrorTemplate}" />
 
@@ -229,21 +200,19 @@
 
       <Trigger Property="Validation.HasError"
                Value="True">
-
         <Setter Property="BorderBrush"
                 Value="{DynamicResource ThemeErrorBrush}" />
-
         <Setter Property="ToolTip"
                 Value="{Binding RelativeSource={RelativeSource Self}, Path=(Validation.Errors)[0].ErrorContent}" />
-
       </Trigger>
+
     </Style.Triggers>
+
   </Style>
 
   <Style x:Key="ValidatedRichTextBoxStyle"
          TargetType="{x:Type RichTextBox}"
          BasedOn="{StaticResource DefaultRichTextBoxStyle}">
-
     <Setter Property="Validation.ErrorTemplate"
             Value="{StaticResource ValidationErrorTemplate}" />
 
@@ -251,33 +220,27 @@
 
       <Trigger Property="Validation.HasError"
                Value="True">
-
         <Setter Property="BorderBrush"
                 Value="{DynamicResource ThemeErrorBrush}" />
-
         <Setter Property="ToolTip"
                 Value="{Binding RelativeSource={RelativeSource Self}, Path=(Validation.Errors)[0].ErrorContent}" />
-
       </Trigger>
+
     </Style.Triggers>
+
   </Style>
 
   <Style x:Key="ValidationMessageStyle"
          TargetType="{x:Type TextBlock}"
          BasedOn="{StaticResource DefaultTextBlockStyle}">
-
     <Setter Property="Margin"
             Value="0,4,0,0" />
-
     <Setter Property="FontSize"
             Value="12" />
-
     <Setter Property="Foreground"
             Value="{DynamicResource ThemeErrorBrush}" />
-
     <Setter Property="TextWrapping"
             Value="Wrap" />
-
   </Style>
 
   <!-- ═══════════════════════════════════════════════════════════ -->
@@ -286,70 +249,52 @@
 
   <Style x:Key="StatusMessageStyle"
          TargetType="{x:Type Border}">
-
     <Setter Property="Padding"
             Value="12,10" />
-
     <Setter Property="Background"
             Value="{DynamicResource ThemeBg1Brush}" />
-
     <Setter Property="BorderBrush"
             Value="{DynamicResource ThemeBorderBrush}" />
-
     <Setter Property="BorderThickness"
             Value="1" />
-
     <Setter Property="CornerRadius"
             Value="6" />
-
   </Style>
 
   <Style x:Key="InfoStatusMessageStyle"
          TargetType="{x:Type Border}"
          BasedOn="{StaticResource StatusMessageStyle}">
-
     <Setter Property="BorderBrush"
             Value="{DynamicResource ThemeInfoBrush}" />
-
     <Setter Property="TextElement.Foreground"
             Value="{DynamicResource ThemeInfoBrush}" />
-
   </Style>
 
   <Style x:Key="SuccessStatusMessageStyle"
          TargetType="{x:Type Border}"
          BasedOn="{StaticResource StatusMessageStyle}">
-
     <Setter Property="BorderBrush"
             Value="{DynamicResource ThemeSuccessBrush}" />
-
     <Setter Property="TextElement.Foreground"
             Value="{DynamicResource ThemeSuccessBrush}" />
-
   </Style>
 
   <Style x:Key="WarningStatusMessageStyle"
          TargetType="{x:Type Border}"
          BasedOn="{StaticResource StatusMessageStyle}">
-
     <Setter Property="BorderBrush"
             Value="{DynamicResource ThemeWarningBrush}" />
-
     <Setter Property="TextElement.Foreground"
             Value="{DynamicResource ThemeWarningBrush}" />
-
   </Style>
 
   <Style x:Key="ErrorStatusMessageStyle"
          TargetType="{x:Type Border}"
          BasedOn="{StaticResource StatusMessageStyle}">
-
     <Setter Property="BorderBrush"
             Value="{DynamicResource ThemeErrorBrush}" />
-
     <Setter Property="TextElement.Foreground"
             Value="{DynamicResource ThemeErrorBrush}" />
-
   </Style>
 
   <!-- ═══════════════════════════════════════════════════════════ -->
@@ -358,19 +303,14 @@
 
   <Style x:Key="BusyOverlayStyle"
          TargetType="{x:Type Border}">
-
     <Setter Property="Background"
             Value="{DynamicResource ThemeOverlayBrush}" />
-
     <Setter Property="HorizontalAlignment"
             Value="Stretch" />
-
     <Setter Property="VerticalAlignment"
             Value="Stretch" />
-
     <Setter Property="Panel.ZIndex"
             Value="1000" />
-
   </Style>
 
   <!-- ═══════════════════════════════════════════════════════════ -->
@@ -378,45 +318,36 @@
   <!-- ═══════════════════════════════════════════════════════════ -->
 
   <Style TargetType="{x:Type ToolTip}">
-
     <Setter Property="Background"
             Value="{DynamicResource ThemeBg1Brush}" />
-
     <Setter Property="Foreground"
             Value="{DynamicResource ThemeFg0Brush}" />
-
     <Setter Property="BorderBrush"
             Value="{DynamicResource ThemeBorderBrush}" />
-
     <Setter Property="BorderThickness"
             Value="1" />
-
     <Setter Property="Padding"
             Value="8,6" />
-
     <Setter Property="MaxWidth"
             Value="360" />
-
     <Setter Property="HasDropShadow"
             Value="True" />
-
     <Setter Property="Template">
 
       <Setter.Value>
-      
         <ControlTemplate TargetType="{x:Type ToolTip}">
-
           <Border Background="{TemplateBinding Background}"
                   BorderBrush="{TemplateBinding BorderBrush}"
                   BorderThickness="{TemplateBinding BorderThickness}"
                   CornerRadius="4"
                   Padding="{TemplateBinding Padding}">
-
             <ContentPresenter />
           </Border>
         </ControlTemplate>
       </Setter.Value>
+
     </Setter>
+    
   </Style>
 
 </ResourceDictionary>

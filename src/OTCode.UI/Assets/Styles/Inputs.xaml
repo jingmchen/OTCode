@@ -23,77 +23,61 @@
                     VerticalScrollBarVisibility="{TemplateBinding VerticalScrollBarVisibility}" />
 
     </Border>
+
     <ControlTemplate.Triggers>
 
       <Trigger Property="IsMouseOver"
                Value="True">
-
         <Setter TargetName="BorderElement"
                 Property="BorderBrush"
                 Value="{DynamicResource ThemeBorderStrongBrush}" />
-
       </Trigger>
 
       <Trigger Property="IsKeyboardFocusWithin"
                Value="True">
-
         <Setter TargetName="BorderElement"
                 Property="BorderBrush"
                 Value="{DynamicResource AccentBrush}" />
-
         <Setter TargetName="BorderElement"
                 Property="BorderThickness"
                 Value="1.5" />
-
       </Trigger>
 
       <Trigger Property="IsEnabled"
                Value="False">
-
         <Setter TargetName="BorderElement"
                 Property="Opacity"
                 Value="0.5" />
-
       </Trigger>
+
     </ControlTemplate.Triggers>
+
   </ControlTemplate>
 
   <Style x:Key="DefaultTextBoxStyle"
          TargetType="{x:Type TextBox}">
-
     <Setter Property="Background"
             Value="{DynamicResource ThemeBg1Brush}" />
-
     <Setter Property="Foreground"
             Value="{DynamicResource ThemeFg0Brush}" />
-
     <Setter Property="BorderBrush"
             Value="{DynamicResource ThemeBorderBrush}" />
-
     <Setter Property="BorderThickness"
             Value="1" />
-
     <Setter Property="Padding"
             Value="10,6" />
-
     <Setter Property="MinHeight"
             Value="32" />
-
     <Setter Property="SelectionBrush"
             Value="{DynamicResource AccentBrush}" />
-
     <Setter Property="SelectionTextBrush"
             Value="{DynamicResource AccentForegroundBrush}" />
-
     <Setter Property="CaretBrush"
             Value="{DynamicResource ThemeFg0Brush}" />
-
     <Setter Property="VerticalContentAlignment"
             Value="Center" />
-
     <Setter Property="Template"
             Value="{StaticResource RoundedTextBoxTemplate}" />
-
   </Style>
 
   <Style TargetType="{x:Type TextBox}"
@@ -103,10 +87,8 @@
   <Style x:Key="mono"
          TargetType="{x:Type TextBox}"
          BasedOn="{StaticResource DefaultTextBoxStyle}">
-
     <Setter Property="FontFamily"
             Value="{DynamicResource {x:Static fonts:AppFont.CascadiaCode}}" />
-
   </Style>
 
   <!-- ═══════════════════════════════════════════════════════════ -->
@@ -118,7 +100,6 @@
 
     <BulletDecorator Background="Transparent"
                      SnapsToDevicePixels="True">
-
       <BulletDecorator.Bullet>
 
         <Border x:Name="CheckBorder"
@@ -130,7 +111,6 @@
                 CornerRadius="3">
 
           <Grid>
-
             <Path x:Name="CheckGlyph"
                   Margin="2"
                   Data="M 1,5 L 4,8 L 10,1"
@@ -139,14 +119,13 @@
                   StrokeStartLineCap="Round"
                   StrokeEndLineCap="Round"
                   Visibility="Collapsed" />
-
             <Rectangle x:Name="IndeterminateGlyph"
                        Width="8"
                        Height="2"
                        Fill="{DynamicResource AccentForegroundBrush}"
                        Visibility="Collapsed" />
-
           </Grid>
+
         </Border>
       </BulletDecorator.Bullet>
 
@@ -155,75 +134,61 @@
                         RecognizesAccessKey="True" />
 
     </BulletDecorator>
+
     <ControlTemplate.Triggers>
 
       <Trigger Property="IsMouseOver"
                Value="True">
-
         <Setter TargetName="CheckBorder"
                 Property="BorderBrush"
                 Value="{DynamicResource ThemeBorderStrongBrush}" />
-
       </Trigger>
 
       <Trigger Property="IsChecked"
                Value="True">
-
         <Setter TargetName="CheckBorder"
                 Property="Background"
                 Value="{DynamicResource AccentBrush}" />
-
         <Setter TargetName="CheckBorder"
                 Property="BorderBrush"
                 Value="{DynamicResource AccentBrush}" />
-
         <Setter TargetName="CheckGlyph"
                 Property="Visibility"
                 Value="Visible" />
-
       </Trigger>
 
       <Trigger Property="IsChecked"
                Value="{x:Null}">
-
         <Setter TargetName="CheckBorder"
                 Property="Background"
                 Value="{DynamicResource AccentBrush}" />
-
         <Setter TargetName="CheckBorder"
                 Property="BorderBrush"
                 Value="{DynamicResource AccentBrush}" />
-
         <Setter TargetName="IndeterminateGlyph"
                 Property="Visibility"
                 Value="Visible" />
-
       </Trigger>
 
       <Trigger Property="IsEnabled"
                Value="False">
-
         <Setter Property="Opacity"
                 Value="0.5" />
-
       </Trigger>
+
     </ControlTemplate.Triggers>
+
   </ControlTemplate>
 
   <Style TargetType="{x:Type CheckBox}">
-
     <Setter Property="Foreground"
             Value="{DynamicResource ThemeFg0Brush}" />
-
     <Setter Property="Padding"
             Value="8,0,0,0" />
-
     <Setter Property="VerticalContentAlignment"
             Value="Center" />
-
     <Setter Property="Template"
             Value="{StaticResource CheckBoxTemplate}" />
-
   </Style>
 
   <!-- ═══════════════════════════════════════════════════════════ -->
@@ -253,6 +218,7 @@
                    Visibility="Collapsed" />
 
         </Grid>
+
       </BulletDecorator.Bullet>
 
       <ContentPresenter Margin="{TemplateBinding Padding}"
@@ -260,54 +226,45 @@
                         RecognizesAccessKey="True" />
 
     </BulletDecorator>
+
     <ControlTemplate.Triggers>
 
       <Trigger Property="IsMouseOver"
                Value="True">
-
         <Setter TargetName="RadioBorder"
                 Property="Stroke"
                 Value="{DynamicResource ThemeBorderStrongBrush}" />
-
       </Trigger>
 
       <Trigger Property="IsChecked"
                Value="True">
-
         <Setter TargetName="RadioBorder"
                 Property="Stroke"
                 Value="{DynamicResource AccentBrush}" />
-                
         <Setter TargetName="RadioGlyph"
                 Property="Visibility"
                 Value="Visible" />
-
       </Trigger>
 
       <Trigger Property="IsEnabled"
                Value="False">
-
         <Setter Property="Opacity"
                 Value="0.5" />
-
       </Trigger>
+
     </ControlTemplate.Triggers>
+
   </ControlTemplate>
 
   <Style TargetType="{x:Type RadioButton}">
-
     <Setter Property="Foreground"
             Value="{DynamicResource ThemeFg0Brush}" />
-
     <Setter Property="Padding"
             Value="8,0,0,0" />
-
     <Setter Property="VerticalContentAlignment"
             Value="Center" />
-
     <Setter Property="Template"
             Value="{StaticResource DefaultRadioButtonTemplate}" />
-
   </Style>
 
   <!-- ═══════════════════════════════════════════════════════════ -->
@@ -317,23 +274,21 @@
   <!-- Toggle switch control as a ToggleButton -->
   <Style x:Key="ToggleSwitch"
          TargetType="{x:Type ToggleButton}">
-
     <Setter Property="Foreground"
             Value="{DynamicResource ThemeFg0Brush}" />
-
     <Setter Property="Cursor"
             Value="Hand" />
-
     <Setter Property="Template">
 
       <Setter.Value>
+
         <ControlTemplate TargetType="{x:Type ToggleButton}">
+
           <Grid Background="Transparent">
+
             <Grid.ColumnDefinitions>
-
               <ColumnDefinition Width="Auto" />
               <ColumnDefinition Width="Auto" />
-
             </Grid.ColumnDefinitions>
 
             <Border x:Name="Track"
@@ -359,45 +314,38 @@
                               RecognizesAccessKey="True" />
 
           </Grid>
+
           <ControlTemplate.Triggers>
 
             <Trigger Property="IsMouseOver"
                      Value="True">
-
               <Setter TargetName="Track"
                       Property="BorderBrush"
                       Value="{DynamicResource ThemeBorderStrongBrush}" />
-
             </Trigger>
 
             <Trigger Property="IsChecked"
                      Value="True">
-
               <Setter TargetName="Track"
                       Property="Background"
                       Value="{DynamicResource AccentBrush}" />
-
               <Setter TargetName="Track"
                       Property="BorderBrush"
                       Value="{DynamicResource AccentBrush}" />
-
               <Setter TargetName="Thumb"
                       Property="HorizontalAlignment"
                       Value="Right" />
-
               <Setter TargetName="Thumb"
                       Property="Fill"
                       Value="{DynamicResource AccentForegroundBrush}" />
-
             </Trigger>
 
             <Trigger Property="IsEnabled"
                      Value="False">
-
               <Setter Property="Opacity"
                       Value="0.5" />
-
             </Trigger>
+
           </ControlTemplate.Triggers>
         </ControlTemplate>
       </Setter.Value>
@@ -433,11 +381,10 @@
                     SnapsToDevicePixels="True">
 
               <Grid>
-                <Grid.ColumnDefinitions>
 
+                <Grid.ColumnDefinitions>
                   <ColumnDefinition Width="*" />
                   <ColumnDefinition Width="20" />
-                  
                 </Grid.ColumnDefinitions>
 
                 <ContentPresenter Grid.Column="0"
@@ -462,21 +409,18 @@
 
               <Trigger Property="IsMouseOver"
                        Value="True">
-
                 <Setter TargetName="Background"
                         Property="BorderBrush"
                         Value="{DynamicResource ThemeBorderStrongBrush}" />
-                        
               </Trigger>
 
               <Trigger Property="IsChecked"
                        Value="True">
-
                 <Setter TargetName="Background"
                         Property="BorderBrush"
                         Value="{DynamicResource AccentBrush}" />
-
               </Trigger>
+
             </ControlTemplate.Triggers>
           </ControlTemplate>
         </ToggleButton.Template>
@@ -510,11 +454,10 @@
 
       <Trigger Property="IsEnabled"
                Value="False">
-
         <Setter Property="Opacity"
                 Value="0.5" />
-
       </Trigger>
+
     </ControlTemplate.Triggers>
   </ControlTemplate>
 

@@ -8,10 +8,8 @@
   <!-- Drawn by WPF's focus adorner above the button template -->
   <Style x:Key="ThemedButtonFocusVisualStyle">
     <Setter Property="Control.Template">
-
       <Setter.Value>
         <ControlTemplate>
-
           <Rectangle Margin="2"
                      RadiusX="3"
                      RadiusY="3"
@@ -19,7 +17,6 @@
                      StrokeDashArray="1 2"
                      Stroke="{DynamicResource ThemeFg0Brush}"
                      SnapsToDevicePixels="True" />
-        
         </ControlTemplate>
       </Setter.Value>
     </Setter>
@@ -38,34 +35,31 @@
             BorderThickness="{TemplateBinding BorderThickness}"
             CornerRadius="4"
             SnapsToDevicePixels="True">
-            
       <ContentPresenter Margin="{TemplateBinding Padding}"
                         HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                         VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
                         RecognizesAccessKey="True"
                         SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
-
     </Border>
+
     <ControlTemplate.Triggers>
 
       <!-- Accent ring on whichever button Enter would activate -->
       <Trigger Property="IsDefaulted"
                Value="True">
-
         <Setter TargetName="Chrome"
                 Property="BorderBrush"
                 Value="{DynamicResource AccentBrush}" />
-
       </Trigger>
 
       <Trigger Property="IsEnabled"
                Value="False">
-
         <Setter Property="Opacity"
                 Value="0.45" />
-
       </Trigger>
+
     </ControlTemplate.Triggers>
+
   </ControlTemplate>
 
   <!-- ═══════════════════════════════════════════════════════════ -->
@@ -75,28 +69,20 @@
   <!-- Standard themed button -->
   <Style x:Key="ThemedButtonStyle"
          TargetType="Button">
-         
     <Setter Property="FocusVisualStyle"
             Value="{StaticResource ThemedButtonFocusVisualStyle}" />
-
     <Setter Property="Background"
             Value="{DynamicResource ThemeBg1Brush}" />
-
     <Setter Property="Foreground"
             Value="{DynamicResource ThemeFg0Brush}" />
-
     <Setter Property="BorderBrush"
             Value="{DynamicResource ThemeBorderBrush}" />
-
     <Setter Property="BorderThickness"
             Value="1" />
-
     <Setter Property="Padding"
             Value="14,6" />
-
     <Setter Property="SnapsToDevicePixels"
             Value="True" />
-
     <Setter Property="Template"
             Value="{StaticResource ThemedButtonTemplate}" />
 
@@ -104,39 +90,32 @@
 
       <Trigger Property="IsMouseOver"
                Value="True">
-
         <Setter Property="Background"
                 Value="{DynamicResource ThemeHoverBrush}" />
-
         <Setter Property="BorderBrush"
                 Value="{DynamicResource ThemeBorderStrongBrush}" />
-      
       </Trigger>
 
       <Trigger Property="IsPressed"
                Value="True">
-
         <Setter Property="Background"
                 Value="{DynamicResource ThemePressedBrush}" />
-
       </Trigger>
+
     </Style.Triggers>
+
   </Style>
 
   <!-- Primary/accent action -->
   <Style x:Key="AccentButtonStyle"
          TargetType="Button"
          BasedOn="{StaticResource ThemedButtonStyle}">
-
     <Setter Property="Background"
             Value="{DynamicResource AccentBrush}" />
-
     <Setter Property="BorderBrush"
             Value="{DynamicResource AccentBrush}" />
-
     <Setter Property="Foreground"
             Value="{DynamicResource AccentForegroundBrush}" />
-
     <Setter Property="FontWeight"
             Value="SemiBold" />
 
@@ -144,26 +123,22 @@
 
       <Trigger Property="IsMouseOver"
                Value="True">
-
         <Setter Property="Background"
                 Value="{DynamicResource AccentHoverBrush}" />
-
         <Setter Property="BorderBrush"
                 Value="{DynamicResource AccentHoverBrush}" />
-
       </Trigger>
 
       <Trigger Property="IsPressed"
                Value="True">
-
         <Setter Property="Background"
                 Value="{DynamicResource AccentPressedBrush}" />
-
         <Setter Property="BorderBrush"
                 Value="{DynamicResource AccentPressedBrush}" />
-                
       </Trigger>
+
     </Style.Triggers>
+
   </Style>
 
   <!-- ═══════════════════════════════════════════════════════════ -->
@@ -173,16 +148,12 @@
   <!-- Border chrome around an editor -->
   <Style x:Key="EditorFrameStyle"
          TargetType="Border">
-
     <Setter Property="BorderBrush"
             Value="{DynamicResource ThemeBorderBrush}" />
-
     <Setter Property="BorderThickness"
             Value="1" />
-
     <Setter Property="CornerRadius"
             Value="4" />
-
   </Style>
 
 </ResourceDictionary>

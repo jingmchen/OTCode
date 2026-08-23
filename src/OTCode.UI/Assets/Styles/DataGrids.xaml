@@ -6,34 +6,24 @@
   <!-- ═══════════════════════════════════════════════════════════ -->
 
   <Style TargetType="{x:Type DataGrid}">
-
     <Setter Property="Background"
             Value="{DynamicResource ThemeBg0Brush}" />
-
     <Setter Property="Foreground"
             Value="{DynamicResource ThemeFg0Brush}" />
-
     <Setter Property="BorderBrush"
             Value="{DynamicResource ThemeBorderBrush}" />
-
     <Setter Property="BorderThickness"
             Value="1" />
-
     <Setter Property="GridLinesVisibility"
             Value="Horizontal" />
-
     <Setter Property="HorizontalGridLinesBrush"
             Value="{DynamicResource ThemeBorderBrush}" />
-
     <Setter Property="VerticalGridLinesBrush"
             Value="{DynamicResource ThemeBorderBrush}" />
-
     <Setter Property="RowBackground"
             Value="Transparent" />
-
     <Setter Property="AlternatingRowBackground"
             Value="Transparent" />
-
   </Style>
 
   <!-- ═══════════════════════════════════════════════════════════ -->
@@ -41,25 +31,18 @@
   <!-- ═══════════════════════════════════════════════════════════ -->
 
   <Style TargetType="{x:Type DataGridColumnHeader}">
-
     <Setter Property="Background"
             Value="{DynamicResource ThemeBg2Brush}" />
-
     <Setter Property="Foreground"
             Value="{DynamicResource ThemeFg0Brush}" />
-
     <Setter Property="FontWeight"
             Value="SemiBold" />
-
     <Setter Property="Padding"
             Value="12,8" />
-
     <Setter Property="BorderBrush"
             Value="{DynamicResource ThemeBorderBrush}" />
-
     <Setter Property="BorderThickness"
             Value="0,0,1,1" />
-
   </Style>
 
   <!-- ═══════════════════════════════════════════════════════════ -->
@@ -67,10 +50,8 @@
   <!-- ═══════════════════════════════════════════════════════════ -->
 
   <Style TargetType="{x:Type DataGridRow}">
-
     <Setter Property="Background"
             Value="Transparent" />
-
     <Setter Property="Foreground"
             Value="{DynamicResource ThemeFg0Brush}" />
 
@@ -78,20 +59,18 @@
 
       <Trigger Property="IsMouseOver"
                Value="True">
-
         <Setter Property="Background"
                 Value="{DynamicResource ThemeHoverBrush}" />
-
       </Trigger>
 
       <Trigger Property="IsSelected"
                Value="True">
-
         <Setter Property="Background"
                 Value="{DynamicResource ThemeSelectedBrush}" />
-
       </Trigger>
+
     </Style.Triggers>
+
   </Style>
 
   <!-- ═══════════════════════════════════════════════════════════ -->
@@ -100,19 +79,14 @@
 
   <!-- Keep cell chrome transparent so row hover and selection remain visible -->
   <Style TargetType="{x:Type DataGridCell}">
-
     <Setter Property="Background"
             Value="Transparent" />
-
     <Setter Property="Foreground"
             Value="{Binding Foreground, RelativeSource={RelativeSource AncestorType={x:Type DataGridRow}}}" />
-
     <Setter Property="BorderBrush"
             Value="{DynamicResource ThemeBorderBrush}" />
-
     <Setter Property="BorderThickness"
             Value="0" />
-
     <Setter Property="Padding"
             Value="8,5" />
 
@@ -120,15 +94,14 @@
 
       <Trigger Property="IsKeyboardFocusWithin"
                Value="True">
-
         <Setter Property="BorderBrush"
                 Value="{DynamicResource AccentBrush}" />
-
         <Setter Property="BorderThickness"
                 Value="1" />
-
       </Trigger>
+
     </Style.Triggers>
+    
   </Style>
 
 </ResourceDictionary>

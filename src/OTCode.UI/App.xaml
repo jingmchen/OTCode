@@ -5,7 +5,7 @@
   <Application.Resources>
     <ResourceDictionary>
       <ResourceDictionary.MergedDictionaries>
-        <ResourceDictionary Source="Assets/Styles/Index.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/OTCode.UI;component/Assets/Styles/Index.xaml" />
       </ResourceDictionary.MergedDictionaries>
     </ResourceDictionary>
   </Application.Resources>
