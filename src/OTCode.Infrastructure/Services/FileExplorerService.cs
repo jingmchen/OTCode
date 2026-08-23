@@ -181,7 +181,7 @@ public sealed class FileExplorerService : IFileExplorerService
                 ItemDeleted?.Invoke(this, item.FullPath);
             }
 
-            if (failures is { Count: > 0 })
+            if (failures is {Count: > 0})
                 throw new IOException($"{failures.Count} item(s) could not be deleted.", failures[0]);
         }
         finally
@@ -380,7 +380,7 @@ public sealed class FileExplorerService : IFileExplorerService
                 Clipboard.SetNone();
             }
 
-            if (failures is { Count: > 0 })
+            if (failures is {Count: > 0})
                 throw new IOException($"{failures.Count} item(s) could not be pasted.", failures[0]);
         }
         finally

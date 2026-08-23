@@ -30,12 +30,10 @@ public sealed partial class FileExplorerControl : UserControl, IDisposable
     private FileExplorerViewModel? ViewModel => DataContext as FileExplorerViewModel;
 
     public FileExplorerControl(
-        IFileExplorerService service,
         FileExplorerOptions options,
         IFileExplorerItemActions? itemActions = null,
         ILoggerFactory? loggerFactory = null)
     {
-        _service = service ?? throw new ArgumentNullException(nameof(service));
         Options = options ?? throw new ArgumentNullException(nameof(options));
 
         options.SanitizeValidate();
@@ -48,6 +46,7 @@ public sealed partial class FileExplorerControl : UserControl, IDisposable
             itemActions ?? new FileExplorerItemActions());
 
         InitializeComponent();
+
         ApplyPanelOptions();
 
         DataContext = _viewModel;
@@ -128,29 +127,20 @@ public sealed partial class FileExplorerControl : UserControl, IDisposable
         e.Handled = true;
     }
 
-    // ─── SELECTION ──────────────────────────────────────────────
-
-    // Selection is stored in FileExplorerItem.IsSelected/ViewModel.SelectedItems because
-    // WPF TreeView has no native multi-selection mode.
     private void OnTreePreviewMouseDown(object sender, MouseButtonEventArgs e)
     {
         if (ViewModel is null)
             return;
-
-        // Do not convert text-editing gestures into row gestures, and do not clear selection
-        // when a TreeView scrollbar is being operated.
-        if (IsWithin<TextBox>(e.OriginalSource) ||
-            IsWithin<ScrollBar>(e.OriginalSource))
-        {
+        
+        if (IsWithin<TextBox>(e.OriginalSource) || IsWithin<ScrollBar>(e.OriginalSource))
             return;
-        }
 
         FileExplorerItem? item = ItemFrom(e.OriginalSource);
 
         if (e.ChangedButton == MouseButton.Right)
         {
             // Preserve an existing multi-selection when right-clicking one of its rows.
-            if (item is { IsSelected: false })
+            if (item is {IsSelected: false})
             {
                 ViewModel.SelectItem(item, multiSelect: false);
                 _anchor = item;
@@ -162,8 +152,7 @@ public sealed partial class FileExplorerControl : UserControl, IDisposable
         if (e.ChangedButton != MouseButton.Left)
             return;
 
-        // Drag/drop may consume mouse-up, so discard a stale deferred collapse before each
-        // new left-button selection gesture.
+        // Drag/drop may consume mouse-up, so discard stale before each new selection gesture
         _pendingCollapseItem = null;
 
         if (item is null)
@@ -184,12 +173,8 @@ public sealed partial class FileExplorerControl : UserControl, IDisposable
         }
 
         bool multiSelect = Options.Panel.AllowMultiSelect;
-        bool controlPressed =
-            multiSelect &&
-            (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control;
-        bool shiftPressed =
-            multiSelect &&
-            (Keyboard.Modifiers & ModifierKeys.Shift) == ModifierKeys.Shift;
+        bool controlPressed = multiSelect && (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control;
+        bool shiftPressed = multiSelect && (Keyboard.Modifiers & ModifierKeys.Shift) == ModifierKeys.Shift;
 
         if (shiftPressed && _anchor is not null)
         {
@@ -297,7 +282,7 @@ public sealed partial class FileExplorerControl : UserControl, IDisposable
 
         while (current is not null)
         {
-            if (current is FrameworkElement { DataContext: FileExplorerItem item })
+            if (current is FrameworkElement {DataContext: FileExplorerItem item})
                 return item;
 
             current = ParentOf(current);

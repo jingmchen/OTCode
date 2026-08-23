@@ -20,7 +20,7 @@ public sealed class ServiceOptions
     public string NewFileName {get; set;} = "NewFile";
     public string NewFileExt {get; set;} = ".txt";
     public string NewFolderName {get; set;} = "NewFolder";
-    public string? RootPath { get; set; }
+    public string? RootPath {get; set;}
     public bool AutoExpandRootOnOpen {get; set;} = true;
     public bool CreateRootIfMissing {get; set;} = true;
     public bool EnableFileWatcher {get; set;} = true;

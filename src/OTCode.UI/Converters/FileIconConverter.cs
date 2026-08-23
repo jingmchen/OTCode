@@ -20,24 +20,19 @@ public sealed class FileIconConverter : IMultiValueConverter
         new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
         {
             // code — languages, markup, styles, scripts
-            { ".cs", "code" }, { ".csproj", "code" }, { ".sln", "code" }, { ".razor", "code" },
-            { ".axaml", "code" }, { ".xaml", "code" }, { ".html", "code" }, { ".htm", "code" },
-            { ".css", "code" }, { ".scss", "code" }, { ".less", "code" }, { ".js", "code" },
-            { ".mjs", "code" }, { ".ts", "code" }, { ".tsx", "code" }, { ".jsx", "code" },
-            { ".vue", "code" }, { ".svelte", "code" }, { ".py", "code" }, { ".rb", "code" },
-            { ".go", "code" }, { ".rs", "code" }, { ".cpp", "code" }, { ".c", "code" },
-            { ".h", "code" }, { ".java", "code" }, { ".kt", "code" }, { ".swift", "code" },
-            { ".dart", "code" }, { ".php", "code" }, { ".sql", "code" }, { ".r", "code" },
-            { ".lua", "code" }, { ".sh", "code" }, { ".bash", "code" }, { ".zsh", "code" },
-            { ".ps1", "code" }, { ".bat", "code" }, { ".cmd", "code" },
+            {".cs", "code"}, {".csproj", "code"},
+            {".axaml", "code"}, {".xaml", "code"},
+
             // image
-            { ".png", "image" }, { ".jpg", "image" }, { ".jpeg", "image" }, { ".gif", "image" },
-            { ".svg", "image" }, { ".ico", "image" }, { ".webp", "image" }, { ".bmp", "image" },
+            {".png", "image"}, {".jpg", "image"}, {".jpeg", "image"}, {".gif", "image"},
+            {".svg", "image"}, {".ico", "image"}, {".webp", "image"}, {".bmp", "image"},
+
             // archive
-            { ".zip", "archive" }, { ".tar", "archive" }, { ".gz", "archive" }, { ".rar", "archive" }, { ".7z", "archive" },
+            {".zip", "archive"}, {".tar", "archive"}, {".gz", "archive"}, {".rar", "archive"}, {".7z", "archive"},
+
             // config — settings + dotfiles keyed by whole name
-            { ".ini", "config" }, { ".env", "config" }, { ".editorconfig", "config" }, { ".toml", "config" },
-            { ".gitignore", "config" }, { ".gitattributes", "config" }, { ".lock", "config" }
+            {".ini", "config"}, {".env", "config"}, {".editorconfig", "config"},
+            {".gitignore", "config"}, {".gitattributes", "config"}
         };
     
     private FileIconConverter() {}
@@ -83,7 +78,7 @@ public sealed class FileIconConverter : IMultiValueConverter
                 image.EndInit();
                 image.Freeze();
 
-                var brush = new ImageBrush(image) { Stretch = Stretch.Uniform };
+                var brush = new ImageBrush(image) {Stretch = Stretch.Uniform};
                 RenderOptions.SetBitmapScalingMode(brush, BitmapScalingMode.HighQuality);
                 brush.Freeze();
                 return brush;

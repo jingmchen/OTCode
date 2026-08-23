@@ -227,6 +227,18 @@
     </Setter>
   </Style>
 
+  <Style TargetType="{x:Type UserControl}"
+         BasedOn="{StaticResource InheritedForegroundControlStyle}" />
+
+  <Style TargetType="{x:Type Label}"
+         BasedOn="{StaticResource InheritedForegroundControlStyle}" />
+
+  <Style TargetType="{x:Type GroupBox}"
+         BasedOn="{StaticResource InheritedForegroundControlStyle}" />
+
+  <Style TargetType="{x:Type Expander}"
+         BasedOn="{StaticResource InheritedForegroundControlStyle}" />
+
   <!-- Status Text -->
   <Style x:Key="statusText"
          TargetType="{x:Type TextBlock}"
