@@ -3,6 +3,7 @@
 using System.Collections.ObjectModel;
 using OTCode.Core.Abstractions.Infrastructure;
 using OTCode.Core.Abstractions.UI;
+using OTCode.Core.Configuration.UserStateSettings;
 using OTCode.Core.Domains.FileExplorer;
 using OTCode.Core.Enums;
 using OTCode.Core.Options.FileExplorer;
@@ -16,7 +17,7 @@ public sealed class FileExplorerService : IFileExplorerService
 {
     private readonly IFileWatcherService _watcher;
     private readonly IUIDispatcher _dispatcher;
-    private string _rootPath = "";
+    private readonly ISettingsProvider<UserStateSettings> _settings;
     private int _internalOpCount;
     private bool _disposed;
 
@@ -24,6 +25,7 @@ public sealed class FileExplorerService : IFileExplorerService
     public ObservableCollection<FileExplorerItem> SelectedItems {get;} = [];
     public FileExplorerClipboard Clipboard {get;} = new();
     public FileExplorerOptions Options {get;}
+    public string RootPath {get; private set;} = "";
 
     public event EventHandler<FileExplorerItem>? ItemCreated;
     public event EventHandler<FileExplorerItem>? ItemRenamed;
@@ -33,16 +35,21 @@ public sealed class FileExplorerService : IFileExplorerService
     public FileExplorerService(
         IFileWatcherService watcher,
         IUIDispatcher dispatcher,
+        ISettingsProvider<UserStateSettings> settings,
         FileExplorerOptions? options = null)
     {
         _watcher = watcher ?? throw new ArgumentNullException(nameof(watcher));
         _dispatcher = dispatcher ?? throw new ArgumentNullException(nameof(dispatcher));
+        _settings = settings ?? throw new ArgumentNullException(nameof(settings));
         Options = options ?? new FileExplorerOptions();
 
         Options.SanitizeValidate();
 
         if (Options.Service.EnableFileWatcher)
             _watcher.Changed += OnWatcherChanged;
+
+        if (!string.IsNullOrWhiteSpace(_settings.Current.AppState.LastOpenedDirectory))
+            LoadDirectory(_settings.Current.AppState.LastOpenedDirectory);
     }
 
     // ─── PUBLIC METHODS ────────────────────────
@@ -50,15 +57,18 @@ public sealed class FileExplorerService : IFileExplorerService
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(rootPath);
 
-        _rootPath = Path.TrimEndingDirectorySeparator(rootPath);
+        RootPath = Path.TrimEndingDirectorySeparator(rootPath);
 
-        if (!Directory.Exists(_rootPath) && Options.Service.CreateRootIfMissing)
-            Directory.CreateDirectory(_rootPath);
+        if (!Directory.Exists(RootPath) && Options.Service.CreateRootIfMissing)
+            Directory.CreateDirectory(RootPath);
 
         RebuildRoot();
 
         if (Options.Service.EnableFileWatcher)
-            _watcher.StartWatching(_rootPath);
+            _watcher.StartWatching(RootPath);
+        
+        _settings.Current.AppState.LastOpenedDirectory = RootPath;
+        _settings.Save();
 
         ExplorerRefreshed?.Invoke(this, EventArgs.Empty);
     }
@@ -71,9 +81,9 @@ public sealed class FileExplorerService : IFileExplorerService
 
     public void RefreshDirectory()
     {
-        if (string.IsNullOrWhiteSpace(_rootPath))
+        if (string.IsNullOrWhiteSpace(RootPath))
             return;
-        LoadDirectory(_rootPath);
+        LoadDirectory(RootPath);
     }
 
     public FileExplorerItem CreateFile(FileExplorerItem? parent, string name)
@@ -279,7 +289,7 @@ public sealed class FileExplorerService : IFileExplorerService
 
         var operation = Clipboard.Operation;
         var snapshot = Clipboard.Snapshot();
-        var targetPath = targetFolder?.FullPath ?? _rootPath;
+        var targetPath = targetFolder?.FullPath ?? RootPath;
 
         SuppressWatcher();
 
@@ -406,7 +416,7 @@ public sealed class FileExplorerService : IFileExplorerService
         RootItems.Clear();
         SelectedItems.Clear();
 
-        foreach (var item in BuildTree(_rootPath, parent: null))
+        foreach (var item in BuildTree(RootPath, parent: null))
             RootItems.Add(item);
         
         if (Options.Service.AutoExpandRootOnOpen)
@@ -692,9 +702,9 @@ public sealed class FileExplorerService : IFileExplorerService
     {
         if (Interlocked.Decrement(ref _internalOpCount) == 0
             && Options.Service.EnableFileWatcher
-            && !string.IsNullOrWhiteSpace(_rootPath))
+            && !string.IsNullOrWhiteSpace(RootPath))
         {
-            _watcher.StartWatching(_rootPath);
+            _watcher.StartWatching(RootPath);
         }
     }
 
@@ -708,5 +718,5 @@ public sealed class FileExplorerService : IFileExplorerService
         => folder?.Children ?? RootItems;
 
     private string PathOf(FileExplorerItem? folder)
-        => folder?.FullPath ?? _rootPath;
+        => folder?.FullPath ?? RootPath;
 }

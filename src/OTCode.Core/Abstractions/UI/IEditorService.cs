@@ -12,4 +12,8 @@ public interface IEditorService<TEditor, TOptions>
     void ConfigureEditor(TEditor editor);
     void SetSyntaxHighlighting(TEditor editor, string? colorFormat);
     void SetOptions(TOptions options);
+    TOptions GetOptions(TEditor editor);
+    void ZoomIn(TEditor editor);
+    void ZoomOut(TEditor editor);
+    void ResetZoom(TEditor editor);
 }

@@ -1,31 +1,27 @@
 // Copyright (c) Tan Jing Ming. Use of this software is governed by LICENSE.md.
 
 using System.Windows;
-using Microsoft.Extensions.Logging;
-using OTCode.Core.Abstractions.Infrastructure;
 using OTCode.Core.Abstractions.UI;
 using OTCode.Core.Options.FileExplorer;
 using OTCode.UI.Controls;
-using OTCode.UI.ViewModels;
+using OTCode.UI.ViewModels.Services;
 
 namespace OTCode.UI.Views;
 
 public sealed partial class MainWindow : Window
 {
     public MainWindow(
-        MainWindowViewModel viewModel,
-        IFileExplorerService service,
-        IFileExplorerItemActions itemActions,
-        FileExplorerOptions options,
-        ILoggerFactory loggerFactory)
+        FileExplorerViewModel viewModel,
+        IFilePickerService filePicker)
     {
         ArgumentNullException.ThrowIfNull(viewModel);
-        ArgumentNullException.ThrowIfNull(service);
-        ArgumentNullException.ThrowIfNull(options);
+        ArgumentNullException.ThrowIfNull(filePicker);
 
         InitializeComponent();
         DataContext = viewModel;
 
-        Content = new FileExplorerControl(service, options, itemActions, loggerFactory);
+        var options = new FileExplorerOptions().SanitizeValidate();
+
+        Content = new FileExplorerControl(viewModel, filePicker, options.Panel);
     }
 }

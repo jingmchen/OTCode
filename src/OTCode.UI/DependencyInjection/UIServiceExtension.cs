@@ -10,6 +10,7 @@ using OTCode.UI.Views.Dialogs;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;
 using OTCode.Core.Options.FileExplorer;
+using OTCode.UI.ViewModels.Services;
 
 namespace OTCode.UI.DependencyInjection;
 
@@ -22,7 +23,7 @@ public static class UIServiceExtension
         services.AddSingleton<App>();
         
         services.AddConsoleLog();
-        services.AddWindows();
+        services.AddViewsAndViewModels();
 
         services.AddSingleton<IFilePickerService, FilePickerService>();
         services.AddSingleton<IHoverTracker, HoverTracker>();
@@ -32,7 +33,6 @@ public static class UIServiceExtension
         services.AddSingleton<IHoverTracker, HoverTracker>();
         services.AddSingleton<IUIDispatcher, UIDispatcher>();
         services.TryAddSingleton<IFileExplorerItemActions, FileExplorerItemActions>();
-        services.AddSingleton<FileExplorerOptions>();
         return services;
     }
 
@@ -44,10 +44,11 @@ public static class UIServiceExtension
         return services;
     }
 
-    private static IServiceCollection AddWindows(this IServiceCollection services)
+    private static IServiceCollection AddViewsAndViewModels(this IServiceCollection services)
     {
         services.AddSingleton<MainWindow>();
         services.AddSingleton<MainWindowViewModel>();
+        services.AddSingleton<FileExplorerViewModel>();
         return services;
     }
 }

@@ -12,6 +12,7 @@ public interface IFileExplorerService
     ObservableCollection<FileExplorerItem> SelectedItems {get;}
     FileExplorerClipboard Clipboard {get;}
     FileExplorerOptions Options {get;}
+    string RootPath {get;}
 
     event EventHandler<FileExplorerItem>? ItemCreated;
     event EventHandler<FileExplorerItem>? ItemRenamed;

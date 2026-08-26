@@ -5,57 +5,39 @@ using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Media;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Abstractions;
-using Microsoft.Win32;
-using OTCode.Core.Abstractions.Infrastructure;
 using OTCode.Core.Abstractions.UI;
 using OTCode.Core.Domains.FileExplorer;
 using OTCode.Core.Options.FileExplorer;
-using OTCode.UI.Services;
 using OTCode.UI.ViewModels.Services;
 
 namespace OTCode.UI.Controls;
 
 public sealed partial class FileExplorerControl : UserControl, IDisposable
 {
-    private readonly IFileExplorerService _service;
     private readonly FileExplorerViewModel _viewModel;
+    private readonly IFilePickerService _filePicker;
     private FileExplorerItem? _anchor;
     private FileExplorerItem? _pendingCollapseItem;
     private Point _pressPoint;
     private bool _disposed;
     private bool _teardownHooked;
-    public FileExplorerOptions Options {get;}
+    public PanelOptions PanelOptions {get;}
     private FileExplorerViewModel? ViewModel => DataContext as FileExplorerViewModel;
 
     public FileExplorerControl(
-        IFileExplorerService service,
-        FileExplorerOptions options,
-        IFileExplorerItemActions? itemActions = null,
-        ILoggerFactory? loggerFactory = null)
+        FileExplorerViewModel viewModel,
+        IFilePickerService filePicker,
+        PanelOptions panelOptions)
     {
-        _service = service ?? throw new ArgumentNullException(nameof(service));
-        Options = options ?? throw new ArgumentNullException(nameof(options));
-
-        options.SanitizeValidate();
-
-        var effectiveLoggerFactory = loggerFactory ?? NullLoggerFactory.Instance;
-        
-        _viewModel = new FileExplorerViewModel(
-            effectiveLoggerFactory.CreateLogger<FileExplorerViewModel>(),
-            _service,
-            itemActions ?? new FileExplorerItemActions());
+        _viewModel = viewModel ?? throw new ArgumentNullException(nameof(viewModel));
+        _filePicker = filePicker ?? throw new ArgumentNullException(nameof(filePicker));
+        PanelOptions = panelOptions ?? throw new ArgumentNullException(nameof(panelOptions));
 
         InitializeComponent();
-
         ApplyPanelOptions();
 
         DataContext = _viewModel;
         Loaded += OnLoaded;
-
-        if (!string.IsNullOrWhiteSpace(options.Service.RootPath))
-            _viewModel.LoadDirectory(options.Service.RootPath);
     }
 
     public void Dispose()
@@ -70,12 +52,10 @@ public sealed partial class FileExplorerControl : UserControl, IDisposable
 
     private void ApplyPanelOptions()
     {
-        var options = Options;
-
-        Width = options.Panel.Width;
-        Height = options.Panel.Height;
-        MinWidth = options.Panel.MinWidth;
-        MaxWidth = options.Panel.MaxWidth;
+        Width = PanelOptions.Width;
+        Height = PanelOptions.Height;
+        MinWidth = PanelOptions.MinWidth;
+        MaxWidth = PanelOptions.MaxWidth;
     }
 
     private void OnLoaded(object? sender, RoutedEventArgs e)
@@ -91,28 +71,12 @@ public sealed partial class FileExplorerControl : UserControl, IDisposable
             Dispatcher.ShutdownStarted += (_, _) => Dispose();
     }
 
-    private void OnBrowseClick(object sender, RoutedEventArgs e)
+    private async void OnBrowseClick(object sender, RoutedEventArgs e)
     {
-        try
-        {
-            var dialog = new OpenFolderDialog
-            {
-                Title = "Select root folder",
-                Multiselect = false
-            };
-
-            if (dialog.ShowDialog(Window.GetWindow(this)) == true &&
-                !string.IsNullOrEmpty(dialog.FolderName))
-            {
-                ViewModel?.LoadDirectory(dialog.FolderName);
-            }
-        }
-        catch (Exception exception)
-        {
-            // A native-picker failure must not terminate the application.
-            System.Diagnostics.Debug.WriteLine(
-                $"[FileExplorer] Folder picker failed: {exception}");
-        }
+        string? path = await _filePicker.PickFolderAsync("Select root folder");
+        
+        if (!string.IsNullOrEmpty(path))
+            ViewModel?.LoadDirectory(path);
     }
 
     private void OnPathBoxKeyDown(object sender, KeyEventArgs e)
@@ -174,7 +138,7 @@ public sealed partial class FileExplorerControl : UserControl, IDisposable
             return;
         }
 
-        bool multiSelect = Options.Panel.AllowMultiSelect;
+        bool multiSelect = PanelOptions.AllowMultiSelect;
         bool controlPressed = multiSelect && (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control;
         bool shiftPressed = multiSelect && (Keyboard.Modifiers & ModifierKeys.Shift) == ModifierKeys.Shift;
 

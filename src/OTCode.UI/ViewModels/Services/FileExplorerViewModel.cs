@@ -9,9 +9,9 @@ using OTCode.Core.Abstractions.Infrastructure;
 using OTCode.Core.Abstractions.UI;
 using OTCode.Core.Domains.Behaviors;
 using OTCode.Core.Domains.FileExplorer;
-using OTCode.UI.Constants;
 using OTCode.Core.Utils;
 using OTCode.Core.Logging;
+using OTCode.UI.Constants;
 
 namespace OTCode.UI.ViewModels.Services;
 
@@ -23,6 +23,7 @@ public sealed partial class FileExplorerViewModel : ObservableObject, IHoverTrac
     private FileExplorerItem? _pendingCreateParent;
     private FileExplorerItem? _pendingRenameItem;
     private bool _disposed;
+    public string CurrentRootPath => _service.RootPath;
 
     [ObservableProperty]
     public partial string StatusMessage {get; set;} = "No folder loaded.";
@@ -46,9 +47,6 @@ public sealed partial class FileExplorerViewModel : ObservableObject, IHoverTrac
 
     [ObservableProperty]
     public partial bool HasDirectory {get; set;}
-
-    [ObservableProperty]
-    public partial string CurrentRootPath {get; set;} = "";
 
     [ObservableProperty]
     public partial double Zoom {get; set;} = UIConstants.Control.FileExplorer.DefaultZoom;
@@ -75,11 +73,13 @@ public sealed partial class FileExplorerViewModel : ObservableObject, IHoverTrac
         _service.ItemRenamed += OnItemRenamed;
         _service.ItemDeleted += OnItemDeleted;
         _service.ExplorerRefreshed += OnExplorerRefreshed;
+
+        LoadDirectory();
     }
 
     public void LoadDirectory()
     {
-        var root = _service.Options.Service.RootPath;
+        var root = _service.RootPath;
 
         if (!string.IsNullOrWhiteSpace(root))
             LoadDirectory(root);
@@ -100,8 +100,7 @@ public sealed partial class FileExplorerViewModel : ObservableObject, IHoverTrac
             SetStatus($"Could not open '{path}': {ex.Message}");
             return;
         }
-
-        CurrentRootPath = path;
+        
         HasDirectory = true;
 
         SetStatus($"Loaded: {DisplayName(path)}");
