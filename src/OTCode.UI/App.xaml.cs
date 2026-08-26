@@ -15,6 +15,7 @@ public sealed partial class App : Application
     private readonly IServiceProvider _services;
     private readonly IAtomicFileAsync _fileWriter;
     private readonly ILogger<App> _logger;
+    private string _appName = "";
 
     public App(IServiceProvider services)
     {
@@ -34,6 +35,9 @@ public sealed partial class App : Application
         if (_services is { } services)
         {
             ShutdownMode = ShutdownMode.OnExplicitShutdown;
+
+            var appInfo = services.GetRequiredService<IAppInfo>();
+            _appName = appInfo.Product;
             
             var theme = services.GetRequiredService<IThemeService>();
             theme.Initialize();
@@ -87,7 +91,7 @@ public sealed partial class App : Application
         _logger.LogError(e.Exception, "Unhandled UI exception.");
         MessageBox.Show(
             "An unexpected error occurred. See the log file for details.",
-            "CLX Transpiler",
+            $"{_appName}",
             MessageBoxButton.OK,
             MessageBoxImage.Error);
         e.Handled = false;

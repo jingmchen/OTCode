@@ -8,6 +8,8 @@ using OTCode.UI.ViewModels;
 using OTCode.UI.Views;
 using OTCode.UI.Views.Dialogs;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Logging;
+using OTCode.Core.Options.FileExplorer;
 
 namespace OTCode.UI.DependencyInjection;
 
@@ -30,6 +32,7 @@ public static class UIServiceExtension
         services.AddSingleton<IHoverTracker, HoverTracker>();
         services.AddSingleton<IUIDispatcher, UIDispatcher>();
         services.TryAddSingleton<IFileExplorerItemActions, FileExplorerItemActions>();
+        services.AddSingleton<FileExplorerOptions>();
         return services;
     }
 

@@ -29,8 +29,19 @@ public sealed class AppInfo : IAppInfo
         
         Copyright = assembly.GetCustomAttribute<AssemblyCopyrightAttribute>()?.Copyright
             ?? InfrastructureConstants.Service.AppInfo.CopyrightDefault;
+
+        InfoVersion = TrimInfoVersion(assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion);
+    }
+
+    private static string TrimInfoVersion(string? infoVersion)
+    {
+        if (string.IsNullOrWhiteSpace(infoVersion))
+            return "";
         
-        InfoVersion = assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion
-            ?? "";
+        int plus = infoVersion.IndexOf('+');
+
+        return plus < 0
+            ? infoVersion
+            : infoVersion[.. plus];
     }
 }

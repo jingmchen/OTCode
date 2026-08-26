@@ -19,7 +19,7 @@ public sealed partial class FileWatcherService : IFileWatcherService, IDisposabl
 
     public event EventHandler<FileSystemEventArgs>? Changed;
 
-    public FileWatcherService(ILogger<FileWatcherService> logger, TimeSpan? debounce)
+    public FileWatcherService(ILogger<FileWatcherService> logger, TimeSpan? debounce = null)
     {
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         _debounce = debounce ?? TimeSpan.FromMilliseconds(InfrastructureConstants.Service.FileWatcher.DebounceTimer);

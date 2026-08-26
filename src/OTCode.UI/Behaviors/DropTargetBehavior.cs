@@ -1,14 +1,13 @@
 // Copyright (c) Tan Jing Ming. Use of this software is governed by LICENSE.md.
 
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Threading;
 using Microsoft.Xaml.Behaviors;
 
 namespace OTCode.UI.Behaviors;
 
-public class DropTargetBehavior : Behavior<Control>
+public class DropTargetBehavior : Behavior<UIElement>
 {
     public static readonly DependencyProperty DropCommandProperty =
         DependencyProperty.Register(
