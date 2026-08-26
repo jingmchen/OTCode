@@ -21,13 +21,13 @@ public sealed partial class FileExplorerControl : UserControl, IDisposable
     private Point _pressPoint;
     private bool _disposed;
     private bool _teardownHooked;
-    public PanelOptions PanelOptions {get;}
+    public FileExplorerPanelOptions PanelOptions {get;}
     private FileExplorerViewModel? ViewModel => DataContext as FileExplorerViewModel;
 
     public FileExplorerControl(
         FileExplorerViewModel viewModel,
         IFilePickerService filePicker,
-        PanelOptions panelOptions)
+        FileExplorerPanelOptions panelOptions)
     {
         _viewModel = viewModel ?? throw new ArgumentNullException(nameof(viewModel));
         _filePicker = filePicker ?? throw new ArgumentNullException(nameof(filePicker));

@@ -4,8 +4,8 @@ namespace OTCode.Core.Options.FileExplorer;
 
 public sealed class FileExplorerOptions
 {
-    public ServiceOptions Service {get; set;} = new();
-    public PanelOptions Panel {get; set;} = new();
+    public FileExplorerServiceOptions Service {get; set;} = new();
+    public FileExplorerPanelOptions Panel {get; set;} = new();
 
     public FileExplorerOptions SanitizeValidate()
     {

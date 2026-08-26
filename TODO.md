@@ -1,3 +1,2 @@
-FileExplorer
 AvalonEditService
-Icons assets
+ConsolePane

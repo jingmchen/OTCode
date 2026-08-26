@@ -4,7 +4,7 @@ using OTCode.Core.Domains.FileExplorer;
 
 namespace OTCode.Core.Options.FileExplorer;
 
-public sealed class ServiceOptions
+public sealed class FileExplorerServiceOptions
 {
     public FileExplorerFilter FileExtensionFilter {get; set;} = new()
     {

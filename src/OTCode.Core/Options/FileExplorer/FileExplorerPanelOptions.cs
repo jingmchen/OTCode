@@ -2,7 +2,7 @@
 
 namespace OTCode.Core.Options.FileExplorer;
 
-public sealed class PanelOptions
+public sealed class FileExplorerPanelOptions
 {
     public double Width {get; set;} = 260;
     public double Height {get; set;} = double.NaN;
