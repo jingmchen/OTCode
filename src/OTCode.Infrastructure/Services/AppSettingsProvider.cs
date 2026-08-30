@@ -1,6 +1,8 @@
 // Copyright (c) Tan Jing Ming. Use of this software is governed by LICENSE.md.
 
 using Microsoft.Extensions.Logging;
+using Serilog.Core;
+using Serilog.Events;
 using OTCode.Core.Abstractions.Infrastructure;
 using OTCode.Core.Configuration.AppSettings;
 using OTCode.Core.Enums;
@@ -11,10 +13,14 @@ public sealed partial class AppSettingsProvider : SettingsProvider<AppSettings>
 {
     private const int MinRetainedFiles = 1;
     private const int MaxRetainedFiles = 30;
+    private readonly LoggingLevelSwitch? _levelSwitch;
 
-    public AppSettingsProvider(ILogger<AppSettingsProvider> logger, IAppPaths appPaths)
-        : base(logger, appPaths.UserAppSettingsFile)
+    public AppSettingsProvider(
+        ILogger<AppSettingsProvider> logger,
+        IAppPaths appPaths,
+        LoggingLevelSwitch? levelSwitch = null) : base(logger, appPaths.UserAppSettingsFile)
     {
+        _levelSwitch = levelSwitch;
     }
 
     // ─── OVERWRITTEN METHODS ───────────────────
@@ -39,4 +45,7 @@ public sealed partial class AppSettingsProvider : SettingsProvider<AppSettings>
         
         return settings;
     }
+
+    protected override void PostSave()
+        => _levelSwitch?.MinimumLevel = Enum.Parse<LogEventLevel>(Current.Logging.MinimumLevel.ToString());
 }

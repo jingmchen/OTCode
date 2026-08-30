@@ -14,6 +14,7 @@ using OTCode.Infrastructure.Utils;
 using OTCode.UI;
 using OTCode.UI.DependencyInjection;
 using OTCode.UI.Services;
+using Serilog.Core;
 
 namespace OTCode.AppHost;
 
@@ -91,9 +92,10 @@ internal sealed class Program
         });
 
         var level = Enum.Parse<LogEventLevel>(appSettings.Current.Logging.MinimumLevel.ToString());
+        var levelSwitch = new LoggingLevelSwitch(level);
 
         builder.Services.AddSerilog((services, configuration) => configuration
-            .MinimumLevel.Is(level)
+            .MinimumLevel.ControlledBy(levelSwitch)
             .MinimumLevel.Override("System", LogEventLevel.Warning)
             .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
             .Enrich.FromLogContext()
@@ -107,6 +109,7 @@ internal sealed class Program
             .WriteTo.ConsoleLogPane(services));  
         
         builder.Services.AddSingleton(typeof(Program).Assembly);
+        builder.Services.AddSingleton(levelSwitch);
         builder.Services.AddInfrastructureServices();
         builder.Services.AddTranspilerServices();
         builder.Services.AddUIServices();

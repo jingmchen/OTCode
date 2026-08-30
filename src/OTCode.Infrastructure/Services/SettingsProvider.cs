@@ -50,6 +50,10 @@ public abstract partial class SettingsProvider<T> : ISettingsProvider<T> where T
             LogFileUnableToSave(ex, Path.GetFileName(_settingsPath));
             return false;
         }
+        finally
+        {
+            PostSave();
+        }
     }
 
     public void Reload()
@@ -109,6 +113,7 @@ public abstract partial class SettingsProvider<T> : ISettingsProvider<T> where T
     }
 
     protected abstract T Sanitize(T settings);
+    protected virtual void PostSave() { }
 
     [LoggerMessage(
         EventId = LogEventIDs.Infrastructure.SettingsProvider.FileNotFound,
