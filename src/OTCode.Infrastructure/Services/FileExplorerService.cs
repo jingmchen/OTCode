@@ -68,7 +68,7 @@ public sealed class FileExplorerService : IFileExplorerService
             _watcher.StartWatching(RootPath);
         
         _settings.Current.AppState.LastOpenedDirectory = RootPath;
-        _settings.Save();
+        _settings.TrySave();
 
         ExplorerRefreshed?.Invoke(this, EventArgs.Empty);
     }

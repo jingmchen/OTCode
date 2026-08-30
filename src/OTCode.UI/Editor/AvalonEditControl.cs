@@ -74,8 +74,6 @@ public sealed class AvalonEditControl : TextEditor
         }
     }
 
-    private void 
-
     private bool TryExecute(TextEditorShortcut shortcut, int wheelDelta)
     {
         switch (shortcut)

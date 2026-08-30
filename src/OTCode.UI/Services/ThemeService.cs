@@ -138,7 +138,7 @@ public sealed partial class ThemeService : IThemeService
     {
         _settings.Current.Theme.Theme = CurrentTheme;
         _settings.Current.Theme.Accent = CurrentAccent;
-        _settings.Save();
+        _settings.TrySave();
     }
 
     private void OnSystemThemeChanged(UISettings sender, object args)
