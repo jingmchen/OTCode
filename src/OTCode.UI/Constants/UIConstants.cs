@@ -39,6 +39,18 @@ internal static class UIConstants
         {
             internal const int DebounceMs = 400;
         }
+
+        internal static class AvalonEditService
+        {
+            /// <summary> Smallest permitted editor font size </summary>
+            internal const double MinFontSize = 6d;
+
+            /// <summary> Largest permitted editor font size </summary>
+            internal const double MaxFontSize = 72d;
+
+            /// <summary> Font-size change applied per zoom step </summary>
+            internal const double Step = 1d;
+        }
     }
 
     internal static class Control

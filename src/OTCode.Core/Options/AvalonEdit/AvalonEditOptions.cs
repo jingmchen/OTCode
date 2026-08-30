@@ -4,7 +4,16 @@ namespace OTCode.Core.Options.AvalonEdit;
 
 public sealed class AvalonEditOptions
 {
-    public EditorOptions Editor {get; set;} = new();
-    public FontOptions Font {get; set;} = new();
-    public ColorOptions Color {get; set;} = new();
+    public AvalonEditEditorOptions Editor {get; set;} = new();
+    public AvalonEditFontOptions Font {get; set;} = new();
+    public AvalonEditColorOptions Color {get; set;} = new();
+
+    public AvalonEditOptions SanitizeValidate()
+    {
+        Editor ??= new AvalonEditEditorOptions();
+        Font ??= new AvalonEditFontOptions();
+        Color ??= new AvalonEditColorOptions();
+
+        return this;
+    }
 }

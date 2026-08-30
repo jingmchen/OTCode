@@ -5,7 +5,7 @@ using OTCode.Core.Extensions;
 
 namespace OTCode.Core.Options.AvalonEdit;
 
-public sealed class FontOptions
+public sealed class AvalonEditFontOptions
 {
     public string Family {get; set;} = AppFont.Arial.ToAvalonEditorFont();
     public double Size {get; set;} = 12d;

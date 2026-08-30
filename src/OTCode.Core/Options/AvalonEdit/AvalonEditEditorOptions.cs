@@ -2,7 +2,7 @@
 
 namespace OTCode.Core.Options.AvalonEdit;
 
-public sealed class EditorOptions
+public sealed class AvalonEditEditorOptions
 {
     public bool ShowLineNumbers {get; set;} = true;
     public bool ShowSpaces {get; set;}

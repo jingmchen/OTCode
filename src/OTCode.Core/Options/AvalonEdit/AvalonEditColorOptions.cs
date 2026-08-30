@@ -2,7 +2,7 @@
 
 namespace OTCode.Core.Options.AvalonEdit;
 
-public sealed class ColorOptions
+public sealed class AvalonEditColorOptions
 {
     public string? ForegroundColor {get; set;}
     public string? BackgroundColor {get; set;}
