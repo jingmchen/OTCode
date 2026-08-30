@@ -53,9 +53,9 @@ public sealed partial class TermsService : ITermsService
         _settings.Current.Terms.AcceptedAtUtc = DateTime.UtcNow;
         _settings.Current.Terms.AcceptedBy = Environment.UserName;
 
-        if (!_settings.TrySave(out var error) && error is not null)
+        if (!_settings.TrySave())
         {
-            LogUnableToPersistAcceptance(error);
+            LogUnableToPersistAcceptance();
         }
 
         LogTermsAccepted();
@@ -98,7 +98,7 @@ public sealed partial class TermsService : ITermsService
 
     [LoggerMessage(
         EventId = LogEventIDs.UI.TermsService.UnableToPersistAcceptance,
-        Level = LogLevel.Error,
+        Level = LogLevel.Warning,
         Message = "Could not persist the Terms and Conditions acceptance — the user will be asked again next launch.")]
-    private partial void LogUnableToPersistAcceptance(Exception ex);
+    private partial void LogUnableToPersistAcceptance();
 }

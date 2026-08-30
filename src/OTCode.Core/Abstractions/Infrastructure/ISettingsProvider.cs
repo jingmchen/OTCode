@@ -5,7 +5,6 @@ namespace OTCode.Core.Abstractions.Infrastructure;
 public interface ISettingsProvider<T>
 {
     T Current {get;}
-    void Save();
-    bool TrySave(out Exception? err);
+    bool TrySave();
     void Reload();
 }

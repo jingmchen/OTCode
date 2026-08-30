@@ -37,23 +37,16 @@ public abstract partial class SettingsProvider<T> : ISettingsProvider<T> where T
     }
 
     // ─── PUBLIC METHODS ────────────────────────
-    public void Save()
-    {
-        lock(_gate)
-            WriteToDisk(Current);
-    }
-
-    public bool TrySave(out Exception? err)
+    public bool TrySave()
     {
         try
         {
-            Save();
-            err = null;
+            lock(_gate)
+                WriteToDisk(Current);
             return true;
         }
         catch (Exception ex)
         {
-            err = ex;
             LogFileUnableToSave(ex, Path.GetFileName(_settingsPath));
             return false;
         }
@@ -100,7 +93,7 @@ public abstract partial class SettingsProvider<T> : ISettingsProvider<T> where T
             }
 
             Current = Sanitize(settings);
-            Save();
+            TrySave();
         }
         catch (Exception ex)
         {
@@ -112,7 +105,7 @@ public abstract partial class SettingsProvider<T> : ISettingsProvider<T> where T
     private void ApplyDefaults()
     {
         Current = new T();
-        Save();
+        TrySave();
     }
 
     protected abstract T Sanitize(T settings);
@@ -140,10 +133,4 @@ public abstract partial class SettingsProvider<T> : ISettingsProvider<T> where T
         Level = LogLevel.Warning,
         Message = "File: {FileName} - Unable to save.")]
     private partial void LogFileUnableToSave(Exception ex, string fileName);
-
-    [LoggerMessage(
-        EventId = LogEventIDs.Infrastructure.SettingsProvider.TempCleanupFailed,
-        Level = LogLevel.Debug,
-        Message = "Temp File: Could not be removed at {Path}.")]
-    private partial void LogTempCleanupFailed(Exception ex, string path);
 }

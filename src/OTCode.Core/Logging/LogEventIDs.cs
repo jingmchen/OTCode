@@ -12,7 +12,6 @@ public static class LogEventIDs
             public const int FileUnableToRead = 1002;
             public const int FileInvalidOrEmpty = 1003;
             public const int FileUnableToSave = 1004;
-            public const int TempCleanupFailed = 1005;
         }
 
         public static class FileWatcher
